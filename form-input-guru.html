@@ -190,7 +190,7 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUSrnwqyBJ63rDX9mxKhzX07tpMpSM_ZGR27FP8zpfEKBjriZvlk_WGPLAyup9jKXkdg/exec";
 
-    // Inisialisasi Data Pengguna
+    // Inisialisasi & Cek Satpam Akses
     document.addEventListener("DOMContentLoaded", () => {
       const user = JSON.parse(localStorage.getItem('currentUser'));
       
@@ -227,7 +227,7 @@
       }
     }
 
-    // FUNGSI SHARE / BAGIKAN
+    // Fungsi Share Text
     async function bagikanTeks(pesan) {
       if (navigator.share) {
         try {
@@ -239,7 +239,6 @@
           console.log("Dibatalkan oleh pengguna");
         }
       } else {
-        // Fallback jika dibuka dari browser komputer yang tidak mendukung Web Share
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
       }
     }
