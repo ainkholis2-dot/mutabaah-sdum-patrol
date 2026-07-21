@@ -42,7 +42,6 @@
   </div>
 
   <script>
-    // Link Google Apps Script kamu sudah terpasang di sini:
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUSrnwqyBJ63rDX9mxKhzX07tpMpSM_ZGR27FP8zpfEKBjriZvlk_WGPLAyup9jKXkdg/exec";
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -59,7 +58,7 @@
         const response = await fetch(SCRIPT_URL, {
           method: 'POST',
           body: JSON.stringify({
-            action:"login", 
+            action: "login", 
             username: usernameInput,
             password: passwordInput
           })
@@ -71,24 +70,23 @@
           const user = result.user;
           alert(`Login Berhasil!\nSelamat datang, ${user.nama} (${user.role})`);
 
-          // Simpan data login sementara di browser
+          // Simpan data login di browser
           localStorage.setItem('currentUser', JSON.stringify(user));
 
           // Arahkan sesuai peran pengguna
-          // DENGAN KODE BARU INI:
-	if (user.role === 'Guru') {
- 	 window.location.href = "form-input-guru.html";
-	} else if (user.role === 'Wali Murid') {
- 	 window.location.href = "laporan-walimurid.html";
-	} else if (user.role === 'Admin') {
- 	 alert("Halaman Admin sedang disiapkan");
-	}
+          if (user.role === 'Guru') {
+            window.location.href = "form-input-guru.html";
+          } else if (user.role === 'Wali Murid') {
+            window.location.href = "laporan-walimurid.html";
+          } else if (user.role === 'Admin') {
+            window.location.href = "dashboard-admin.html"; // <-- SUDAH DIARAHKAN
+          }
         } else {
           alert(`Gagal Login: ${result.message}`);
         }
       } catch (error) {
         console.error(error);
-        alert("Terjadi kesalahan koneksi ke server. Pastikan pengaturan Deploy Google Script sudah diatur ke 'Anyone' (Siapa saja).");
+        alert("Terjadi kesalahan koneksi ke server.");
       } finally {
         btn.innerText = "Masuk Aplikasi";
         btn.disabled = false;
