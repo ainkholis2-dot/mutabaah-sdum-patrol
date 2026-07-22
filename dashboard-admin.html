@@ -237,146 +237,14 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUSrnwqyBJ63rDX9mxKhzX07tpMpSM_ZGR27FP8zpfEKBjriZvlk_WGPLAyup9jKXkdg/exec";
+    <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySzJxlvGRwDDhGF39oC4Z22Ha_rpQlfpTsvY3QFfiyFg1eenztQBiMUtV3xpbBU_lahQ/exec"; // <-- Pastikan URL Deploy terbaru kamu ada di sini
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const rawUser = localStorage.getItem('currentUser');
-      if (!rawUser) {
-        window.location.href = "index.html";
-        return;
-      }
-      const user = JSON.parse(rawUser);
-      if (user.role !== 'Admin') {
-        window.location.href = "index.html";
-        return;
-      }
+    // ... (kode JavaScript lainnya di atas) ...
 
-      document.getElementById('namaAdmin').innerText = user.nama || user.username || "Admin";
-
-      // Jam & Tanggal
-      updateClock();
-      setInterval(updateClock, 1000);
-
-      // Muat Data Statistik
-      loadRealtimeStats();
-    });
-
-    function updateClock() {
-      const now = new Date();
-      const jam = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
-      document.getElementById('jamText').innerText = jam;
-
-      const opsiMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const masehi = now.toLocaleDateString('id-ID', opsiMasehi);
-      const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
-      const hijriah = new Intl.DateTimeFormat('id-TN-u-ca-islamic', opsiHijriah).format(now);
-
-      document.getElementById('tanggalText').innerText = `${masehi} / ${hijriah} H`;
-    }
-
-    async function loadRealtimeStats() {
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: "get_admin_stats" })
-        });
-        const result = await response.json();
-        if (result.success) {
-          document.getElementById('statSiswa').innerText = result.totalSiswa || 0;
-          document.getElementById('statGuru').innerText = result.totalGuru || 0;
-          document.getElementById('statSetoran').innerText = result.setoranHariIni || 0;
-        }
-      } catch (err) {
-        console.log("Error memuat statistik");
-      }
-    }
-
-    // Modal Tab Control
-    function bukaModalInput() { document.getElementById('modalInput').classList.remove('hidden'); }
-    function tutupModalInput() { document.getElementById('modalInput').classList.add('hidden'); }
-
-    function pilihTabModal(tab) {
-      const fT = document.getElementById('formInputTahfidz');
-      const fM = document.getElementById('formInputMengaji');
-      const fG = document.getElementById('formInputGuru');
-      const fI = document.getElementById('formImportExcel');
-
-      const bT = document.getElementById('btnTabTahfidz');
-      const bM = document.getElementById('btnTabMengaji');
-      const bG = document.getElementById('btnTabGuru');
-      const bI = document.getElementById('btnTabImport');
-
-      [fT, fM, fG, fI].forEach(el => el.classList.add('hidden'));
-      [bT, bM, bG, bI].forEach(el => el.className = "w-1/4 py-2");
-
-      if (tab === 'tahfidz') { fT.classList.remove('hidden'); bT.className = "w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold"; }
-      else if (tab === 'mengaji') { fM.classList.remove('hidden'); bM.className = "w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold"; }
-      else if (tab === 'guru') { fG.classList.remove('hidden'); bG.className = "w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold"; }
-      else if (tab === 'import') { fI.classList.remove('hidden'); bI.className = "w-1/4 py-2 bg-amber-200 text-amber-900 rounded-lg shadow font-bold"; }
-    }
-
-    // IMPORT EXCEL LOGIC
-    function prosesImportExcel() {
-      const fileInput = document.getElementById('fileExcel');
-      const tipe = document.getElementById('tipeImport').value;
-      const btn = document.getElementById('btnImport');
-
-      if (!fileInput.files.length) {
-        alert("Silakan pilih file Excel / CSV terlebih dahulu!");
-        return;
-      }
-
-      btn.innerText = "Membaca & Memproses File...";
-      btn.disabled = true;
-
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-
-      reader.onload = async function(e) {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheet];
-          
-          const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          const filteredRows = rows.filter(r => r.length > 0 && r[0] !== undefined);
-
-          if (filteredRows.length === 0) {
-            alert("File Excel kosong!");
-            return;
-          }
-
-          const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-              action: "import_batch_siswa",
-              tipe: tipe,
-              rows: filteredRows
-            })
-          });
-
-          const result = await res.json();
-          if (result.success) {
-            alert("Alhamdulillah! " + result.message);
-            fileInput.value = "";
-            tutupModalInput();
-            loadRealtimeStats();
-          } else {
-            alert("Gagal Import: " + result.message);
-          }
-        } catch (err) {
-          alert("Gagal memproses file Excel. Pastikan formatnya benar.");
-        } finally {
-          btn.innerText = "🚀 Upload & Import Data";
-          btn.disabled = false;
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-
-    // SUBMIT FORM INDIVIDUAL
+    // ==========================================
+    // 1. SUBMIT FORM INDIVIDUAL (TAHFIDZ)
+    // ==========================================
     document.getElementById('formInputTahfidz').addEventListener('submit', async (e) => {
       e.preventDefault();
       await kirimData({
@@ -388,6 +256,9 @@
       }, e.target);
     });
 
+    // ==========================================
+    // 2. SUBMIT FORM INDIVIDUAL (MENGAJI)
+    // ==========================================
     document.getElementById('formInputMengaji').addEventListener('submit', async (e) => {
       e.preventDefault();
       await kirimData({
@@ -399,6 +270,9 @@
       }, e.target);
     });
 
+    // ==========================================
+    // 3. SUBMIT FORM INDIVIDUAL (GURU BARU)
+    // ==========================================
     document.getElementById('formInputGuru').addEventListener('submit', async (e) => {
       e.preventDefault();
       await kirimData({
@@ -409,55 +283,42 @@
       }, e.target);
     });
 
+
+    // 📌 LETAKKAN FUNGSI kirimData DI SINI:
+    // ==========================================
     async function kirimData(payload, formEl) {
       try {
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const res = await fetch(SCRIPT_URL, { 
+          method: 'POST', 
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload) 
+        });
         const result = await res.json();
         if (result.success) {
-          alert("Berhasil! " + result.message);
-          formEl.reset();
+          alert("Alhamdulillah! " + result.message);
+          if (formEl) formEl.reset();
           tutupModalInput();
           loadRealtimeStats();
         } else {
           alert("Gagal: " + result.message);
         }
-      } catch (err) { alert("Kesalahan koneksi."); }
-    }
-
-    // FUNGSI DOWNLOAD REKAP EXCEL PER KELAS / KELOMPOK
-    async function downloadRekap(tipe) {
-      const filterVal = tipe === 'tahfidz' 
-        ? document.getElementById('filterKelasTahfidz').value 
-        : document.getElementById('filterKelompokMengaji').value;
-
-      alert(`Memproses rekap data ${tipe.toUpperCase()}... Mohon tunggu.`);
-
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: "get_rekap_data", tipe: tipe, filterVal: filterVal })
-        });
-        const result = await res.json();
-
-        if (result.success && result.data.length > 0) {
-          // Buat Worksheet Excel
-          const wsData = [result.headers, ...result.data];
-          const ws = XLSX.utils.aoa_to_sheet(wsData);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, "Rekap Mutabaah");
-
-          // Simpan File Excel
-          const fileName = `Rekap_${tipe.toUpperCase()}_${filterVal || 'Semua'}_SDUM.xlsx`;
-          XLSX.writeFile(wb, fileName);
-        } else {
-          alert("Tidak ada data setoran yang cocok dengan filter ini.");
-        }
-      } catch (err) {
-        alert("Gagal mengunduh rekap data.");
+      } catch (err) { 
+        alert("Kesalahan koneksi / server: " + err.message); 
       }
     }
 
-    function logout() { localStorage.removeItem('currentUser'); window.location.href = "index.html"; }
+
+    // ==========================================
+    // 4. FUNGSI DOWNLOAD REKAP EXCEL
+    // ==========================================
+    async function downloadRekap(tipe) {
+      // ... (fungsi download rekap) ...
+    }
+
+    function logout() { 
+      localStorage.removeItem('currentUser'); 
+      window.location.href = "index.html"; 
+    }
   </script>
 </body>
 </html>
