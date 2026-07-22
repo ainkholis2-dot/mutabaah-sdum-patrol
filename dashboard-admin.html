@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Admin - SDUM Patrol</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library untuk Membaca File Excel di Browser -->
+  <!-- Library XLSX untuk Read & Export File Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-10">
@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <!-- Live Clock, Tanggal Masehi & Hijriah -->
+      <!-- Live Clock -->
       <div class="text-center md:text-right bg-emerald-900/50 px-4 py-1.5 rounded-xl border border-emerald-700/50">
         <p id="jamText" class="text-xs font-mono font-bold text-amber-300">00:00:00 WIB</p>
         <p id="tanggalText" class="text-[11px] text-emerald-100 mt-0.5">Memuat tanggal...</p>
@@ -42,54 +42,97 @@
       <div>
         <span class="bg-emerald-900/60 text-emerald-200 text-xs px-3 py-1 rounded-full font-medium">Administrator Sistem</span>
         <h2 class="text-2xl font-bold mt-2">Selamat Datang, <span id="namaAdmin">Admin</span>! 👋</h2>
-        <p class="text-xs text-emerald-100 mt-1">Kelola data master guru, siswa, kelas, dan import file Excel/CSV di sini.</p>
+        <p class="text-xs text-emerald-100 mt-1">Kelola data master guru, siswa, kelas, dan rekap mutaba'ah di sini.</p>
       </div>
-      <button onclick="bukaModalInput()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs shadow transition flex items-center gap-2">
-        ➕ Input & Import Data (Excel/Form)
-      </button>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="bukaModalInput()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs shadow transition flex items-center gap-2">
+          ➕ Input & Import Master
+        </button>
+        <a href="https://docs.google.com/spreadsheets" target="_blank" class="bg-emerald-900 hover:bg-emerald-950 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow transition flex items-center gap-2 border border-emerald-500">
+          🟢 Buka Direct Google Sheet
+        </a>
+      </div>
     </div>
 
-    <!-- Ringkasan Statistik Real-Time (Default: 0) -->
+    <!-- Ringkasan Statistik Real-Time -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-xs font-semibold text-slate-500 uppercase">Total Santri</p>
+        <p class="text-xs font-semibold text-slate-500 uppercase">Total Santri Master</p>
         <p id="statSiswa" class="text-3xl font-black text-slate-800 mt-1">0</p>
-        <span class="text-[10px] text-emerald-600 font-medium">● Data Real-Time</span>
+        <span class="text-[10px] text-emerald-600 font-medium">● Tahfidz & Mengaji</span>
       </div>
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
         <p class="text-xs font-semibold text-slate-500 uppercase">Total Guru / Ustadz</p>
         <p id="statGuru" class="text-3xl font-black text-slate-800 mt-1">0</p>
-        <span class="text-[10px] text-emerald-600 font-medium">● Data Real-Time</span>
+        <span class="text-[10px] text-emerald-600 font-medium">● Data Master Guru</span>
       </div>
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
         <p class="text-xs font-semibold text-slate-500 uppercase">Setoran Hari Ini</p>
         <p id="statSetoran" class="text-3xl font-black text-emerald-600 mt-1">0</p>
-        <span class="text-[10px] text-slate-400 font-medium">Tahfidz & Mengaji</span>
+        <span class="text-[10px] text-slate-400 font-medium">Hari Ini</span>
       </div>
     </div>
 
+    <!-- FITUR REKAP & DOWNLOAD -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
+      <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Setoran Mutaba'ah</h3>
+      <p class="text-xs text-slate-500 mb-4">Unduh rekap setoran hafalan per kelas (Tahfidz) atau per kelompok (Mengaji) ke format Excel (.xlsx).</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Rekap Tahfidz -->
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+          <h4 class="font-bold text-emerald-800 text-sm mb-2">📖 Rekap Tahfidz (Per Kelas)</h4>
+          <div class="space-y-3">
+            <select id="filterKelasTahfidz" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+              <option value="">-- Semua Kelas --</option>
+              <option value="Kelas 1 A">Kelas 1 A</option>
+              <option value="Kelas 1 B">Kelas 1 B</option>
+              <option value="Kelas 2 A">Kelas 2 A</option>
+              <option value="Kelas 2 B">Kelas 2 B</option>
+              <option value="Kelas 3 Putra">Kelas 3 Putra</option>
+              <option value="Kelas 3 Putri">Kelas 3 Putri</option>
+              <option value="Kelas 4 A">Kelas 4 A</option>
+              <option value="Kelas 4 B">Kelas 4 B</option>
+              <option value="Kelas 5 Putra">Kelas 5 Putra</option>
+              <option value="Kelas 5 Putri">Kelas 5 Putri</option>
+              <option value="Kelas 6 A">Kelas 6 A</option>
+            </select>
+            <button onclick="downloadRekap('tahfidz')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
+              📊 Unduh Rekap Tahfidz (Excel)
+            </button>
+          </div>
+        </div>
+
+        <!-- Rekap Mengaji -->
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50">
+          <h4 class="font-bold text-amber-800 text-sm mb-2">📚 Rekap Mengaji (Per Kelompok)</h4>
+          <div class="space-y-3">
+            <input type="text" id="filterKelompokMengaji" placeholder="Ketik nama kelompok (Misal: Kelompok A)" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+            <button onclick="downloadRekap('mengaji')" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
+              📊 Unduh Rekap Mengaji (Excel)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Navigasi Akses Cepat -->
-    <h3 class="text-md font-bold text-slate-800 mb-3">Aksi Cepat & Navigasi</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <div class="text-3xl mb-2">📖</div>
-        <h4 class="font-bold text-slate-800 text-sm">Mode Form Guru</h4>
-        <p class="text-xs text-slate-500 mt-1 mb-4">Inputkan setoran hafalan santri secara langsung.</p>
-        <a href="form-input-guru.html" class="inline-block w-full text-center bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-semibold text-xs py-2 rounded-lg transition">Buka Form Input</a>
+    <h3 class="text-md font-bold text-slate-800 mb-3">Navigasi Halaman</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+        <div>
+          <h4 class="font-bold text-slate-800 text-sm">Mode Form Guru</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Inputkan setoran hafalan santri secara langsung.</p>
+        </div>
+        <a href="form-input-guru.html" class="bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-semibold text-xs px-4 py-2.5 rounded-lg transition">Buka Form</a>
       </div>
 
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <div class="text-3xl mb-2">📊</div>
-        <h4 class="font-bold text-slate-800 text-sm">Laporan Wali Murid</h4>
-        <p class="text-xs text-slate-500 mt-1 mb-4">Lihat tampilan perkembangan hafalan santri.</p>
-        <a href="laporan-walimurid.html" class="inline-block w-full text-center bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-semibold text-xs py-2 rounded-lg transition">Lihat Laporan</a>
-      </div>
-
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <div class="text-3xl mb-2">🟩</div>
-        <h4 class="font-bold text-slate-800 text-sm">Google Spreadsheet</h4>
-        <p class="text-xs text-slate-500 mt-1 mb-4">Buka database induk Google Sheets.</p>
-        <a href="https://docs.google.com/spreadsheets" target="_blank" class="inline-block w-full text-center bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-semibold text-xs py-2 rounded-lg transition">Buka Google Sheets ↗</a>
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+        <div>
+          <h4 class="font-bold text-slate-800 text-sm">Laporan Wali Murid</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Lihat tampilan perkembangan hafalan santri.</p>
+        </div>
+        <a href="laporan-walimurid.html" class="bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-semibold text-xs px-4 py-2.5 rounded-lg transition">Lihat Laporan</a>
       </div>
     </div>
 
@@ -106,7 +149,7 @@
 
       <!-- Tab Input -->
       <div class="flex bg-slate-100 p-1 border-b text-xs font-semibold text-slate-600">
-        <button id="btnTabTahfidz" onclick="pilihTabModal('tahfidz')" class="w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow">Tahfidz</button>
+        <button id="btnTabTahfidz" onclick="pilihTabModal('tahfidz')" class="w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold">Tahfidz</button>
         <button id="btnTabMengaji" onclick="pilihTabModal('mengaji')" class="w-1/4 py-2">Mengaji</button>
         <button id="btnTabGuru" onclick="pilihTabModal('guru')" class="w-1/4 py-2">Guru</button>
         <button id="btnTabImport" onclick="pilihTabModal('import')" class="w-1/4 py-2 bg-amber-100 text-amber-800">📂 Import Excel</button>
@@ -124,16 +167,13 @@
               <option value="Kelas 1 B">Kelas 1 B</option>
               <option value="Kelas 2 A">Kelas 2 A</option>
               <option value="Kelas 2 B">Kelas 2 B</option>
-              <option value="Kelas 2 C">Kelas 2 C</option>
               <option value="Kelas 3 Putra">Kelas 3 Putra</option>
               <option value="Kelas 3 Putri">Kelas 3 Putri</option>
               <option value="Kelas 4 A">Kelas 4 A</option>
-               <option value="Kelas 4 B">Kelas 4 B</option>
+              <option value="Kelas 4 B">Kelas 4 B</option>
               <option value="Kelas 5 Putra">Kelas 5 Putra</option>
               <option value="Kelas 5 Putri">Kelas 5 Putri</option>
               <option value="Kelas 6 A">Kelas 6 A</option>
-              <option value="Kelas 6 B">Kelas 6 B</option>
-              <option value="Kelas 6 C">Kelas 6 C</option>
             </select>
             <input type="text" id="waliKelasTahfidz" required placeholder="Wali Kelas / Guru Pengampu" class="w-full px-3 py-2 border rounded-lg text-xs">
           </div>
@@ -213,7 +253,7 @@
 
       document.getElementById('namaAdmin').innerText = user.nama || user.username || "Admin";
 
-      // Jalankan Jam & Waktu Hijriah/Masehi
+      // Jam & Tanggal
       updateClock();
       setInterval(updateClock, 1000);
 
@@ -221,19 +261,13 @@
       loadRealtimeStats();
     });
 
-    // FUNGSI WAKTU & TANGGAL HIJRIAH / MASEHI
     function updateClock() {
       const now = new Date();
-      
-      // Jam realtime
       const jam = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
       document.getElementById('jamText').innerText = jam;
 
-      // Tanggal Masehi
       const opsiMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       const masehi = now.toLocaleDateString('id-ID', opsiMasehi);
-
-      // Tanggal Hijriah (Intl API)
       const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
       const hijriah = new Intl.DateTimeFormat('id-TN-u-ca-islamic', opsiHijriah).format(now);
 
@@ -253,7 +287,7 @@
           document.getElementById('statSetoran').innerText = result.setoranHariIni || 0;
         }
       } catch (err) {
-        console.log("Menggunakan angka default");
+        console.log("Error memuat statistik");
       }
     }
 
@@ -305,10 +339,7 @@
           const firstSheet = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheet];
           
-          // Convert sheet to Array of Arrays
           const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          
-          // Filter baris kosong jika ada
           const filteredRows = rows.filter(r => r.length > 0 && r[0] !== undefined);
 
           if (filteredRows.length === 0) {
@@ -316,7 +347,6 @@
             return;
           }
 
-          // Kirim Batch ke Apps Script
           const res = await fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({
@@ -346,7 +376,7 @@
       reader.readAsArrayBuffer(file);
     }
 
-    // Submit Form Individual
+    // SUBMIT FORM INDIVIDUAL
     document.getElementById('formInputTahfidz').addEventListener('submit', async (e) => {
       e.preventDefault();
       await kirimData({
@@ -388,8 +418,43 @@
           formEl.reset();
           tutupModalInput();
           loadRealtimeStats();
+        } else {
+          alert("Gagal: " + result.message);
         }
       } catch (err) { alert("Kesalahan koneksi."); }
+    }
+
+    // FUNGSI DOWNLOAD REKAP EXCEL PER KELAS / KELOMPOK
+    async function downloadRekap(tipe) {
+      const filterVal = tipe === 'tahfidz' 
+        ? document.getElementById('filterKelasTahfidz').value 
+        : document.getElementById('filterKelompokMengaji').value;
+
+      alert(`Memproses rekap data ${tipe.toUpperCase()}... Mohon tunggu.`);
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: "get_rekap_data", tipe: tipe, filterVal: filterVal })
+        });
+        const result = await res.json();
+
+        if (result.success && result.data.length > 0) {
+          // Buat Worksheet Excel
+          const wsData = [result.headers, ...result.data];
+          const ws = XLSX.utils.aoa_to_sheet(wsData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Rekap Mutabaah");
+
+          // Simpan File Excel
+          const fileName = `Rekap_${tipe.toUpperCase()}_${filterVal || 'Semua'}_SDUM.xlsx`;
+          XLSX.writeFile(wb, fileName);
+        } else {
+          alert("Tidak ada data setoran yang cocok dengan filter ini.");
+        }
+      } catch (err) {
+        alert("Gagal mengunduh rekap data.");
+      }
     }
 
     function logout() { localStorage.removeItem('currentUser'); window.location.href = "index.html"; }
