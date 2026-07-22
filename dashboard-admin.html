@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Admin - SDUM Patrol</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library XLSX untuk Read & Export File Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-10">
@@ -22,7 +21,6 @@
         </div>
       </div>
 
-      <!-- Live Clock -->
       <div class="text-center md:text-right bg-emerald-900/50 px-4 py-1.5 rounded-xl border border-emerald-700/50">
         <p id="jamText" class="text-xs font-mono font-bold text-amber-300">00:00:00 WIB</p>
         <p id="tanggalText" class="text-[11px] text-emerald-100 mt-0.5">Memuat tanggal...</p>
@@ -34,7 +32,6 @@
     </div>
   </header>
 
-  <!-- Container Utama -->
   <main class="max-w-6xl mx-auto px-4 mt-6">
     
     <!-- Banner Selamat Datang -->
@@ -45,10 +42,10 @@
         <p class="text-xs text-emerald-100 mt-1">Kelola data master guru, siswa, kelas, dan rekap mutaba'ah di sini.</p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button onclick="bukaModalInput()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs shadow transition flex items-center gap-2">
+        <button onclick="bukaModalInput()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs shadow transition">
           ➕ Input & Import Master
         </button>
-        <a href="https://docs.google.com/spreadsheets/d/1pVkqMjoOctFNDqZ9DU5CqC3ynMTObTmam94rjEuFAOI/edit?usp=sharing" target="_blank" class="bg-emerald-900 hover:bg-emerald-950 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow transition flex items-center gap-2 border border-emerald-500">
+        <a href="https://docs.google.com/spreadsheets/d/1pVkqMjoOctFNDqZ9DU5CqC3ynMTObTmam94rjEuFAOI/edit?usp=sharing" target="_blank" class="bg-emerald-900 hover:bg-emerald-950 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow transition border border-emerald-500">
           🟢 Buka Direct Google Sheet
         </a>
       </div>
@@ -64,7 +61,7 @@
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
         <p class="text-xs font-semibold text-slate-500 uppercase">Total Guru / Ustadz</p>
         <p id="statGuru" class="text-3xl font-black text-slate-800 mt-1">0</p>
-        <span class="text-[10px] text-emerald-600 font-medium">● Data Master Guru</span>
+        <span class="text-[10px] text-emerald-600 font-medium">● Master Guru Login</span>
       </div>
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
         <p class="text-xs font-semibold text-slate-500 uppercase">Setoran Hari Ini</p>
@@ -73,51 +70,59 @@
       </div>
     </div>
 
-    <!-- FITUR REKAP & DOWNLOAD -->
+    <!-- FITUR BARU: REKAP LENGKAP (PER ANAK, PER KELAS, PER KELOMPOK) -->
     <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-      <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Setoran Mutaba'ah</h3>
-      <p class="text-xs text-slate-500 mb-4">Unduh rekap setoran hafalan per kelas (Tahfidz) atau per kelompok (Mengaji) ke format Excel (.xlsx).</p>
+      <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Mutaba'ah Per Anak / Kelas / Kelompok</h3>
+      <p class="text-xs text-slate-500 mb-4">Pilih jenis rekapitulasi setoran yang ingin diunduh ke format Excel.</p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Rekap Tahfidz -->
-        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
-          <h4 class="font-bold text-emerald-800 text-sm mb-2">📖 Rekap Tahfidz (Per Kelas)</h4>
-          <div class="space-y-3">
-            <select id="filterKelasTahfidz" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-              <option value="">-- Semua Kelas --</option>
-              <option value="Kelas 1 A">Kelas 1 A</option>
-              <option value="Kelas 1 B">Kelas 1 B</option>
-              <option value="Kelas 2 A">Kelas 2 A</option>
-              <option value="Kelas 2 B">Kelas 2 B</option>
-              <option value="Kelas 3 Putra">Kelas 3 Putra</option>
-              <option value="Kelas 3 Putri">Kelas 3 Putri</option>
-              <option value="Kelas 4 A">Kelas 4 A</option>
-              <option value="Kelas 4 B">Kelas 4 B</option>
-              <option value="Kelas 5 Putra">Kelas 5 Putra</option>
-              <option value="Kelas 5 Putri">Kelas 5 Putri</option>
-              <option value="Kelas 6 A">Kelas 6 A</option>
-            </select>
-            <button onclick="downloadRekap('tahfidz')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
-              📊 Unduh Rekap Tahfidz (Excel)
-            </button>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 1. Rekap Per Anak -->
+        <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 space-y-3">
+          <h4 class="font-bold text-blue-900 text-xs">👤 Rekap Per Anak (Individual)</h4>
+          <select id="tipeAnak" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+            <option value="tahfidz">Program Tahfidz</option>
+            <option value="mengaji">Program Mengaji</option>
+          </select>
+          <input type="text" id="keyAnak" placeholder="Ketik NISN / Nama Santri" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+          <button onclick="downloadRekapLengkap('anak')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Rekap Anak
+          </button>
         </div>
 
-        <!-- Rekap Mengaji -->
-        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50">
-          <h4 class="font-bold text-amber-800 text-sm mb-2">📚 Rekap Mengaji (Per Kelompok)</h4>
-          <div class="space-y-3">
-            <input type="text" id="filterKelompokMengaji" placeholder="Ketik nama kelompok (Misal: Kelompok A)" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            <button onclick="downloadRekap('mengaji')" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
-              📊 Unduh Rekap Mengaji (Excel)
-            </button>
-          </div>
+        <!-- 2. Rekap Per Kelas (Tahfidz) -->
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 space-y-3">
+          <h4 class="font-bold text-emerald-900 text-xs">📖 Rekap Per Kelas (Tahfidz)</h4>
+          <select id="keyKelas" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+            <option value="">-- Semua Kelas --</option>
+            <option value="Kelas 1 A">Kelas 1 A</option>
+            <option value="Kelas 1 B">Kelas 1 B</option>
+            <option value="Kelas 2 A">Kelas 2 A</option>
+            <option value="Kelas 2 B">Kelas 2 B</option>
+            <option value="Kelas 3 Putra">Kelas 3 Putra</option>
+            <option value="Kelas 3 Putri">Kelas 3 Putri</option>
+            <option value="Kelas 4 A">Kelas 4 A</option>
+            <option value="Kelas 4 B">Kelas 4 B</option>
+            <option value="Kelas 5 Putra">Kelas 5 Putra</option>
+            <option value="Kelas 5 Putri">Kelas 5 Putri</option>
+            <option value="Kelas 6 A">Kelas 6 A</option>
+          </select>
+          <button onclick="downloadRekapLengkap('kelas')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Rekap Kelas
+          </button>
+        </div>
+
+        <!-- 3. Rekap Per Kelompok (Mengaji) -->
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50 space-y-3">
+          <h4 class="font-bold text-amber-900 text-xs">📚 Rekap Per Kelompok (Mengaji)</h4>
+          <input type="text" id="keyKelompok" placeholder="Ketik Nama Kelompok Mengaji" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+          <button onclick="downloadRekapLengkap('kelompok')" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Rekap Kelompok
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Navigasi Akses Cepat -->
-    <h3 class="text-md font-bold text-slate-800 mb-3">Navigasi Halaman</h3>
+    <!-- Navigasi Halaman -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
         <div>
@@ -138,7 +143,7 @@
 
   </main>
 
-  <!-- MODAL INPUT & IMPORT DATA MASTER -->
+  <!-- MODAL INPUT MASTER -->
   <div id="modalInput" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden">
       
@@ -147,7 +152,6 @@
         <button onclick="tutupModalInput()" class="text-white hover:text-slate-200 text-lg font-bold">&times;</button>
       </div>
 
-      <!-- Tab Input -->
       <div class="flex bg-slate-100 p-1 border-b text-xs font-semibold text-slate-600">
         <button id="btnTabTahfidz" onclick="pilihTabModal('tahfidz')" class="w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold">Tahfidz</button>
         <button id="btnTabMengaji" onclick="pilihTabModal('mengaji')" class="w-1/4 py-2">Mengaji</button>
@@ -156,7 +160,7 @@
       </div>
 
       <div class="p-6">
-        <!-- FORM 1: SISWA TAHFIDZ -->
+        <!-- FORM SISWA TAHFIDZ -->
         <form id="formInputTahfidz" class="space-y-3">
           <p class="text-xs text-slate-500 mb-2">Input Siswa Tahfidz (Per Kelas & Wali Kelas).</p>
           <input type="text" id="nisnTahfidz" required placeholder="NISN Santri" class="w-full px-3 py-2 border rounded-lg text-xs">
@@ -175,12 +179,12 @@
               <option value="Kelas 5 Putri">Kelas 5 Putri</option>
               <option value="Kelas 6 A">Kelas 6 A</option>
             </select>
-            <input type="text" id="waliKelasTahfidz" required placeholder="Wali Kelas / Guru Pengampu" class="w-full px-3 py-2 border rounded-lg text-xs">
+            <input type="text" id="waliKelasTahfidz" required placeholder="Nama Ustadz / Guru Pengampu" class="w-full px-3 py-2 border rounded-lg text-xs">
           </div>
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs">Simpan Siswa Tahfidz</button>
         </form>
 
-        <!-- FORM 2: SISWA MENGAJI -->
+        <!-- FORM SISWA MENGAJI -->
         <form id="formInputMengaji" class="space-y-3 hidden">
           <p class="text-xs text-slate-500 mb-2">Input Siswa Mengaji (Per Kelompok & Sesi).</p>
           <input type="text" id="nisnMengaji" required placeholder="NISN Santri" class="w-full px-3 py-2 border rounded-lg text-xs">
@@ -195,10 +199,10 @@
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs">Simpan Siswa Mengaji</button>
         </form>
 
-        <!-- FORM 3: GURU BARU -->
+        <!-- FORM GURU BARU -->
         <form id="formInputGuru" class="space-y-3 hidden">
-          <p class="text-xs text-slate-500 mb-2">Pendaftaran akun Guru baru.</p>
-          <input type="text" id="namaGuruBaru" required placeholder="Nama Lengkap Guru" class="w-full px-3 py-2 border rounded-lg text-xs">
+          <p class="text-xs text-slate-500 mb-2">Pendaftaran akun Guru baru untuk login.</p>
+          <input type="text" id="namaGuruBaru" required placeholder="Nama Lengkap Guru (Sama seperti Guru Pengampu)" class="w-full px-3 py-2 border rounded-lg text-xs">
           <div class="grid grid-cols-2 gap-3">
             <input type="text" id="usernameGuruBaru" required placeholder="Username Login" class="w-full px-3 py-2 border rounded-lg text-xs">
             <input type="password" id="passwordGuruBaru" required placeholder="Password / PIN" class="w-full px-3 py-2 border rounded-lg text-xs">
@@ -206,11 +210,11 @@
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs">Simpan Data Guru</button>
         </form>
 
-        <!-- FORM 4: IMPORT DARI EXCEL / CSV -->
+        <!-- IMPORT EXCEL -->
         <div id="formImportExcel" class="space-y-4 hidden">
           <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
             <strong>Petunjuk Format Excel:</strong><br>
-            • <b>Siswa Tahfidz:</b> Kolom A (NISN), Kolom B (Nama), Kolom C (Kelas), Kolom D (Wali Kelas)<br>
+            • <b>Siswa Tahfidz:</b> Kolom A (NISN), Kolom B (Nama), Kolom C (Kelas), Kolom D (Ustadz Pengampu)<br>
             • <b>Siswa Mengaji:</b> Kolom A (NISN), Kolom B (Nama), Kolom C (Kelompok), Kolom D (Sesi)
           </div>
 
@@ -237,42 +241,26 @@
   </div>
 
   <script>
-    // ⚠️ MASUKKAN URL DEPLOY WEB APP KAMU DI SINI
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDr9EBRi8hTsmPMCydkgMcn8g_cTBJdHGE8033gdPRnRrZ1TEG4G7-gS5U3sBvhhMXOA/exec";
+    const SCRIPT_URL = "PASANG_URL_WEB_APP_DEPLOY_BARU_DI_SINI"; // <-- Masukkan URL Web App kamu
 
     document.addEventListener("DOMContentLoaded", () => {
       const rawUser = localStorage.getItem('currentUser');
-      if (!rawUser) {
-        window.location.href = "index.html";
-        return;
-      }
+      if (!rawUser) { window.location.href = "index.html"; return; }
       const user = JSON.parse(rawUser);
-      if (user.role !== 'Admin') {
-        window.location.href = "index.html";
-        return;
-      }
+      if (user.role !== 'Admin') { window.location.href = "index.html"; return; }
 
       document.getElementById('namaAdmin').innerText = user.nama || user.username || "Admin";
 
-      // Jam & Tanggal
       updateClock();
       setInterval(updateClock, 1000);
-
-      // Muat Data Statistik Realtime
       loadRealtimeStats();
     });
 
     function updateClock() {
       const now = new Date();
-      const jam = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
-      document.getElementById('jamText').innerText = jam;
-
+      document.getElementById('jamText').innerText = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
       const opsiMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const masehi = now.toLocaleDateString('id-ID', opsiMasehi);
-      const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
-      const hijriah = new Intl.DateTimeFormat('id-TN-u-ca-islamic', opsiHijriah).format(now);
-
-      document.getElementById('tanggalText').innerText = `${masehi} / ${hijriah} H`;
+      document.getElementById('tanggalText').innerText = now.toLocaleDateString('id-ID', opsiMasehi);
     }
 
     async function loadRealtimeStats() {
@@ -288,12 +276,53 @@
           document.getElementById('statGuru').innerText = result.totalGuru || 0;
           document.getElementById('statSetoran').innerText = result.setoranHariIni || 0;
         }
+      } catch (err) {}
+    }
+
+    // DOWNLOAD REKAP LENGKAP
+    async function downloadRekapLengkap(mode) {
+      let tipe = 'tahfidz';
+      let filterKey = '';
+
+      if (mode === 'anak') {
+        tipe = document.getElementById('tipeAnak').value;
+        filterKey = document.getElementById('keyAnak').value;
+        if (!filterKey) { alert("Masukkan NISN atau Nama Santri terlebih dahulu!"); return; }
+      } else if (mode === 'kelas') {
+        tipe = 'tahfidz';
+        filterKey = document.getElementById('keyKelas').value;
+      } else if (mode === 'kelompok') {
+        tipe = 'mengaji';
+        filterKey = document.getElementById('keyKelompok').value;
+        if (!filterKey) { alert("Masukkan Nama Kelompok terlebih dahulu!"); return; }
+      }
+
+      alert("Memproses rekap data... Mohon tunggu.");
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "get_rekap_lengkap", mode: mode, tipe: tipe, filterKey: filterKey })
+        });
+        const result = await res.json();
+
+        if (result.success && result.data.length > 0) {
+          const wsData = [result.headers, ...result.data];
+          const ws = XLSX.utils.aoa_to_sheet(wsData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Rekap Mutabaah");
+
+          const fileName = `Rekap_${mode.toUpperCase()}_${filterKey || 'Semua'}_SDUM.xlsx`;
+          XLSX.writeFile(wb, fileName);
+        } else {
+          alert("Data setoran tidak ditemukan.");
+        }
       } catch (err) {
-        console.log("Memuat statistik...");
+        alert("Gagal mengunduh rekap data.");
       }
     }
 
-    // Modal Tab Control
     function bukaModalInput() { document.getElementById('modalInput').classList.remove('hidden'); }
     function tutupModalInput() { document.getElementById('modalInput').classList.add('hidden'); }
 
@@ -317,57 +346,7 @@
       else if (tab === 'import') { fI.classList.remove('hidden'); bI.className = "w-1/4 py-2 bg-amber-200 text-amber-900 rounded-lg shadow font-bold"; }
     }
 
-    // IMPORT EXCEL LOGIC
-    function prosesImportExcel() {
-      const fileInput = document.getElementById('fileExcel');
-      const tipe = document.getElementById('tipeImport').value;
-      const btn = document.getElementById('btnImport');
-
-      if (!fileInput.files.length) {
-        alert("Silakan pilih file Excel / CSV terlebih dahulu!");
-        return;
-      }
-
-      btn.innerText = "Membaca & Memproses File...";
-      btn.disabled = true;
-
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-
-      reader.onload = async function(e) {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheet];
-          
-          const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          const filteredRows = rows.filter(r => r.length > 0 && r[0] !== undefined);
-
-          if (filteredRows.length === 0) {
-            alert("File Excel kosong!");
-            return;
-          }
-
-          await kirimData({
-            action: "import_batch_siswa",
-            tipe: tipe,
-            rows: filteredRows
-          });
-
-          fileInput.value = "";
-        } catch (err) {
-          alert("Gagal memproses file Excel. Pastikan formatnya benar.");
-        } finally {
-          btn.innerText = "🚀 Upload & Import Data";
-          btn.disabled = false;
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-
-    // SUBMIT FORM INDIVIDUAL
+    // FORM HANDLERS
     document.getElementById('formInputTahfidz').addEventListener('submit', async (e) => {
       e.preventDefault();
       await kirimData({
@@ -400,7 +379,6 @@
       }, e.target);
     });
 
-    // FUNGSI UTAMA PENGIRIMAN DATA KE GOOGLE APPS SCRIPT
     async function kirimData(payload, formEl) {
       try {
         const res = await fetch(SCRIPT_URL, { 
@@ -414,50 +392,11 @@
           if (formEl) formEl.reset();
           tutupModalInput();
           loadRealtimeStats();
-        } else {
-          alert("Gagal: " + result.message);
-        }
-      } catch (err) { 
-        alert("Kesalahan koneksi / server: " + err.message); 
-      }
+        } else { alert("Gagal: " + result.message); }
+      } catch (err) { alert("Kesalahan koneksi."); }
     }
 
-    // DOWNLOAD REKAP EXCEL
-    async function downloadRekap(tipe) {
-      const filterVal = tipe === 'tahfidz' 
-        ? document.getElementById('filterKelasTahfidz').value 
-        : document.getElementById('filterKelompokMengaji').value;
-
-      alert(`Memproses rekap data ${tipe.toUpperCase()}... Mohon tunggu.`);
-
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "get_rekap_data", tipe: tipe, filterVal: filterVal })
-        });
-        const result = await res.json();
-
-        if (result.success && result.data.length > 0) {
-          const wsData = [result.headers, ...result.data];
-          const ws = XLSX.utils.aoa_to_sheet(wsData);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, "Rekap Mutabaah");
-
-          const fileName = `Rekap_${tipe.toUpperCase()}_${filterVal || 'Semua'}_SDUM.xlsx`;
-          XLSX.writeFile(wb, fileName);
-        } else {
-          alert("Tidak ada data setoran yang cocok dengan filter ini.");
-        }
-      } catch (err) {
-        alert("Gagal mengunduh rekap data.");
-      }
-    }
-
-    function logout() { 
-      localStorage.removeItem('currentUser'); 
-      window.location.href = "index.html"; 
-    }
+    function logout() { localStorage.removeItem('currentUser'); window.location.href = "index.html"; }
   </script>
 </body>
 </html>
