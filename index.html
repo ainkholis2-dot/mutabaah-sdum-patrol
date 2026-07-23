@@ -76,16 +76,24 @@
           localStorage.setItem('currentUser', JSON.stringify(user));
 
           // Pengarahan Halaman
-          if (user.role === 'Guru') {
-            window.location.href = "form-input-guru.html";
-          } else if (user.role === 'Wali Murid') {
-            window.location.href = "laporan-walimurid.html";
-          } else if (user.role === 'Admin') {
-            window.location.href = "dashboard-admin.html";
-          }
-        } else {
-          alert(`Gagal Login: ${result.message || 'Username atau Password salah.'}`);
-        }
+          // Contoh bagian saat respon server menyatakan "success"
+      if (result.success) {
+        // 1. Simpan data user ke localStorage browser (agar tidak hilang saat pindah halaman)
+      localStorage.setItem("userMutabaah", JSON.stringify(result.user));
+
+  // 2. Arahkan halaman berdasarkan Role / Peran
+  if (result.user.role === "Admin") {
+    // Dipaksa langsung mengarah ke halaman dashboard admin
+    window.location.href = "dashboard-admin.html"; 
+  } else if (result.user.role === "Guru") {
+    window.location.href = "form-input-guru.html";
+  } else {
+    // Jika role lain (misal Wali Murid)
+    window.location.href = "laporan-walimurid.html";
+  }
+} else {
+  alert(result.message);
+}
       } catch (error) {
         console.error("Error Detail:", error);
         alert("Terjadi kesalahan koneksi ke server.");
