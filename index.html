@@ -42,13 +42,13 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUSrnwqyBJ63rDX9mxKhzX07tpMpSM_ZGR27FP8zpfEKBjriZvlk_WGPLAyup9jKXkdg/exec";
+    // Link Apps Script Terbaru Anda
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVFjsFJjT8-ZWGheqElqCCNX4voxfcopew_-cG556lNM-gg7VpxkzfMB4U5S6yGiG5pg/exec";
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const btn = document.getElementById('btnLogin');
-      // .trim() menghapus spasi yang tidak sengaja terketik di awal/akhir
       const usernameInput = document.getElementById('username').value.trim();
       const passwordInput = document.getElementById('password').value.trim();
 
@@ -58,7 +58,7 @@
       try {
         const response = await fetch(SCRIPT_URL, {
           method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" }, // Wajib untuk menghindari blokir CORS Apps Script
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({
             action: "login", 
             username: usernameInput,
@@ -69,26 +69,26 @@
         const result = await response.json();
 
         if (result.success) {
-          const user = result.user;
-          alert(`Login Berhasil!\nSelamat datang, ${user.nama} (${user.role})`);
+          const user = result.user || result;
+          alert(`Login Berhasil!\nSelamat datang, ${user.nama || user.username} (${user.role})`);
 
-          // Simpan data login di browser
+          // Simpan data session login
           localStorage.setItem('currentUser', JSON.stringify(user));
 
-          // Arahkan sesuai peran pengguna & nama file HTML yang benar
+          // Pengarahan Halaman
           if (user.role === 'Guru') {
             window.location.href = "form-input-guru.html";
           } else if (user.role === 'Wali Murid') {
             window.location.href = "laporan-walimurid.html";
           } else if (user.role === 'Admin') {
-            window.location.href = "admin-dashboard.html"; // Diselaraskan dengan nama file admin
+            window.location.href = "admin-dashboard.html";
           }
         } else {
-          alert(`Gagal Login: ${result.message}`);
+          alert(`Gagal Login: ${result.message || 'Username atau Password salah.'}`);
         }
       } catch (error) {
-        console.error(error);
-        alert("Terjadi kesalahan koneksi ke server. Pastikan URL Web App sudah di-deploy dengan akses 'Anyone'.");
+        console.error("Error Detail:", error);
+        alert("Terjadi kesalahan koneksi ke server.");
       } finally {
         btn.innerText = "Masuk Aplikasi";
         btn.disabled = false;
