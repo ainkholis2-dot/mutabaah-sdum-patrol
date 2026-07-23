@@ -70,7 +70,7 @@
       </div>
     </div>
 
-    <!-- FITUR BARU: REKAP LENGKAP (PER ANAK, PER KELAS, PER KELOMPOK) -->
+    <!-- REKAP LENGKAP -->
     <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
       <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Mutaba'ah Per Anak / Kelas / Kelompok</h3>
       <p class="text-xs text-slate-500 mb-4">Pilih jenis rekapitulasi setoran yang ingin diunduh ke format Excel.</p>
@@ -241,7 +241,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDr9EBRi8hTsmPMCydkgMcn8g_cTBJdHGE8033gdPRnRrZ1TEG4G7-gS5U3sBvhhMXOA/exec"; // <-- Masukkan URL Web App kamu
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDr9EBRi8hTsmPMCydkgMcn8g_cTBJdHGE8033gdPRnRrZ1TEG4G7-gS5U3sBvhhMXOA/exec";
 
     document.addEventListener("DOMContentLoaded", () => {
       const rawUser = localStorage.getItem('currentUser');
@@ -378,6 +378,78 @@
         password: document.getElementById('passwordGuruBaru').value
       }, e.target);
     });
+
+    // FUNGSI IMPORT EXCEL
+    function prosesImportExcel() {
+      const fileInput = document.getElementById('fileExcel');
+      const tipe = document.getElementById('tipeImport').value;
+
+      if (!fileInput.files.length) {
+        alert("Silakan pilih file Excel terlebih dahulu!");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          // Ambil baris data (mengabaikan header/baris pertama)
+          const rows = jsonData.slice(1).filter(r => r.length > 0 && r[0]);
+
+          if (rows.length === 0) {
+            alert("File Excel kosong atau format tidak sesuai!");
+            return;
+          }
+
+          let successCount = 0;
+          alert(`Memproses import ${rows.length} data... Mohon tunggu.`);
+
+          for (let row of rows) {
+            let payload = {};
+            if (tipe === 'tahfidz') {
+              payload = {
+                action: "tambah_siswa_tahfidz",
+                nisn: String(row[0] || ''),
+                nama: String(row[1] || ''),
+                kelas: String(row[2] || ''),
+                waliKelas: String(row[3] || '')
+              };
+            } else {
+              payload = {
+                action: "tambah_siswa_mengaji",
+                nisn: String(row[0] || ''),
+                nama: String(row[1] || ''),
+                kelompok: String(row[2] || ''),
+                sesi: String(row[3] || '')
+              };
+            }
+
+            await fetch(SCRIPT_URL, {
+              method: 'POST',
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(payload)
+            });
+            successCount++;
+          }
+
+          alert(`Alhamdulillah! Berhasil mengimpor ${successCount} data.`);
+          fileInput.value = '';
+          tutupModalInput();
+          loadRealtimeStats();
+        } catch (err) {
+          alert("Gagal memproses file Excel: " + err.message);
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
 
     async function kirimData(payload, formEl) {
       try {
