@@ -3,270 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Input Mutaba'ah - SDUM Patrol</title>
+  <title>Form Input Setoran - SDUM Patrol</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-10">
 
-  <!-- Header / Navbar Guru -->
-  <header class="bg-emerald-800 text-white shadow-md">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+  <!-- Header -->
+  <header class="bg-emerald-700 text-white shadow-md">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
       <div class="flex items-center space-x-3">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Logo_Muhammadiyah.svg/500px-Logo_Muhammadiyah.svg.png" 
-             alt="Logo Muhammadiyah" class="h-9 w-9 object-contain bg-white rounded-full p-1">
+             alt="Logo Muhammadiyah" class="h-10 w-10 object-contain bg-white rounded-full p-1">
         <div>
-          <h1 class="font-bold text-sm leading-tight">Form Setoran Hafalan</h1>
-          <p class="text-[11px] text-emerald-200">Ustadz/Ustzah: <span id="namaUstadzText" class="font-bold text-amber-300">-</span></p>
+          <h1 class="font-bold text-base leading-tight">Mutaba'ah Digital SDUM</h1>
+          <p class="text-xs text-emerald-200" id="namaGuruHeader">Memuat data guru...</p>
         </div>
       </div>
-      <button onclick="logout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg transition font-semibold text-white shadow">
+      <button onclick="logout()" class="text-xs bg-emerald-800 hover:bg-emerald-900 px-3 py-1.5 rounded-lg transition font-medium border border-emerald-600">
         Keluar 🚪
       </button>
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto px-4 mt-6">
+  <main class="max-w-3xl mx-auto px-4 mt-6">
     
-    <!-- Tab Pilih Program -->
-    <div class="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200 mb-6 text-sm font-bold text-slate-600">
-      <button id="btnTabTahfidz" onclick="pilihProgram('tahfidz')" class="w-1/2 py-2.5 bg-emerald-700 text-white rounded-lg shadow transition">
+    <!-- Tab Navigasi Program -->
+    <div class="flex bg-white rounded-xl p-1 shadow-sm border border-slate-200 mb-6">
+      <button id="btnTabTahfidz" onclick="pilihProgram('tahfidz')" 
+              class="w-1/2 py-2.5 text-xs font-bold rounded-lg transition text-emerald-700 bg-emerald-50 border border-emerald-200">
         📖 Program Tahfidz
       </button>
-      <button id="btnTabMengaji" onclick="pilihProgram('mengaji')" class="w-1/2 py-2.5 hover:text-emerald-700 transition">
+      <button id="btnTabMengaji" onclick="pilihProgram('mengaji')" 
+              class="w-1/2 py-2.5 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-700">
         📚 Program Mengaji
       </button>
     </div>
 
-    <!-- FORM SETORAN TAHFIDZ -->
-    <form id="formTahfidz" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-      <h2 class="text-base font-bold text-emerald-800 border-b pb-2">Form Setoran Tahfidz</h2>
+    <!-- Container Form Input -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      
+      <!-- FORM SETORAN TAHFIDZ -->
+      <form id="formTahfidz" class="space-y-4">
+        <h3 class="font-bold text-slate-800 text-sm border-b pb-2 flex justify-between items-center">
+          <span>Input Setoran Tahfidz</span>
+          <span class="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">Tahfidz</span>
+        </h3>
 
-      <!-- Pilih Santri terintegrasi dari Master Data Admin -->
-      <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri Bimbingan</label>
-        <select id="selectSiswaTahfidz" onchange="autoFillSiswaTahfidz()" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-          <option value="">-- Memuat Data Santri... --</option>
-        </select>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">NISN</label>
-          <input type="text" id="nisnTahfidz" readonly class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-100 font-mono">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Kelas</label>
-          <input type="text" id="kelasTahfidz" readonly class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-100">
-        </div>
-      </div>
-
-      <!-- FITUR BARU: Pilihan Juz & Surat Otomatis -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Juz</label>
-          <select id="juzTahfidz" onchange="updateDaftarSurah()" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            <option value="">-- Pilih Juz --</option>
-            <option value="Juz 30">Juz 30</option>
-            <option value="Juz 29">Juz 29</option>
-            <option value="Juz 1">Juz 1</option>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri / Siswa</label>
+          <select id="siswaTahfidz" required class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition">
+            <option value="">-- Memuat daftar santri... --</option>
           </select>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Juz</label>
+            <input type="text" id="juzTahfidz" required placeholder="Contoh: Juz 30" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Surah</label>
+            <input type="text" id="surahTahfidz" required placeholder="Contoh: An-Naba'" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Ayat</label>
+            <input type="text" id="ayatTahfidz" required placeholder="Contoh: 1-15" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nilai / Predikat</label>
+            <select id="nilaiTahfidz" required class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+              <option value="Mumtaz (Sangat Baik)">Mumtaz (Sangat Baik)</option>
+              <option value="Jayyid Jiddan (Baik Sekali)">Jayyid Jiddan (Baik Sekali)</option>
+              <option value="Jayyid (Baik)">Jayyid (Baik)</option>
+              <option value="Maqbul (Cukup)">Maqbul (Cukup)</option>
+              <option value="Muroja'ah Lagi">Muroja'ah Lagi</option>
+            </select>
+          </div>
+        </div>
+
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Surah</label>
-          <select id="surahTahfidz" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            <option value="">-- Pilih Juz Terlebih Dahulu --</option>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Ustadz (Opsional)</label>
+          <textarea id="catatanTahfidz" rows="2" placeholder="Catatan kelancaran, tajwid, makhraj..." class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white"></textarea>
+        </div>
+
+        <button type="submit" id="btnSimpanTahfidz" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow transition">
+          💾 Simpan Setoran Tahfidz
+        </button>
+      </form>
+
+      <!-- FORM SETORAN MENGAJI -->
+      <form id="formMengaji" class="space-y-4 hidden">
+        <h3 class="font-bold text-slate-800 text-sm border-b pb-2 flex justify-between items-center">
+          <span>Input Setoran Mengaji</span>
+          <span class="text-[10px] bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full">Mengaji</span>
+        </h3>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri / Siswa</label>
+          <select id="siswaMengaji" required class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition">
+            <option value="">-- Memuat daftar santri... --</option>
           </select>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Ayat</label>
-          <input type="text" id="ayatTahfidz" placeholder="Misal: 1 - 15" required class="w-full px-3 py-2 border rounded-lg text-xs">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Jilid / Kitab</label>
+            <input type="text" id="jilidMengaji" required placeholder="Contoh: Jilid 3 / Al-Qur'an" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Halaman / Surah</label>
+            <input type="text" id="halamanMengaji" required placeholder="Contoh: Halaman 12" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+          </div>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Nilai / Predikat</label>
-          <select id="nilaiTahfidz" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            <option value="Mumtaz (Sangat Baik)">Mumtaz (Sangat Baik)</option>
-            <option value="Jayyid Jiddan (Baik Sekali)">Jayyid Jiddan (Baik Sekali)</option>
-            <option value="Jayyid (Baik)">Jayyid (Baik)</option>
-            <option value="Maqbul (Cukup)">Maqbul (Cukup)</option>
+          <select id="nilaiMengaji" required class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white">
+            <option value="Lancar / Lanjut">Lancar / Lanjut</option>
+            <option value="Ulangi Halaman Ini">Ulangi Halaman Ini</option>
+            <option value="Sangat Baik">Sangat Baik</option>
           </select>
         </div>
+
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Setoran</label>
-          <input type="date" id="tglTahfidz" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Ustadz (Opsional)</label>
+          <textarea id="catatanMengaji" rows="2" placeholder="Catatan bacaan, panjang pendek..." class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 focus:bg-white"></textarea>
         </div>
-      </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Ustadz</label>
-        <textarea id="catatanTahfidz" rows="2" placeholder="Catatan tajwid/kelancaran hafalan..." class="w-full px-3 py-2 border rounded-lg text-xs"></textarea>
-      </div>
+        <button type="submit" id="btnSimpanMengaji" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow transition">
+          💾 Simpan Setoran Mengaji
+        </button>
+      </form>
 
-      <button type="submit" id="btnSimpanT" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition">
-        💾 Simpan Setoran Tahfidz
-      </button>
-    </form>
-
-
-    <!-- FORM SETORAN MENGAJI -->
-    <form id="formMengaji" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 hidden">
-      <h2 class="text-base font-bold text-amber-800 border-b pb-2">Form Setoran Mengaji / Ummi / Iqro</h2>
-
-      <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri Bimbingan</label>
-        <select id="selectSiswaMengaji" onchange="autoFillSiswaMengaji()" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-          <option value="">-- Memuat Data Santri... --</option>
-        </select>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">NISN</label>
-          <input type="text" id="nisnMengaji" readonly class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-100 font-mono">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok</label>
-          <input type="text" id="kelompokMengaji" readonly class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-100">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Jilid / Buku</label>
-          <input type="text" id="jilidMengaji" placeholder="Misal: Jilid 3 / Al-Qur'an" required class="w-full px-3 py-2 border rounded-lg text-xs">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Halaman / Hal</label>
-          <input type="text" id="halamanMengaji" placeholder="Misal: Hal 12 - 14" required class="w-full px-3 py-2 border rounded-lg text-xs">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Nilai</label>
-          <select id="nilaiMengaji" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            <option value="Lanjut (A)">Lanjut (A)</option>
-            <option value="Lanjut dengan Catatan (B)">Lanjut dengan Catatan (B)</option>
-            <option value="Ulang Halaman (C)">Ulang Halaman (C)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Setoran</label>
-          <input type="date" id="tglMengaji" required class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan Ustadz</label>
-          <input type="text" id="catatanMengaji" placeholder="Catatan kelancaran..." class="w-full px-3 py-2 border rounded-lg text-xs">
-        </div>
-      </div>
-
-      <button type="submit" id="btnSimpanM" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow transition">
-        💾 Simpan Setoran Mengaji
-      </button>
-    </form>
-
+    </div>
   </main>
 
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDr9EBRi8hTsmPMCydkgMcn8g_cTBJdHGE8033gdPRnRrZ1TEG4G7-gS5U3sBvhhMXOA/exec"; // <-- Masukkan URL Web App kamu
-    let currentUser = null;
-    let listSiswaTahfidz = [];
-    let listSiswaMengaji = [];
+  <!-- MODAL SUKSES & TOMBOL BAGIKAN WHATSAPP -->
+  <div id="modalSukses" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden text-center p-6 space-y-4">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+        ✅
+      </div>
+      <div>
+        <h3 class="font-bold text-slate-800 text-lg">Alhamdulillah, Berhasil!</h3>
+        <p class="text-xs text-slate-500 mt-1">Data setoran telah tersimpan di sistem.</p>
+      </div>
 
-    // Daftar Surah Otomatis per Juz
-    const surahMap = {
-      "Juz 30": ["An-Naba'", "An-Nazi'at", "'Abasa", At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Inshiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", "Al-Ghashiyah", "Al-Fajr", "Al-Balad", "Ash-Shams", "Al-Lail", "Ad-Duha", "Ash-Sharh", "At-Tin", "Al-'Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-'Adiyat", "Al-Qari'ah", "At-Takathur", "Al-'Asr", "Al-Humazah", "Al-Fil", "Quraish", "Al-Ma'un", "Al-Kawthar", "Al-Kafirun", "An-Nasr", "Al-Masad", "Al-Ikhlas", "Al-Falaq", "An-Nas"],
-      "Juz 29": ["Al-Mulk", "Al-Qalam", "Al-Haqqah", "Al-Ma'arij", "Nuh", "Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyamah", "Al-Insan", "Al-Mursalat"],
-      "Juz 1": ["Al-Fatihah", "Al-Baqarah (Ayat 1-141)"]
-    };
+      <!-- Preview Ringkasan Pesan WA -->
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-left text-[11px] text-slate-700 font-mono space-y-1 overflow-x-auto max-h-40" id="previewPesanWA">
+        <!-- Teks dibuat oleh JavaScript -->
+      </div>
+
+      <div class="space-y-2 pt-2">
+        <a id="btnBagikanWA" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">
+          <span>📱 Bagikan Laporan via WhatsApp</span>
+        </a>
+        <button onclick="tutupModalSukses()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 rounded-xl text-xs transition">
+          Tutup & Input Baru
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDr9EBRi8hTsmPMCydkgMcn8g_cTBJdHGE8033gdPRnRrZ1TEG4G7-gS5U3sBvhhMXOA/exec";
+    
+    let currentGuru = null;
+    let daftarSiswaTahfidz = [];
+    let daftarSiswaMengaji = [];
+    let programAktif = 'tahfidz';
 
     document.addEventListener("DOMContentLoaded", () => {
       const rawUser = localStorage.getItem('currentUser');
       if (!rawUser) { window.location.href = "index.html"; return; }
-      currentUser = JSON.parse(rawUser);
-
-      document.getElementById('namaUstadzText').innerText = currentUser.nama || currentUser.username;
       
-      // Set Default Tanggal Hari ini
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('tglTahfidz').value = today;
-      document.getElementById('tglMengaji').value = today;
+      currentGuru = JSON.parse(rawUser);
+      document.getElementById('namaGuruHeader').innerText = `Ustadz/Ustadzah: ${currentGuru.nama || currentGuru.username}`;
 
-      // Muat Data Siswa Terintegrasi untuk Ustadz yang sedang Login
-      loadMasterSiswa();
+      loadDaftarSiswa();
     });
 
-    // Update Dropdown Surah Berdasarkan Juz
-    function updateDaftarSurah() {
-      const juz = document.getElementById('juzTahfidz').value;
-      const selectSurah = document.getElementById('surahTahfidz');
-      selectSurah.innerHTML = '<option value="">-- Pilih Surah --</option>';
-
-      if (juz && surahMap[juz]) {
-        surahMap[juz].forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s;
-          opt.textContent = s;
-          selectSurah.appendChild(opt);
-        });
-      }
-    }
-
-    async function loadMasterSiswa() {
+    async function loadDaftarSiswa() {
       try {
         const res = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "get_siswa_guru", namaGuru: currentUser.nama })
+          body: JSON.stringify({ action: "get_siswa_guru", namaGuru: currentGuru.nama || currentGuru.username })
         });
         const result = await res.json();
-
+        
         if (result.success) {
-          listSiswaTahfidz = result.tahfidz || [];
-          listSiswaMengaji = result.mengaji || [];
-
-          // Render Dropdown Tahfidz
-          const selT = document.getElementById('selectSiswaTahfidz');
-          selT.innerHTML = '<option value="">-- Pilih Santri Tahfidz --</option>';
-          listSiswaTahfidz.forEach((s, idx) => {
-            selT.innerHTML += `<option value="${idx}">${s.nama} (${s.kelas})</option>`;
-          });
-
-          // Render Dropdown Mengaji
-          const selM = document.getElementById('selectSiswaMengaji');
-          selM.innerHTML = '<option value="">-- Pilih Santri Mengaji --</option>';
-          listSiswaMengaji.forEach((s, idx) => {
-            selM.innerHTML += `<option value="${idx}">${s.nama} (${s.kelompok})</option>`;
-          });
+          daftarSiswaTahfidz = result.tahfidz || [];
+          daftarSiswaMengaji = result.mengaji || [];
+          populateDropdowns();
         }
       } catch (err) {
-        alert("Gagal memuat data santri bimbingan.");
+        console.error("Gagal memuat siswa:", err);
       }
     }
 
-    function autoFillSiswaTahfidz() {
-      const idx = document.getElementById('selectSiswaTahfidz').value;
-      if (idx !== "") {
-        const s = listSiswaTahfidz[idx];
-        document.getElementById('nisnTahfidz').value = s.nisn;
-        document.getElementById('kelasTahfidz').value = s.kelas;
-      }
-    }
+    function populateDropdowns() {
+      const selT = document.getElementById('siswaTahfidz');
+      const selM = document.getElementById('siswaMengaji');
 
-    function autoFillSiswaMengaji() {
-      const idx = document.getElementById('selectSiswaMengaji').value;
-      if (idx !== "") {
-        const s = listSiswaMengaji[idx];
-        document.getElementById('nisnMengaji').value = s.nisn;
-        document.getElementById('kelompokMengaji').value = s.kelompok;
-      }
+      selT.innerHTML = '<option value="">-- Pilih Santri Tahfidz --</option>';
+      daftarSiswaTahfidz.forEach(s => {
+        selT.innerHTML += `<option value="${s.nisn}" data-nama="${s.nama}" data-kelas="${s.kelas}">${s.nama} (${s.kelas})</option>`;
+      });
+
+      selM.innerHTML = '<option value="">-- Pilih Santri Mengaji --</option>';
+      daftarSiswaMengaji.forEach(s => {
+        selM.innerHTML += `<option value="${s.nisn}" data-nama="${s.nama}" data-kelompok="${s.kelompok}">${s.nama} (${s.kelompok})</option>`;
+      });
     }
 
     function pilihProgram(prog) {
+      programAktif = prog;
       const fT = document.getElementById('formTahfidz');
       const fM = document.getElementById('formMengaji');
       const bT = document.getElementById('btnTabTahfidz');
@@ -274,63 +229,79 @@
 
       if (prog === 'tahfidz') {
         fT.classList.remove('hidden'); fM.classList.add('hidden');
-        bT.className = "w-1/2 py-2.5 bg-emerald-700 text-white rounded-lg shadow transition font-bold";
-        bM.className = "w-1/2 py-2.5 text-slate-600 hover:text-emerald-700 transition font-bold";
+        bT.className = "w-1/2 py-2.5 text-xs font-bold rounded-lg transition text-emerald-700 bg-emerald-50 border border-emerald-200";
+        bM.className = "w-1/2 py-2.5 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-700";
       } else {
         fM.classList.remove('hidden'); fT.classList.add('hidden');
-        bM.className = "w-1/2 py-2.5 bg-amber-500 text-slate-900 rounded-lg shadow transition font-bold";
-        bT.className = "w-1/2 py-2.5 text-slate-600 hover:text-amber-600 transition font-bold";
+        bM.className = "w-1/2 py-2.5 text-xs font-bold rounded-lg transition text-amber-800 bg-amber-50 border border-amber-200";
+        bT.className = "w-1/2 py-2.5 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-700";
       }
     }
 
-    // SUBMIT TAHFIDZ
+    // HANDLER SIMPAN TAHFIDZ
     document.getElementById('formTahfidz').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const idx = document.getElementById('selectSiswaTahfidz').value;
-      if (idx === "") { alert("Pilih santri terlebih dahulu!"); return; }
+      const sel = document.getElementById('siswaTahfidz');
+      const opt = sel.options[sel.selectedIndex];
       
-      const siswa = listSiswaTahfidz[idx];
+      const dataSiswa = {
+        nisn: sel.value,
+        nama: opt.getAttribute('data-nama'),
+        kelas: opt.getAttribute('data-kelas')
+      };
+
       const payload = {
         action: "simpan_setoran_tahfidz",
-        tanggal: document.getElementById('tglTahfidz').value,
-        nisn: siswa.nisn,
-        nama: siswa.nama,
-        kelas: siswa.kelas,
+        nisn: dataSiswa.nisn,
+        nama: dataSiswa.nama,
+        kelas: dataSiswa.kelas,
         juz: document.getElementById('juzTahfidz').value,
         surah: document.getElementById('surahTahfidz').value,
         ayat: document.getElementById('ayatTahfidz').value,
         nilai: document.getElementById('nilaiTahfidz').value,
         catatan: document.getElementById('catatanTahfidz').value,
-        guru: currentUser.nama || currentUser.username
+        ustadz: currentGuru.nama || currentGuru.username
       };
 
-      await kirimSetoran(payload, e.target);
+      await kirimSetoran(payload, e.target, () => {
+        buatLinkWhatsApp('tahfidz', dataSiswa, payload);
+      });
     });
 
-    // SUBMIT MENGAJI
+    // HANDLER SIMPAN MENGAJI
     document.getElementById('formMengaji').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const idx = document.getElementById('selectSiswaMengaji').value;
-      if (idx === "") { alert("Pilih santri terlebih dahulu!"); return; }
+      const sel = document.getElementById('siswaMengaji');
+      const opt = sel.options[sel.selectedIndex];
 
-      const siswa = listSiswaMengaji[idx];
+      const dataSiswa = {
+        nisn: sel.value,
+        nama: opt.getAttribute('data-nama'),
+        kelompok: opt.getAttribute('data-kelompok')
+      };
+
       const payload = {
         action: "simpan_setoran_mengaji",
-        tanggal: document.getElementById('tglMengaji').value,
-        nisn: siswa.nisn,
-        nama: siswa.nama,
-        kelompok: siswa.kelompok,
+        nisn: dataSiswa.nisn,
+        nama: dataSiswa.nama,
+        kelompok: dataSiswa.kelompok,
         jilid: document.getElementById('jilidMengaji').value,
         halaman: document.getElementById('halamanMengaji').value,
         nilai: document.getElementById('nilaiMengaji').value,
         catatan: document.getElementById('catatanMengaji').value,
-        guru: currentUser.nama || currentUser.username
+        ustadz: currentGuru.nama || currentGuru.username
       };
 
-      await kirimSetoran(payload, e.target);
+      await kirimSetoran(payload, e.target, () => {
+        buatLinkWhatsApp('mengaji', dataSiswa, payload);
+      });
     });
 
-    async function kirimSetoran(payload, formEl) {
+    async function kirimSetoran(payload, formEl, callbackWA) {
+      const btn = formEl.querySelector('button[type="submit"]');
+      const txtAwal = btn.innerText;
+      btn.innerText = "Mengirim..."; btn.disabled = true;
+
       try {
         const res = await fetch(SCRIPT_URL, {
           method: 'POST',
@@ -338,19 +309,66 @@
           body: JSON.stringify(payload)
         });
         const result = await res.json();
+
         if (result.success) {
-          alert("Alhamdulillah! " + result.message);
           formEl.reset();
-          loadMasterSiswa();
+          callbackWA();
+          document.getElementById('modalSukses').classList.remove('hidden');
         } else {
           alert("Gagal: " + result.message);
         }
       } catch (err) {
-        alert("Kesalahan koneksi.");
+        alert("Kesalahan koneksi ke server.");
+      } finally {
+        btn.innerText = txtAwal; btn.disabled = false;
       }
     }
 
-    function logout() { localStorage.removeItem('currentUser'); window.location.href = "index.html"; }
+    // FUNGSI MEMBUAT PESAN & LINK WHATSAPP
+    function buatLinkWhatsApp(jenis, siswa, detail) {
+      const now = new Date();
+      const tglStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      
+      let teksWA = `*Laporan Setoran Mutaba'ah SDUM Patrol*\n`;
+      teksWA += `==============================\n\n`;
+      teksWA += `👤 *Nama Santri:* ${siswa.nama}\n`;
+
+      if (jenis === 'tahfidz') {
+        teksWA += `🏫 *Kelas:* ${siswa.kelas}\n`;
+        teksWA += `📖 *Program:* Tahfidz Al-Qur'an\n`;
+        teksWA += `📍 *Setoran:* ${detail.juz} - Surah ${detail.surah} (Ayat ${detail.ayat})\n`;
+      } else {
+        teksWA += `📚 *Kelompok:* ${siswa.kelompok}\n`;
+        teksWA += `📖 *Program:* Mengaji\n`;
+        teksWA += `📍 *Setoran:* ${detail.jilid} (${detail.halaman})\n`;
+      }
+
+      teksWA += `📊 *Nilai:* ${detail.nilai}\n`;
+      teksWA += `📅 *Tanggal:* ${tglStr}\n`;
+      if (detail.catatan) {
+        teksWA += `📝 *Catatan:* ${detail.catatan}\n`;
+      }
+      teksWA += `\n*Pengampu:* Ustadz/ah ${detail.ustadz}\n`;
+      teksWA += `\n_Jazakallah Khairan katsiran._`;
+
+      // Tampilkan preview di modal
+      document.getElementById('previewPesanWA').innerText = teksWA;
+
+      // Encode URL untuk WhatsApp API Share
+      const encodedText = encodeURIComponent(teksWA);
+      const urlWA = `https://api.whatsapp.com/send?text=${encodedText}`;
+
+      document.getElementById('btnBagikanWA').setAttribute('href', urlWA);
+    }
+
+    function tutupModalSukses() {
+      document.getElementById('modalSukses').classList.add('hidden');
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = "index.html";
+    }
   </script>
 </body>
 </html>
