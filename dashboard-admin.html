@@ -379,7 +379,7 @@
       }, e.target);
     });
 
-    // FUNGSI IMPORT EXCEL
+    // FUNGSI IMPORT EXCEL (OPTIMIZED BATCH IMPORT)
     function prosesImportExcel() {
       const fileInput = document.getElementById('fileExcel');
       const tipe = document.getElementById('tipeImport').value;
@@ -400,7 +400,7 @@
           const worksheet = workbook.Sheets[sheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-          // Ambil baris data (mengabaikan header/baris pertama)
+          // Abaikan baris header (baris pertama)
           const rows = jsonData.slice(1).filter(r => r.length > 0 && r[0]);
 
           if (rows.length === 0) {
@@ -408,41 +408,39 @@
             return;
           }
 
-          let successCount = 0;
-          alert(`Memproses import ${rows.length} data... Mohon tunggu.`);
+          // Petakan data ke struktur JSON Batch
+          const formattedBatch = rows.map(r => ({
+            nisn: String(r[0] || '').trim(),
+            nama: String(r[1] || '').trim(),
+            kelasOrKelompok: String(r[2] || '').trim(),
+            waliOrSesi: String(r[3] || '').trim()
+          }));
 
-          for (let row of rows) {
-            let payload = {};
-            if (tipe === 'tahfidz') {
-              payload = {
-                action: "tambah_siswa_tahfidz",
-                nisn: String(row[0] || ''),
-                nama: String(row[1] || ''),
-                kelas: String(row[2] || ''),
-                waliKelas: String(row[3] || '')
-              };
-            } else {
-              payload = {
-                action: "tambah_siswa_mengaji",
-                nisn: String(row[0] || ''),
-                nama: String(row[1] || ''),
-                kelompok: String(row[2] || ''),
-                sesi: String(row[3] || '')
-              };
-            }
+          const actionTarget = tipe === 'tahfidz' ? "batch_tambah_siswa_tahfidz" : "batch_tambah_siswa_mengaji";
 
-            await fetch(SCRIPT_URL, {
-              method: 'POST',
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(payload)
-            });
-            successCount++;
+          alert(`Mengimpor ${formattedBatch.length} data sekaligus... Mohon tunggu.`);
+
+          // Kirim dalam 1x HTTP POST Request (sangat cepat)
+          const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: actionTarget,
+              data: formattedBatch
+            })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            alert("Alhamdulillah! " + result.message);
+            fileInput.value = '';
+            tutupModalInput();
+            loadRealtimeStats();
+          } else {
+            alert("Gagal mengimpor: " + result.message);
           }
 
-          alert(`Alhamdulillah! Berhasil mengimpor ${successCount} data.`);
-          fileInput.value = '';
-          tutupModalInput();
-          loadRealtimeStats();
         } catch (err) {
           alert("Gagal memproses file Excel: " + err.message);
         }
