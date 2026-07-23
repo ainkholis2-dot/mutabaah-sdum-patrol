@@ -70,30 +70,25 @@
 
         if (result.success) {
           const user = result.user || result;
-          alert(`Login Berhasil!\nSelamat datang, ${user.nama || user.username} (${user.role})`);
-
-          // Simpan data session login
+          
+          // 1. Simpan session dengan nama 'currentUser' (SAMA seperti yang dibaca oleh dashboard-admin.html)
           localStorage.setItem('currentUser', JSON.stringify(user));
 
-          // Pengarahan Halaman
-          // Contoh bagian saat respon server menyatakan "success"
-      if (result.success) {
-        // 1. Simpan data user ke localStorage browser (agar tidak hilang saat pindah halaman)
-      localStorage.setItem("userMutabaah", JSON.stringify(result.user));
+          alert(`Login Berhasil!\nSelamat datang, ${user.nama || user.username} (${user.role})`);
 
-  // 2. Arahkan halaman berdasarkan Role / Peran
-  if (result.user.role === "Admin") {
-    // Dipaksa langsung mengarah ke halaman dashboard admin
-    window.location.href = "dashboard-admin.html"; 
-  } else if (result.user.role === "Guru") {
-    window.location.href = "form-input-guru.html";
-  } else {
-    // Jika role lain (misal Wali Murid)
-    window.location.href = "laporan-walimurid.html";
-  }
-} else {
-  alert(result.message);
-}
+          // 2. Arahkan halaman sesuai role
+          if (user.role === "Admin") {
+            window.location.href = "dashboard-admin.html"; 
+          } else if (user.role === "Guru") {
+            window.location.href = "form-input-guru.html";
+          } else {
+            window.location.href = "laporan-walimurid.html";
+          }
+
+        } else {
+          alert("Gagal Login: " + (result.message || "Username atau Password salah!"));
+        }
+
       } catch (error) {
         console.error("Error Detail:", error);
         alert("Terjadi kesalahan koneksi ke server.");
