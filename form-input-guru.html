@@ -27,21 +27,57 @@
 
   <div class="max-w-4xl mx-auto p-4 md:p-6">
 
-    <!-- Panel Informasi Waktu & Tanggal (Masehi & Hijriah) -->
-    <div class="bg-white rounded-lg shadow-sm p-4 mb-6 border-l-4 border-emerald-600 flex flex-col md:flex-row justify-between items-center gap-3">
-      <div class="flex items-center gap-3">
-        <div class="p-3 bg-emerald-100 text-emerald-700 rounded-full">
-          <i class="fa-regular fa-calendar-days text-xl"></i>
+    <!-- Panel Informasi Waktu, Tanggal & Jadwal Sholat -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6 border-l-4 border-emerald-600 flex flex-col gap-4">
+      
+      <!-- Top Bar: Waktu & Tanggal -->
+      <div class="flex flex-col md:flex-row justify-between items-center gap-3 border-b pb-3">
+        <div class="flex items-center gap-3">
+          <div class="p-3 bg-emerald-100 text-emerald-700 rounded-full">
+            <i class="fa-regular fa-calendar-days text-xl"></i>
+          </div>
+          <div>
+            <div id="tglMasehi" class="font-bold text-slate-800 text-sm md:text-base">-- Masehi --</div>
+            <div id="tglHijriah" class="text-xs md:text-sm text-emerald-700 font-semibold">Memuat Tanggal Hijriah...</div>
+          </div>
         </div>
-        <div>
-          <div id="tglMasehi" class="font-bold text-slate-800 text-sm md:text-base">-- Masehi --</div>
-          <div id="tglHijriah" class="text-xs md:text-sm text-emerald-700 font-medium">-- Hijriah --</div>
+        <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-lg border">
+          <i class="fa-regular fa-clock text-emerald-600"></i>
+          <span id="jamDigital" class="font-mono font-bold text-slate-700 text-base md:text-lg">00:00:00 WIB</span>
         </div>
       </div>
-      <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-lg border">
-        <i class="fa-regular fa-clock text-emerald-600"></i>
-        <span id="jamDigital" class="font-mono font-bold text-slate-700 text-base md:text-lg">00:00:00 WIB</span>
+
+      <!-- Bottom Bar: Jadwal Sholat Indramayu -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-location-dot text-rose-500"></i> Jadwal Sholat Indramayu Hari Ini
+          </span>
+        </div>
+        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+          <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+            <div class="text-slate-500 font-medium mb-0.5">Subuh</div>
+            <div id="sholatSubuh" class="font-bold text-emerald-800 font-mono">--:--</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+            <div class="text-slate-500 font-medium mb-0.5">Dzuhur</div>
+            <div id="sholatDzuhur" class="font-bold text-emerald-800 font-mono">--:--</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+            <div class="text-slate-500 font-medium mb-0.5">Ashar</div>
+            <div id="sholatAshar" class="font-bold text-emerald-800 font-mono">--:--</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+            <div class="text-slate-500 font-medium mb-0.5">Maghrib</div>
+            <div id="sholatMaghrib" class="font-bold text-emerald-800 font-mono">--:--</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+            <div class="text-slate-500 font-medium mb-0.5">Isya</div>
+            <div id="sholatIsya" class="font-bold text-emerald-800 font-mono">--:--</div>
+          </div>
+        </div>
       </div>
+
     </div>
 
     <!-- Tab Selection -->
@@ -255,33 +291,70 @@
 
       loadDaftarSantri();
       initWaktuDanTanggal();
+      loadJadwalSholatIndramayu();
     });
 
-    // Update Waktu Jam, Tanggal Masehi, dan Tanggal Hijriah
+    // Update Jam Digital & Tanggal Masehi
     function initWaktuDanTanggal() {
       function updateClock() {
         const now = new Date();
         
-        // Jam Digital
+        // Jam Digital Real-time
         const jamStr = now.toLocaleTimeString('id-ID', { hour12: false });
         document.getElementById('jamDigital').textContent = `${jamStr} WIB`;
 
         // Tanggal Masehi
         const opsiMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('tglMasehi').textContent = now.toLocaleDateString('id-ID', opsiMasehi);
-
-        // Tanggal Hijriah (Menggunakan API Format Islami)
-        try {
-          const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
-          const hijriahFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma', opsiHijriah);
-          document.getElementById('tglHijriah').textContent = `${hijriahFormatter.format(now)} H`;
-        } catch (e) {
-          document.getElementById('tglHijriah').textContent = "Tanggal Hijriah Auto";
-        }
       }
 
       updateClock();
       setInterval(updateClock, 1000);
+    }
+
+    // Load Tanggal Hijriah & Jadwal Sholat Khusus Indramayu (ID Kota MyQuran: 1215)
+    async function loadJadwalSholatIndramayu() {
+      const now = new Date();
+      const YYYY = now.getFullYear();
+      const MM = String(now.getMonth() + 1).padStart(2, '0');
+      const DD = String(now.getDate()).padStart(2, '0');
+      const kodeKabIndramayu = "1215";
+
+      try {
+        const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/${kodeKabIndramayu}/${YYYY}/${MM}/${DD}`);
+        const data = await res.json();
+
+        if (data.status && data.data) {
+          const jadwal = data.data.jadwal;
+          
+          // Tanggal Hijriah dari API
+          document.getElementById('tglHijriah').textContent = `${jadwal.tanggal_hijriah || jadwal.date}`;
+
+          // Jadwal Sholat Indramayu
+          document.getElementById('sholatSubuh').textContent = jadwal.subuh;
+          document.getElementById('sholatDzuhur').textContent = jadwal.dzuhur;
+          document.getElementById('sholatAshar').textContent = jadwal.ashar;
+          document.getElementById('sholatMaghrib').textContent = jadwal.maghrib;
+          document.getElementById('sholatIsya').textContent = jadwal.isya;
+        } else {
+          fallbackHijriah();
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data jadwal sholat:", err);
+        fallbackHijriah();
+      }
+    }
+
+    // Fallback jika API terganggu (Menggunakan Intl.DateTimeFormat)
+    function fallbackHijriah() {
+      try {
+        const now = new Date();
+        const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
+        const hijriahFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma', opsiHijriah);
+        document.getElementById('tglHijriah').textContent = `${hijriahFormatter.format(now)} H`;
+      } catch (e) {
+        document.getElementById('tglHijriah').textContent = "Tanggal Hijriah Auto";
+      }
     }
 
     // Fungsi Update Opsi Surah Berdasarkan Pilih Juz
@@ -418,7 +491,7 @@
       }
     }
 
-    // Fungsi Simpan & Buka WhatsApp Langsung (Ke Kontak Pilihan Guru)
+    // Fungsi Simpan & Buka WhatsApp Langsung
     async function kirimWaTahfidz() {
       const santri = document.getElementById('santriTahfidz').value;
       const juz = document.getElementById('juzTahfidz').value;
@@ -435,14 +508,12 @@
         return;
       }
 
-      // Simpan ke sheet terlebih dahulu
       const res = await saveDataTahfidz();
       if (!res.success) {
         alert("Gagal menyimpan data: " + res.message);
         return;
       }
 
-      // Format Pesan WA Tahfidz
       let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
                   `Yth. Ayah / Bunda dari *${santri}*,\n` +
                   `Berikut kami sampaikan laporan mutaba'ah hafalan Al-Qur'an Ananda:\n\n` +
@@ -459,7 +530,6 @@
                   `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
                   `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
 
-      // Buka WA tanpa nomor tujuan (Guru dapat memilih kontak tujuan di WA)
       window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
       
       document.getElementById('ftTahfidz').reset();
@@ -527,14 +597,12 @@
         return;
       }
 
-      // Simpan ke sheet terlebih dahulu
       const res = await saveDataMengaji();
       if (!res.success) {
         alert("Gagal menyimpan data: " + res.message);
         return;
       }
 
-      // Format Pesan WA Mengaji
       let detailPesan = `Program: ${jilid}`;
       if (halaman) detailPesan += ` (${halaman})`;
       if (surah) detailPesan += ` | Surah ${surah}`;
@@ -555,7 +623,6 @@
                   `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
                   `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
 
-      // Buka WA tanpa nomor tujuan (Guru dapat memilih kontak tujuan di WA)
       window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
 
       document.getElementById('ftMengaji').reset();
