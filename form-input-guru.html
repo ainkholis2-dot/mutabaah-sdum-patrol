@@ -327,33 +327,45 @@
         if (data.status && data.data) {
           const jadwal = data.data.jadwal;
           
-          // Tanggal Hijriah dari API
-          document.getElementById('tglHijriah').textContent = `${jadwal.tanggal_hijriah || jadwal.date}`;
-
-          // Jadwal Sholat Indramayu
+          // Set Jadwal Sholat
           document.getElementById('sholatSubuh').textContent = jadwal.subuh;
           document.getElementById('sholatDzuhur').textContent = jadwal.dzuhur;
           document.getElementById('sholatAshar').textContent = jadwal.ashar;
           document.getElementById('sholatMaghrib').textContent = jadwal.maghrib;
           document.getElementById('sholatIsya').textContent = jadwal.isya;
+
+          // Cek ketersediaan tanggal Hijriah dari API, jika tidak ada gunakan fungsi converter internal
+          if (jadwal.date) {
+            document.getElementById('tglHijriah').textContent = jadwal.date;
+          } else {
+            getHijriDateFormatted();
+          }
         } else {
-          fallbackHijriah();
+          getHijriDateFormatted();
         }
       } catch (err) {
         console.error("Gagal mengambil data jadwal sholat:", err);
-        fallbackHijriah();
+        getHijriDateFormatted();
       }
     }
 
-    // Fallback jika API terganggu (Menggunakan Intl.DateTimeFormat)
-    function fallbackHijriah() {
+    // Fungsi Konversi Kalender Hijriah Mandiri & Andal
+    function getHijriDateFormatted() {
       try {
         const now = new Date();
-        const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
-        const hijriahFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma', opsiHijriah);
-        document.getElementById('tglHijriah').textContent = `${hijriahFormatter.format(now)} H`;
+        // Menggunakan opsi standar 'islamic-umalqura' atau 'islamic'
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options);
+        document.getElementById('tglHijriah').textContent = `${formatter.format(now)} H`;
       } catch (e) {
-        document.getElementById('tglHijriah').textContent = "Tanggal Hijriah Auto";
+        try {
+          // Fallback kedua jika 'islamic-umalqura' tidak didukung browser
+          const now = new Date();
+          const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' });
+          document.getElementById('tglHijriah').textContent = `${formatter.format(now)} H`;
+        } catch (err) {
+          document.getElementById('tglHijriah').textContent = "Kalender Hijriah";
+        }
       }
     }
 
@@ -574,65 +586,4 @@
           alert("Gagal: " + result.message);
         }
       } catch (err) {
-        alert("Error koneksi!");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet`;
-      }
-    }
-
-    // Fungsi Simpan & Buka WhatsApp Langsung (Mengaji)
-    async function kirimWaMengaji() {
-      const santri = document.getElementById('santriMengaji').value;
-      const jilid = document.getElementById('jilidMengaji').value;
-      const halaman = document.getElementById('halamanMengaji').value;
-      const surah = document.getElementById('surahMengaji').value;
-      const ayat = document.getElementById('ayatMengaji').value;
-      const nilai = document.getElementById('nilaiMengaji').value;
-      const catatan = document.getElementById('catatanMengaji').value;
-      const tgl = document.getElementById('tglMengaji').value;
-
-      if (!santri || !jilid) {
-        alert("Mohon lengkapi data setoran sebelum mengirim WA!");
-        return;
-      }
-
-      const res = await saveDataMengaji();
-      if (!res.success) {
-        alert("Gagal menyimpan data: " + res.message);
-        return;
-      }
-
-      let detailPesan = `Program: ${jilid}`;
-      if (halaman) detailPesan += ` (${halaman})`;
-      if (surah) detailPesan += ` | Surah ${surah}`;
-      if (ayat) detailPesan += ` (Ayat ${ayat})`;
-
-      let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
-                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
-                  `Berikut kami sampaikan laporan perkembangan mengaji Ananda:\n\n` +
-                  `*LAPORAN MUTABA'AH MENGAJI*\n` +
-                  `-----------------------------------\n` +
-                  `📅 *Tanggal:* ${tgl}\n` +
-                  `👤 *Santri:* ${santri}\n` +
-                  `📖 *Capaian:* ${detailPesan}\n` +
-                  `⭐ *Nilai:* ${nilai}\n` +
-                  `📝 *Catatan:* ${catatan || '-'}\n` +
-                  `-----------------------------------\n\n` +
-                  `Alhamdulillah, terus semangat belajar membaca Al-Qur'an ya Nak. Semoga Ananda menjadi anak yang soleh/solehah, tercapai apa yang dicita-citakan, serta membanggakan kedua orang tua di dunia dan akhirat. Aamiin.\n\n` +
-                  `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
-                  `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
-
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
-
-      document.getElementById('ftMengaji').reset();
-      document.getElementById('tglMengaji').value = new Date().toISOString().split('T')[0];
-    }
-
-    function logout() {
-      localStorage.removeItem('currentUser');
-      window.location.href = "index.html";
-    }
-  </script>
-</body>
-</html>
+        alert("Error k
