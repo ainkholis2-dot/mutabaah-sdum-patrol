@@ -11,10 +11,11 @@
 
   <!-- Navbar -->
   <nav class="bg-emerald-700 text-white shadow-md">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-book-quran text-2xl"></i>
-        <span class="font-bold text-lg">Input Mutaba'ah</span>
+    <div class="max-w-4xl mx-auto px-4 py-2.5 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <!-- Logo Sekolah -->
+        <img src="logo.png" alt="Logo SD Unggulan Muhammadiyah Patrol" class="h-9 w-auto bg-white p-1 rounded-full shadow-sm">
+        <span class="font-bold text-lg tracking-wide">Input Mutaba'ah</span>
       </div>
       <div class="flex items-center space-x-4 text-xs md:text-sm">
         <span id="userInfo" class="font-medium bg-emerald-800 px-3 py-1 rounded-full">Loading...</span>
@@ -414,7 +415,6 @@
         return;
       }
 
-      // Buat Format Pesan WA
       // Buat Format Pesan WA Tahfidz
       let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
                   `Yth. Ayah / Bunda dari *${santri}*,\n` +
@@ -516,7 +516,6 @@
         return;
       }
 
-      // Format Pesan WA Mengaji
       // Format Pesan WA Mengaji
       let detailPesan = `Program: ${jilid}`;
       if (halaman) detailPesan += ` (${halaman})`;
