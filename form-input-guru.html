@@ -148,12 +148,12 @@
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Jilid / Program</label>
             <select id="jilidMengaji" required class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-              <option value="Iqro 1">Iqro 1</option>
-              <option value="Iqro 2">Iqro 2</option>
-              <option value="Iqro 3">Iqro 3</option>
-              <option value="Iqro 4">Iqro 4</option>
-              <option value="Iqro 5">Iqro 5</option>
-              <option value="Iqro 6">Iqro 6</option>
+              <option value="Jilid 1">Jilid 1</option>
+              <option value="Jilid 2">Jilid 2</option>
+              <option value="Jilid 3">Jilid 3</option>
+              <option value="Jilid 4">Jilid 4</option>
+              <option value="Jilid 5">Jilid 5</option>
+              <option value="Jilid 6">Jilid 6</option>
               <option value="Tadarus Al-Qur'an">Tadarus Al-Qur'an</option>
               <option value="Tajwid / Ghorib">Tajwid / Ghorib</option>
             </select>
@@ -415,7 +415,11 @@
       }
 
       // Buat Format Pesan WA
-      let pesan = `*LAPORAN MUTABA'AH TAHFIDZ*\n` +
+      // Buat Format Pesan WA Tahfidz
+      let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
+                  `Berikut kami sampaikan laporan mutaba'ah hafalan Al-Qur'an Ananda:\n\n` +
+                  `*LAPORAN MUTABA'AH TAHFIDZ*\n` +
                   `-----------------------------------\n` +
                   `📅 *Tanggal:* ${tgl}\n` +
                   `👤 *Santri:* ${santri}\n` +
@@ -423,8 +427,10 @@
                   `📚 *Capaian:* ${juz} - Surah ${surat} (Ayat ${ayatAwal} - ${ayatAkhir})\n` +
                   `⭐ *Nilai:* ${nilai}\n` +
                   `📝 *Catatan:* ${catatan || '-'}\n` +
-                  `-----------------------------------\n` +
-                  `_Barakallahu Fiikum._`;
+                  `-----------------------------------\n\n` +
+                  `MasyaAllah, terus tingkatkan semangat muraja'ah dan menambah hafalannya ya Nak. Semoga Allah SWT senantiasa memberikan kemudahan, keistiqomahan, dan keberkahan dalam menjaga kalam-Nya. Aamiin.\n\n` +
+                  `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
+                  `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
 
       let formattedWa = noWa.replace(/[^0-9]/g, '');
       if (formattedWa.startsWith('0')) formattedWa = '62' + formattedWa.slice(1);
@@ -511,20 +517,26 @@
       }
 
       // Format Pesan WA Mengaji
+      // Format Pesan WA Mengaji
       let detailPesan = `Program: ${jilid}`;
       if (halaman) detailPesan += ` (${halaman})`;
       if (surah) detailPesan += ` | Surah ${surah}`;
       if (ayat) detailPesan += ` (Ayat ${ayat})`;
 
-      let pesan = `*LAPORAN MUTABA'AH MENGAJI*\n` +
+      let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
+                  `Berikut kami sampaikan laporan perkembangan mengaji Ananda:\n\n` +
+                  `*LAPORAN MUTABA'AH MENGAJI*\n` +
                   `-----------------------------------\n` +
                   `📅 *Tanggal:* ${tgl}\n` +
                   `👤 *Santri:* ${santri}\n` +
                   `📖 *Capaian:* ${detailPesan}\n` +
                   `⭐ *Nilai:* ${nilai}\n` +
                   `📝 *Catatan:* ${catatan || '-'}\n` +
-                  `-----------------------------------\n` +
-                  `_Barakallahu Fiikum._`;
+                  `-----------------------------------\n\n` +
+                  `Alhamdulillah, terus semangat belajar membaca Al-Qur'an ya Nak. Semoga Ananda menjadi anak yang soleh/solehah, tercapai apa yang dicita-citakan, serta membanggakan kedua orang tua di dunia dan akhirat. Aamiin.\n\n` +
+                  `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
+                  `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
 
       let formattedWa = noWa.replace(/[^0-9]/g, '');
       if (formattedWa.startsWith('0')) formattedWa = '62' + formattedWa.slice(1);
