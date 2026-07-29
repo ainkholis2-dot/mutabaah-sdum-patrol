@@ -67,11 +67,18 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Juz</label>
-            <input type="text" id="juzTahfidz" placeholder="Contoh: Juz 30" required class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="juzTahfidz" onchange="updateSuratOptions()" required class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <option value="">-- Pilih Juz --</option>
+              <option value="Juz 30">Juz 30</option>
+              <option value="Juz 29">Juz 29</option>
+              <option value="Juz 1">Juz 1</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Nama Surah</label>
-            <input type="text" id="suratTahfidz" placeholder="Contoh: An-Naba" required class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="suratTahfidz" required class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <option value="">-- Pilih Juz Terlebih Dahulu --</option>
+            </select>
           </div>
         </div>
 
@@ -102,13 +109,19 @@
         </div>
 
         <div class="mb-6">
-          <label class="block text-xs font-bold text-slate-600 mb-1">No. WhatsApp Orang Tua (Opsional)</label>
+          <label class="block text-xs font-bold text-slate-600 mb-1">No. WhatsApp Orang Tua (Contoh: 628123456789)</label>
           <input type="text" id="waTahfidz" placeholder="628123456789" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
         </div>
 
-        <button type="submit" id="btnSimpanTahfidz" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i> Simpan Setoran Tahfidz
-        </button>
+        <!-- Tombol Aksi Tahfidz -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button type="submit" id="btnSimpanTahfidz" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet
+          </button>
+          <button type="button" onclick="kirimWaTahfidz()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp text-lg"></i> Simpan & Kirim WA
+          </button>
+        </div>
       </form>
     </div>
 
@@ -177,24 +190,50 @@
         </div>
 
         <div class="mb-6">
-          <label class="block text-xs font-bold text-slate-600 mb-1">No. WhatsApp Orang Tua (Opsional)</label>
+          <label class="block text-xs font-bold text-slate-600 mb-1">No. WhatsApp Orang Tua (Contoh: 628123456789)</label>
           <input type="text" id="waMengaji" placeholder="628123456789" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
         </div>
 
-        <button type="submit" id="btnSimpanMengaji" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i> Simpan Setoran Mengaji
-        </button>
+        <!-- Tombol Aksi Mengaji -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button type="submit" id="btnSimpanMengaji" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet
+          </button>
+          <button type="button" onclick="kirimWaMengaji()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp text-lg"></i> Simpan & Kirim WA
+          </button>
+        </div>
       </form>
     </div>
 
   </div>
 
   <script>
-    // URL Web App Google Apps Script Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
 
+    // Data Daftar Surah Berdasarkan Juz
+    const dataSurahPerJuz = {
+      "Juz 30": [
+        "78. An-Naba'", "79. An-Nazi'at", "80. 'Abasa", "81. At-Takwir", "82. Al-Infitar", 
+        "83. Al-Mutaffifin", "84. Al-Insyiqaq", "85. Al-Buruj", "86. At-Tariq", "87. Al-A'la", 
+        "88. Al-Ghasyiyah", "89. Al-Fajr", "90. Al-Balad", "91. Asy-Syams", "92. Al-Lail", 
+        "93. Ad-Duha", "94. Asy-Syarh", "95. At-Tin", "96. Al-'Alaq", "97. Al-Qadr", 
+        "98. Al-Bayyinah", "99. Az-Zalzalah", "100. Al-'Adiyat", "101. Al-Qari'ah", 
+        "102. At-Takasur", "103. Al-'Asr", "104. Al-Humazah", "105. Al-Fil", "106. Quraisy", 
+        "107. Al-Ma'un", "108. Al-Kausar", "109. Al-Kafirun", "110. An-Nasr", "111. Al-Lahab", 
+        "112. Al-Ikhlas", "113. Al-Falaq", "114. An-Nas"
+      ],
+      "Juz 29": [
+        "67. Al-Mulk", "68. Al-Qalam", "69. Al-Haqqah", "70. Al-Ma'arij", 
+        "71. Nuh", "72. Al-Jinn", "73. Al-Muzzammil", "74. Al-Muddassir", 
+        "75. Al-Qiyamah", "76. Al-Insan", "77. Al-Mursalat"
+      ],
+      "Juz 1": [
+        "1. Al-Fatihah", "2. Al-Baqarah (Ayat 1-141)"
+      ]
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
-      // 1. Cek User Login
       const rawUser = localStorage.getItem('currentUser');
       if (!rawUser) {
         window.location.href = "index.html";
@@ -203,16 +242,34 @@
       const user = JSON.parse(rawUser);
       document.getElementById('userInfo').textContent = `${user.nama} (${user.role})`;
 
-      // 2. Set Tanggal Default Hari Ini
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('tglTahfidz').value = today;
       document.getElementById('tglMengaji').value = today;
 
-      // 3. Load Daftar Santri
       loadDaftarSantri();
     });
 
-    // Pindah Tab
+    // Fungsi Update Opsi Surah Berdasarkan Pilih Juz
+    function updateSuratOptions() {
+      const juz = document.getElementById('juzTahfidz').value;
+      const selectSurat = document.getElementById('suratTahfidz');
+
+      selectSurat.innerHTML = '';
+
+      if (!juz || !dataSurahPerJuz[juz]) {
+        selectSurat.innerHTML = '<option value="">-- Pilih Juz Terlebih Dahulu --</option>';
+        return;
+      }
+
+      selectSurat.innerHTML = '<option value="">-- Pilih Surah --</option>';
+      dataSurahPerJuz[juz].forEach(surah => {
+        const opt = document.createElement('option');
+        opt.value = surah;
+        opt.textContent = surah;
+        selectSurat.appendChild(opt);
+      });
+    }
+
     function switchTab(type) {
       const formT = document.getElementById('formTahfidz');
       const formM = document.getElementById('formMengaji');
@@ -232,11 +289,9 @@
       }
     }
 
-    // Ambil Data Santri Terfilter Berdasarkan Ustadz
     async function loadDaftarSantri() {
       const selT = document.getElementById('santriTahfidz');
       const selM = document.getElementById('santriMengaji');
-
       const rawUser = localStorage.getItem('currentUser');
       const user = rawUser ? JSON.parse(rawUser) : {};
 
@@ -253,49 +308,37 @@
         const result = await res.json();
 
         if (result.success) {
-          // Render Santri Tahfidz
           if (result.tahfidz && result.tahfidz.length > 0) {
             selT.innerHTML = '<option value="">-- Pilih Santri Tahfidz --</option>';
             result.tahfidz.forEach(s => {
               const opt = document.createElement('option');
               opt.value = `${s.nama} (${s.kelas})`;
-              opt.textContent = `${s.nama} - ${s.kelas} ${s.nisn ? '[' + s.nisn + ']' : ''}`;
+              opt.textContent = `${s.nama} - ${s.kelas}`;
               selT.appendChild(opt);
             });
           } else {
-            selT.innerHTML = '<option value="">Tidak ada santri bimbingan untuk Ustadz/Ustadzah ini</option>';
+            selT.innerHTML = '<option value="">Tidak ada santri bimbingan</option>';
           }
 
-          // Render Santri Mengaji (Dengan Sesi)
           if (result.mengaji && result.mengaji.length > 0) {
             selM.innerHTML = '<option value="">-- Pilih Santri Mengaji --</option>';
             result.mengaji.forEach(s => {
               const opt = document.createElement('option');
               opt.value = `${s.nama} (${s.sesi})`;
-              opt.textContent = `${s.nama} - ${s.sesi} ${s.nisn ? '[' + s.nisn + ']' : ''}`;
+              opt.textContent = `${s.nama} - ${s.sesi}`;
               selM.appendChild(opt);
             });
           } else {
-            selM.innerHTML = '<option value="">Tidak ada santri bimbingan untuk Ustadz/Ustadzah ini</option>';
+            selM.innerHTML = '<option value="">Tidak ada santri bimbingan</option>';
           }
-
-        } else {
-          alert("Gagal memuat data santri: " + result.message);
         }
       } catch (err) {
-        console.error("Gagal memuat daftar santri", err);
-        selT.innerHTML = '<option value="">Gagal Koneksi ke Server</option>';
-        selM.innerHTML = '<option value="">Gagal Koneksi ke Server</option>';
+        console.error(err);
       }
     }
 
-    // Simpan Setoran Tahfidz
-    async function handleSaveTahfidz(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSimpanTahfidz');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
-
+    // Fungsi Simpan Setoran Tahfidz ke Google Sheet
+    async function saveDataTahfidz() {
       const payload = {
         action: "simpan_setoran_tahfidz",
         tanggal: document.getElementById('tglTahfidz').value,
@@ -310,36 +353,90 @@
         noWa: document.getElementById('waTahfidz').value
       };
 
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-        const result = await res.json();
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
 
+    async function handleSaveTahfidz(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSimpanTahfidz');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+      try {
+        const result = await saveDataTahfidz();
         if (result.success) {
           alert("Alhamdulillah, setoran Tahfidz berhasil disimpan!");
           document.getElementById('ftTahfidz').reset();
           document.getElementById('tglTahfidz').value = new Date().toISOString().split('T')[0];
         } else {
-          alert("Gagal menyimpan: " + result.message);
+          alert("Gagal: " + result.message);
         }
       } catch (err) {
-        alert("Error koneksi saat menyimpan data!");
+        alert("Error koneksi!");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Setoran Tahfidz`;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet`;
       }
     }
 
-    // Simpan Setoran Mengaji
-    async function handleSaveMengaji(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSimpanMengaji');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+    // Fungsi Simpan & Langsung Buka WA untuk Tahfidz
+    async function kirimWaTahfidz() {
+      const santri = document.getElementById('santriTahfidz').value;
+      const juz = document.getElementById('juzTahfidz').value;
+      const surat = document.getElementById('suratTahfidz').value;
+      const ayatAwal = document.getElementById('ayatAwal').value;
+      const ayatAkhir = document.getElementById('ayatAkhir').value;
+      const nilai = document.getElementById('nilaiTahfidz').value;
+      const noWa = document.getElementById('waTahfidz').value;
+      const jenis = document.getElementById('jenisTahfidz').value;
+      const catatan = document.getElementById('catatanTahfidz').value;
+      const tgl = document.getElementById('tglTahfidz').value;
 
+      if (!santri || !juz || !surat || !ayatAwal || !ayatAkhir) {
+        alert("Mohon lengkapi data setoran sebelum mengirim WA!");
+        return;
+      }
+
+      if (!noWa) {
+        alert("Masukkan No. WhatsApp Orang Tua terlebih dahulu!");
+        return;
+      }
+
+      // Simpan ke sheet terlebih dahulu
+      const res = await saveDataTahfidz();
+      if (!res.success) {
+        alert("Gagal menyimpan data: " + res.message);
+        return;
+      }
+
+      // Buat Format Pesan WA
+      let pesan = `*LAPORAN MUTABA'AH TAHFIDZ*\n` +
+                  `-----------------------------------\n` +
+                  `📅 *Tanggal:* ${tgl}\n` +
+                  `👤 *Santri:* ${santri}\n` +
+                  `📖 *Jenis Setoran:* ${jenis}\n` +
+                  `📚 *Capaian:* ${juz} - Surah ${surat} (Ayat ${ayatAwal} - ${ayatAkhir})\n` +
+                  `⭐ *Nilai:* ${nilai}\n` +
+                  `📝 *Catatan:* ${catatan || '-'}\n` +
+                  `-----------------------------------\n` +
+                  `_Barakallahu Fiikum._`;
+
+      let formattedWa = noWa.replace(/[^0-9]/g, '');
+      if (formattedWa.startsWith('0')) formattedWa = '62' + formattedWa.slice(1);
+
+      window.open(`https://wa.me/${formattedWa}?text=${encodeURIComponent(pesan)}`, '_blank');
+      
+      document.getElementById('ftTahfidz').reset();
+      document.getElementById('tglTahfidz').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Fungsi Simpan Setoran Mengaji ke Google Sheet
+    async function saveDataMengaji() {
       const payload = {
         action: "simpan_setoran_mengaji",
         tanggal: document.getElementById('tglMengaji').value,
@@ -353,27 +450,89 @@
         noWa: document.getElementById('waMengaji').value
       };
 
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-        const result = await res.json();
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
 
+    async function handleSaveMengaji(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSimpanMengaji');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+      try {
+        const result = await saveDataMengaji();
         if (result.success) {
           alert("Alhamdulillah, setoran Mengaji berhasil disimpan!");
           document.getElementById('ftMengaji').reset();
           document.getElementById('tglMengaji').value = new Date().toISOString().split('T')[0];
         } else {
-          alert("Gagal menyimpan: " + result.message);
+          alert("Gagal: " + result.message);
         }
       } catch (err) {
-        alert("Error koneksi saat menyimpan data!");
+        alert("Error koneksi!");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Setoran Mengaji`;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet`;
       }
+    }
+
+    // Fungsi Simpan & Langsung Buka WA untuk Mengaji
+    async function kirimWaMengaji() {
+      const santri = document.getElementById('santriMengaji').value;
+      const jilid = document.getElementById('jilidMengaji').value;
+      const halaman = document.getElementById('halamanMengaji').value;
+      const surah = document.getElementById('surahMengaji').value;
+      const ayat = document.getElementById('ayatMengaji').value;
+      const nilai = document.getElementById('nilaiMengaji').value;
+      const noWa = document.getElementById('waMengaji').value;
+      const catatan = document.getElementById('catatanMengaji').value;
+      const tgl = document.getElementById('tglMengaji').value;
+
+      if (!santri || !jilid) {
+        alert("Mohon lengkapi data setoran sebelum mengirim WA!");
+        return;
+      }
+
+      if (!noWa) {
+        alert("Masukkan No. WhatsApp Orang Tua terlebih dahulu!");
+        return;
+      }
+
+      // Simpan ke sheet terlebih dahulu
+      const res = await saveDataMengaji();
+      if (!res.success) {
+        alert("Gagal menyimpan data: " + res.message);
+        return;
+      }
+
+      // Format Pesan WA Mengaji
+      let detailPesan = `Program: ${jilid}`;
+      if (halaman) detailPesan += ` (${halaman})`;
+      if (surah) detailPesan += ` | Surah ${surah}`;
+      if (ayat) detailPesan += ` (Ayat ${ayat})`;
+
+      let pesan = `*LAPORAN MUTABA'AH MENGAJI*\n` +
+                  `-----------------------------------\n` +
+                  `📅 *Tanggal:* ${tgl}\n` +
+                  `👤 *Santri:* ${santri}\n` +
+                  `📖 *Capaian:* ${detailPesan}\n` +
+                  `⭐ *Nilai:* ${nilai}\n` +
+                  `📝 *Catatan:* ${catatan || '-'}\n` +
+                  `-----------------------------------\n` +
+                  `_Barakallahu Fiikum._`;
+
+      let formattedWa = noWa.replace(/[^0-9]/g, '');
+      if (formattedWa.startsWith('0')) formattedWa = '62' + formattedWa.slice(1);
+
+      window.open(`https://wa.me/${formattedWa}?text=${encodeURIComponent(pesan)}`, '_blank');
+
+      document.getElementById('ftMengaji').reset();
+      document.getElementById('tglMengaji').value = new Date().toISOString().split('T')[0];
     }
 
     function logout() {
