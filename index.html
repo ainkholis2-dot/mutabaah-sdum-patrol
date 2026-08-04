@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Verifikasi Kepemilikan Google Search Console -->
+  <meta name="google-site-verification" content="google687c1a1453dc4835" />
+  
   <title>Mutaba'ah Anak Unggulan - SD Unggulan Muhammadiyah Patrol</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -71,7 +75,7 @@
         if (result.success) {
           const user = result.user || result;
           
-          // 1. Simpan session dengan nama 'currentUser' (SAMA seperti yang dibaca oleh dashboard-admin.html)
+          // 1. Simpan session dengan nama 'currentUser'
           localStorage.setItem('currentUser', JSON.stringify(user));
 
           alert(`Login Berhasil!\nSelamat datang, ${user.nama || user.username} (${user.role})`);
