@@ -368,7 +368,7 @@
       }
     }
 
-    // Fungsi Rekap Harian Semua Setoran Hari Ini ke WhatsApp Grup (DIPERBAIKI FORMATNYA)
+    // Fungsi Rekap Harian Semua Setoran Hari Ini ke WhatsApp Grup
     async function kirimRekapHarianGrup() {
       const btn = document.getElementById('btnRekapGrup');
       const today = new Date().toISOString().split('T')[0];
@@ -387,62 +387,40 @@
         const data = await res.json();
 
         if (data.success) {
-          // Build pesan dengan format yang lebih rapi
-          let pesan = [];
-          
-          // Header
-          pesan.push('🕌 *REKAP MUTABA\'AH HARIAN*');
-          pesan.push('═══════════════════════════════');
-          pesan.push(`📅 ${tglMasehiStr}`);
-          pesan.push(`🌙 ${tglHijriahStr}`);
-          pesan.push('───────────────────────────────');
-          pesan.push('');
-          
-          // ===== TAHFIDZ =====
-          pesan.push('📖 *▸ SETORAN TAHFIDZ*');
-          pesan.push('───────────────────────────────');
-          
+          let textRekap = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                          `Yth. Ayah / Bunda Wali Murid,\n` +
+                          `Berikut kami sampaikan *REKAP MUTABA'AH HARIAN* Ananda santri bimbingan:\n\n` +
+                          `📅 *Hari/Tanggal:* ${tglMasehiStr}\n` +
+                          `🌙 *Hijriah:* ${tglHijriahStr}\n` +
+                          `-----------------------------------\n\n`;
+
+          // Section Tahfidz
+          textRekap += `📖 *[ SETORAN TAHFIDZ ]*\n`;
           if (data.tahfidz && data.tahfidz.length > 0) {
             data.tahfidz.forEach((item, index) => {
-              pesan.push(`${index + 1}. *${item.santri}*`);
-              pesan.push(`   📌 Jenis  : ${item.jenis}`);
-              pesan.push(`   📖 Capaian: ${item.capaian}`);
-              pesan.push(`   ⭐ Nilai  : ${item.nilai}`);
-              if (index < data.tahfidz.length - 1) pesan.push('');
+              textRekap += `${index + 1}. *${item.santri}*\n` +
+                           `   - Jenis: ${item.jenis}\n` +
+                           `   - Capaian: ${item.capaian}\n` +
+                           `   - Nilai: ${item.nilai}\n`;
             });
           } else {
-            pesan.push('   _Belum ada data setoran hari ini_');
+            textRekap += `_Belum ada data setoran tahfidz hari ini._\n`;
           }
-          
-          pesan.push('');
-          
-          // ===== MENGAJI =====
-          pesan.push('📖 *▸ SETORAN MENGAJI*');
-          pesan.push('───────────────────────────────');
-          
+
+          textRekap += `\n📖 *[ SETORAN MENGAJI ]*\n`;
           if (data.mengaji && data.mengaji.length > 0) {
             data.mengaji.forEach((item, index) => {
-              pesan.push(`${index + 1}. *${item.santri}*`);
-              pesan.push(`   📖 Capaian: ${item.capaian}`);
-              pesan.push(`   ⭐ Nilai  : ${item.nilai}`);
-              if (index < data.mengaji.length - 1) pesan.push('');
+              textRekap += `${index + 1}. *${item.santri}*\n` +
+                           `   - Capaian: ${item.capaian}\n` +
+                           `   - Nilai: ${item.nilai}\n`;
             });
           } else {
-            pesan.push('   _Belum ada data setoran hari ini_');
+            textRekap += `_Belum ada data setoran mengaji hari ini._\n`;
           }
-          
-          pesan.push('');
-          pesan.push('═══════════════════════════════');
-          pesan.push('Alhamdulillah, Jazakumullahu');
-          pesan.push('Khairan Khatsiran atas');
-          pesan.push('perhatian dan pendampingannya');
-          pesan.push('di rumah. ☺️');
-          pesan.push('');
-          pesan.push('Wassalamu\'alaikum Warahmatullahi');
-          pesan.push('Wabarakatuh.');
 
-          // Gabungkan dengan newline
-          const textRekap = pesan.join('\n');
+          textRekap += `\n-----------------------------------\n` +
+                      `Alhamdulillah, Jazakumullahu Khairan Khatsiran atas perhatian dan pendampingannya di rumah.\n\n` +
+                      `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
 
           // Buka WA untuk dibagikan ke Grup
           window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textRekap)}`, '_blank');
@@ -596,4 +574,144 @@
     async function kirimWaTahfidz() {
       const santri = document.getElementById('santriTahfidz').value;
       const juz = document.getElementById('juzTahfidz').value;
-      const surat
+      const surat = document.getElementById('suratTahfidz').value;
+      const ayatAwal = document.getElementById('ayatAwal').value;
+      const ayatAkhir = document.getElementById('ayatAkhir').value;
+      const nilai = document.getElementById('nilaiTahfidz').value;
+      const jenis = document.getElementById('jenisTahfidz').value;
+      const catatan = document.getElementById('catatanTahfidz').value;
+      const tgl = document.getElementById('tglTahfidz').value;
+
+      if (!santri || !juz || !surat || !ayatAwal || !ayatAkhir) {
+        alert("Mohon lengkapi data setoran sebelum mengirim WA!");
+        return;
+      }
+
+      const res = await saveDataTahfidz();
+      if (!res.success) {
+        alert("Gagal menyimpan data: " + res.message);
+        return;
+      }
+
+      let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
+                  `Berikut kami sampaikan laporan mutaba'ah hafalan Al-Qur'an Ananda:\n\n` +
+                  `*LAPORAN MUTABA'AH TAHFIDZ*\n` +
+                  `-----------------------------------\n` +
+                  `📅 *Tanggal:* ${tgl}\n` +
+                  `👤 *Santri:* ${santri}\n` +
+                  `📖 *Jenis Setoran:* ${jenis}\n` +
+                  `📚 *Capaian:* ${juz} - Surah ${surat} (Ayat ${ayatAwal} - ${ayatAkhir})\n` +
+                  `⭐ *Nilai:* ${nilai}\n` +
+                  `📝 *Catatan:* ${catatan || '-'}\n` +
+                  `-----------------------------------\n\n` +
+                  `MasyaAllah, terus tingkatkan semangat muraja'ah dan menambah hafalannya ya Nak. Semoga Allah SWT senantiasa memberikan kemudahan, keistiqomahan, dan keberkahan dalam menjaga kalam-Nya. Aamiin.\n\n` +
+                  `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
+                  `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
+      
+      document.getElementById('ftTahfidz').reset();
+      document.getElementById('tglTahfidz').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Fungsi Simpan Setoran Mengaji ke Google Sheet
+    async function saveDataMengaji() {
+      const payload = {
+        action: "simpan_setoran_mengaji",
+        tanggal: document.getElementById('tglMengaji').value,
+        santri: document.getElementById('santriMengaji').value,
+        jilid: document.getElementById('jilidMengaji').value,
+        halaman: document.getElementById('halamanMengaji').value,
+        surah: document.getElementById('surahMengaji').value,
+        ayat: document.getElementById('ayatMengaji').value,
+        nilai: document.getElementById('nilaiMengaji').value,
+        catatan: document.getElementById('catatanMengaji').value
+      };
+
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
+
+    async function handleSaveMengaji(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSimpanMengaji');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+      try {
+        const result = await saveDataMengaji();
+        if (result.success) {
+          alert("Alhamdulillah, setoran Mengaji berhasil disimpan!");
+          document.getElementById('ftMengaji').reset();
+          document.getElementById('tglMengaji').value = new Date().toISOString().split('T')[0];
+        } else {
+          alert("Gagal: " + result.message);
+        }
+      } catch (err) {
+        alert("Error koneksi!");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet`;
+      }
+    }
+
+    // Fungsi Simpan & Buka WhatsApp Langsung (Mengaji)
+    async function kirimWaMengaji() {
+      const santri = document.getElementById('santriMengaji').value;
+      const jilid = document.getElementById('jilidMengaji').value;
+      const halaman = document.getElementById('halamanMengaji').value;
+      const surah = document.getElementById('surahMengaji').value;
+      const ayat = document.getElementById('ayatMengaji').value;
+      const nilai = document.getElementById('nilaiMengaji').value;
+      const catatan = document.getElementById('catatanMengaji').value;
+      const tgl = document.getElementById('tglMengaji').value;
+
+      if (!santri || !jilid) {
+        alert("Mohon lengkapi data setoran sebelum mengirim WA!");
+        return;
+      }
+
+      const res = await saveDataMengaji();
+      if (!res.success) {
+        alert("Gagal menyimpan data: " + res.message);
+        return;
+      }
+
+      let detailPesan = `Program: ${jilid}`;
+      if (halaman) detailPesan += ` (${halaman})`;
+      if (surah) detailPesan += ` | Surah ${surah}`;
+      if (ayat) detailPesan += ` (Ayat ${ayat})`;
+
+      let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
+                  `Berikut kami sampaikan laporan perkembangan mengaji Ananda:\n\n` +
+                  `*LAPORAN MUTABA'AH MENGAJI*\n` +
+                  `-----------------------------------\n` +
+                  `📅 *Tanggal:* ${tgl}\n` +
+                  `👤 *Santri:* ${santri}\n` +
+                  `📖 *Capaian:* ${detailPesan}\n` +
+                  `⭐ *Nilai:* ${nilai}\n` +
+                  `📝 *Catatan:* ${catatan || '-'}\n` +
+                  `-----------------------------------\n\n` +
+                  `Alhamdulillah, terus semangat belajar membaca Al-Qur'an ya Nak. Semoga Ananda menjadi anak yang soleh/solehah, tercapai apa yang dicita-citakan, serta membanggakan kedua orang tua di dunia dan akhirat. Aamiin.\n\n` +
+                  `Syukron, Jazakumullahu Khairan Khatsiran.\n` +
+                  `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
+
+      document.getElementById('ftMengaji').reset();
+      document.getElementById('tglMengaji').value = new Date().toISOString().split('T')[0];
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
