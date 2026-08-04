@@ -398,7 +398,7 @@
           textRekap += `📖 *[ SETORAN TAHFIDZ ]*\n`;
           if (data.tahfidz && data.tahfidz.length > 0) {
             data.tahfidz.forEach((item, index) => {
-              textRekap += `${index + 1}. *${item.santri}*\n` +
+              textRekap += `${index + 1}. *${item.santri}* (Kelas: ${item.kelas || '-'})\n` +
                            `   - Jenis: ${item.jenis}\n` +
                            `   - Capaian: ${item.capaian}\n` +
                            `   - Nilai: ${item.nilai}\n`;
@@ -410,7 +410,7 @@
           textRekap += `\n📖 *[ SETORAN MENGAJI ]*\n`;
           if (data.mengaji && data.mengaji.length > 0) {
             data.mengaji.forEach((item, index) => {
-              textRekap += `${index + 1}. *${item.santri}*\n` +
+              textRekap += `${index + 1}. *${item.santri}* (Kelas: ${item.kelas || '-'})\n` +
                            `   - Capaian: ${item.capaian}\n` +
                            `   - Nilai: ${item.nilai}\n`;
             });
@@ -495,11 +495,13 @@
         const result = await res.json();
 
         if (result.success) {
+          // Load Santri Tahfidz
           if (result.tahfidz && result.tahfidz.length > 0) {
             selT.innerHTML = '<option value="">-- Pilih Santri Tahfidz --</option>';
             result.tahfidz.forEach(s => {
               const opt = document.createElement('option');
-              opt.value = `${s.nama} (${s.kelas})`;
+              // Simpan data lengkap untuk dikirim ke backend
+              opt.value = JSON.stringify({ nama: s.nama, kelas: s.kelas });
               opt.textContent = `${s.nama} - ${s.kelas}`;
               selT.appendChild(opt);
             });
@@ -507,11 +509,12 @@
             selT.innerHTML = '<option value="">Tidak ada santri bimbingan</option>';
           }
 
+          // Load Santri Mengaji
           if (result.mengaji && result.mengaji.length > 0) {
             selM.innerHTML = '<option value="">-- Pilih Santri Mengaji --</option>';
             result.mengaji.forEach(s => {
               const opt = document.createElement('option');
-              opt.value = `${s.nama} (${s.sesi})`;
+              opt.value = JSON.stringify({ nama: s.nama, kelas: s.sesi });
               opt.textContent = `${s.nama} - ${s.sesi}`;
               selM.appendChild(opt);
             });
@@ -526,10 +529,13 @@
 
     // Fungsi Simpan Setoran Tahfidz ke Google Sheet
     async function saveDataTahfidz() {
+      const santriData = JSON.parse(document.getElementById('santriTahfidz').value || '{"nama":"","kelas":""}');
+      
       const payload = {
         action: "simpan_setoran_tahfidz",
         tanggal: document.getElementById('tglTahfidz').value,
-        santri: document.getElementById('santriTahfidz').value,
+        kelas: santriData.kelas || "-",
+        santri: santriData.nama || document.getElementById('santriTahfidz').value,
         jenisSetoran: document.getElementById('jenisTahfidz').value,
         juz: document.getElementById('juzTahfidz').value,
         surat: document.getElementById('suratTahfidz').value,
@@ -572,7 +578,9 @@
 
     // Fungsi Simpan & Buka WhatsApp Langsung
     async function kirimWaTahfidz() {
-      const santri = document.getElementById('santriTahfidz').value;
+      const santriData = JSON.parse(document.getElementById('santriTahfidz').value || '{"nama":"","kelas":""}');
+      const santri = santriData.nama || document.getElementById('santriTahfidz').value;
+      const kelas = santriData.kelas || "-";
       const juz = document.getElementById('juzTahfidz').value;
       const surat = document.getElementById('suratTahfidz').value;
       const ayatAwal = document.getElementById('ayatAwal').value;
@@ -594,12 +602,12 @@
       }
 
       let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
-                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
+                  `Yth. Ayah / Bunda dari *${santri}* (Kelas ${kelas}),\n` +
                   `Berikut kami sampaikan laporan mutaba'ah hafalan Al-Qur'an Ananda:\n\n` +
                   `*LAPORAN MUTABA'AH TAHFIDZ*\n` +
                   `-----------------------------------\n` +
                   `📅 *Tanggal:* ${tgl}\n` +
-                  `👤 *Santri:* ${santri}\n` +
+                  `👤 *Santri:* ${santri} (Kelas ${kelas})\n` +
                   `📖 *Jenis Setoran:* ${jenis}\n` +
                   `📚 *Capaian:* ${juz} - Surah ${surat} (Ayat ${ayatAwal} - ${ayatAkhir})\n` +
                   `⭐ *Nilai:* ${nilai}\n` +
@@ -617,10 +625,13 @@
 
     // Fungsi Simpan Setoran Mengaji ke Google Sheet
     async function saveDataMengaji() {
+      const santriData = JSON.parse(document.getElementById('santriMengaji').value || '{"nama":"","kelas":""}');
+      
       const payload = {
         action: "simpan_setoran_mengaji",
         tanggal: document.getElementById('tglMengaji').value,
-        santri: document.getElementById('santriMengaji').value,
+        kelas: santriData.kelas || "-",
+        santri: santriData.nama || document.getElementById('santriMengaji').value,
         jilid: document.getElementById('jilidMengaji').value,
         halaman: document.getElementById('halamanMengaji').value,
         surah: document.getElementById('surahMengaji').value,
@@ -662,7 +673,9 @@
 
     // Fungsi Simpan & Buka WhatsApp Langsung (Mengaji)
     async function kirimWaMengaji() {
-      const santri = document.getElementById('santriMengaji').value;
+      const santriData = JSON.parse(document.getElementById('santriMengaji').value || '{"nama":"","kelas":""}');
+      const santri = santriData.nama || document.getElementById('santriMengaji').value;
+      const kelas = santriData.kelas || "-";
       const jilid = document.getElementById('jilidMengaji').value;
       const halaman = document.getElementById('halamanMengaji').value;
       const surah = document.getElementById('surahMengaji').value;
@@ -688,12 +701,12 @@
       if (ayat) detailPesan += ` (Ayat ${ayat})`;
 
       let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
-                  `Yth. Ayah / Bunda dari *${santri}*,\n` +
+                  `Yth. Ayah / Bunda dari *${santri}* (Kelas ${kelas}),\n` +
                   `Berikut kami sampaikan laporan perkembangan mengaji Ananda:\n\n` +
                   `*LAPORAN MUTABA'AH MENGAJI*\n` +
                   `-----------------------------------\n` +
                   `📅 *Tanggal:* ${tgl}\n` +
-                  `👤 *Santri:* ${santri}\n` +
+                  `👤 *Santri:* ${santri} (Kelas ${kelas})\n` +
                   `📖 *Capaian:* ${detailPesan}\n` +
                   `⭐ *Nilai:* ${nilai}\n` +
                   `📝 *Catatan:* ${catatan || '-'}\n` +
