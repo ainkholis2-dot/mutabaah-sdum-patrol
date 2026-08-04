@@ -80,6 +80,13 @@
 
     </div>
 
+    <!-- Tombol Rekap Harian ke WA Grup -->
+    <div class="mb-6">
+      <button onclick="kirimRekapHarianGrup()" id="btnRekapGrup" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border border-emerald-600">
+        <i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Mutaba'ah Hari Ini ke Grup WA
+      </button>
+    </div>
+
     <!-- Tab Selection -->
     <div class="flex border-b border-slate-300 mb-6 bg-white rounded-t-lg shadow-sm">
       <button id="btnTabTahfidz" onclick="switchTab('tahfidz')" class="flex-1 py-3 font-semibold text-emerald-700 border-b-2 border-emerald-600 transition flex items-center justify-center gap-2">
@@ -312,7 +319,7 @@
       setInterval(updateClock, 1000);
     }
 
-    // Load Tanggal Hijriah & Jadwal Sholat Khusus Indramayu (ID Kota MyQuran: 1215)
+    // Load Tanggal Hijriah & Jadwal Sholat Khusus Indramayu
     async function loadJadwalSholatIndramayu() {
       const now = new Date();
       const YYYY = now.getFullYear();
@@ -327,33 +334,105 @@
         if (data.status && data.data) {
           const jadwal = data.data.jadwal;
           
-          // Tanggal Hijriah dari API
-          document.getElementById('tglHijriah').textContent = `${jadwal.tanggal_hijriah || jadwal.date}`;
-
-          // Jadwal Sholat Indramayu
           document.getElementById('sholatSubuh').textContent = jadwal.subuh;
           document.getElementById('sholatDzuhur').textContent = jadwal.dzuhur;
           document.getElementById('sholatAshar').textContent = jadwal.ashar;
           document.getElementById('sholatMaghrib').textContent = jadwal.maghrib;
           document.getElementById('sholatIsya').textContent = jadwal.isya;
+
+          getHijriDateFormatted();
         } else {
-          fallbackHijriah();
+          getHijriDateFormatted();
         }
       } catch (err) {
         console.error("Gagal mengambil data jadwal sholat:", err);
-        fallbackHijriah();
+        getHijriDateFormatted();
       }
     }
 
-    // Fallback jika API terganggu (Menggunakan Intl.DateTimeFormat)
-    function fallbackHijriah() {
+    // Konversi Kalender Hijriah
+    function getHijriDateFormatted() {
       try {
         const now = new Date();
-        const opsiHijriah = { day: 'numeric', month: 'long', year: 'numeric' };
-        const hijriahFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma', opsiHijriah);
-        document.getElementById('tglHijriah').textContent = `${hijriahFormatter.format(now)} H`;
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options);
+        document.getElementById('tglHijriah').textContent = `${formatter.format(now)} H`;
       } catch (e) {
-        document.getElementById('tglHijriah').textContent = "Tanggal Hijriah Auto";
+        try {
+          const now = new Date();
+          const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' });
+          document.getElementById('tglHijriah').textContent = `${formatter.format(now)} H`;
+        } catch (err) {
+          document.getElementById('tglHijriah').textContent = "Kalender Hijriah";
+        }
+      }
+    }
+
+    // Fungsi Rekap Harian Semua Setoran Hari Ini ke WhatsApp Grup
+    async function kirimRekapHarianGrup() {
+      const btn = document.getElementById('btnRekapGrup');
+      const today = new Date().toISOString().split('T')[0];
+      const tglMasehiStr = document.getElementById('tglMasehi').textContent;
+      const tglHijriahStr = document.getElementById('tglHijriah').textContent;
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan Rekap...`;
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "get_rekap_harian", tanggal: today })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          let textRekap = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                          `Yth. Ayah / Bunda Wali Murid,\n` +
+                          `Berikut kami sampaikan *REKAP MUTABA'AH HARIAN* Ananda santri bimbingan:\n\n` +
+                          `📅 *Hari/Tanggal:* ${tglMasehiStr}\n` +
+                          `🌙 *Hijriah:* ${tglHijriahStr}\n` +
+                          `-----------------------------------\n\n`;
+
+          // Section Tahfidz
+          textRekap += `📖 *[ SETORAN TAHFIDZ ]*\n`;
+          if (data.tahfidz && data.tahfidz.length > 0) {
+            data.tahfidz.forEach((item, index) => {
+              textRekap += `${index + 1}. *${item.santri}*\n` +
+                           `   - Jenis: ${item.jenis}\n` +
+                           `   - Capaian: ${item.capaian}\n` +
+                           `   - Nilai: ${item.nilai}\n`;
+            });
+          } else {
+            textRekap += `_Belum ada data setoran tahfidz hari ini._\n`;
+          }
+
+          textRekap += `\n📖 *[ SETORAN MENGAJI ]*\n`;
+          if (data.mengaji && data.mengaji.length > 0) {
+            data.mengaji.forEach((item, index) => {
+              textRekap += `${index + 1}. *${item.santri}*\n` +
+                           `   - Capaian: ${item.capaian}\n` +
+                           `   - Nilai: ${item.nilai}\n`;
+            });
+          } else {
+            textRekap += `_Belum ada data setoran mengaji hari ini._\n`;
+          }
+
+          textRekap += `\n-----------------------------------\n` +
+                      `Alhamdulillah, Jazakumullahu Khairan Khatsiran atas perhatian dan pendampingannya di rumah.\n\n` +
+                      `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+
+          // Buka WA untuk dibagikan ke Grup
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textRekap)}`, '_blank');
+        } else {
+          alert("Gagal memuat rekap harian.");
+        }
+      } catch (err) {
+        alert("Terjadi kesalahan koneksi saat mengambil data rekap!");
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Mutaba'ah Hari Ini ke Grup WA`;
       }
     }
 
