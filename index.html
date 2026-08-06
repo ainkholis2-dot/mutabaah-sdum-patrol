@@ -85,6 +85,8 @@
             window.location.href = "dashboard-admin.html"; 
           } else if (user.role === "Guru") {
             window.location.href = "form-input-guru.html";
+          } else if (user.role === "Siswa") {
+            window.location.href = "dashboard-siswa.html"; // <-- TAMBAHKAN BARIS INI
           } else {
             window.location.href = "laporan-walimurid.html";
           }
