@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Siswa - Asesmen & Latihan</title>
+  <title>Dashboard Siswa - SD Unggulan Muhammadiyah Patrol</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen p-4 md:p-6">
@@ -21,31 +21,90 @@
       </button>
     </div>
 
-    <!-- Area Card Soal/Ujian -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 space-y-6">
+    <!-- Navigation Tab (Akademik / Psikologi) -->
+    <div class="flex space-x-2 border-b border-slate-200">
+      <button id="tabAkademik" onclick="switchTab('akademik')" class="pb-3 px-4 font-bold text-sm text-emerald-600 border-b-2 border-emerald-600 transition">
+        📚 Ujian & Latihan Harian
+      </button>
+      <button id="tabPsikologi" onclick="switchTab('psikologi')" class="pb-3 px-4 font-semibold text-sm text-slate-500 hover:text-emerald-600 transition">
+        🧠 Asesmen Minat, Bakat & Gaya Belajar
+      </button>
+    </div>
+
+    <!-- TAB 1: UJIAN AKADEMIK -->
+    <div id="sectionAkademik" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 space-y-6">
       <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
-        <h2 class="text-lg font-bold text-slate-800">Asesmen / Latihan Harian</h2>
-        <span id="badgeStatus" class="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Siap Mengerjakan</span>
+        <h2 class="text-lg font-bold text-slate-800">Soal Latihan & Assessment Harian</h2>
+        <span class="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Akademik</span>
       </div>
 
-      <!-- Container Soal (Dinamis dari JS) -->
       <form id="formUjian" class="space-y-6">
         <div id="containerSoal" class="space-y-6 text-slate-700">
           <p class="text-center text-slate-400 py-8">Memuat soal ujian...</p>
         </div>
 
-        <button type="submit" id="btnSubmit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition hidden">
-          Kirim Jawaban
+        <button type="submit" id="btnSubmitAkademik" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition hidden">
+          Kirim Jawaban Ujian
+        </button>
+      </form>
+    </div>
+
+    <!-- TAB 2: ASESMEN PSIKOLOGI -->
+    <div id="sectionPsikologi" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 space-y-6 hidden">
+      <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
+        <h2 class="text-lg font-bold text-slate-800">Tes Gaya Belajar & Potensi Diri</h2>
+        <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full">Psikologi</span>
+      </div>
+
+      <form id="formPsikologi" class="space-y-6">
+        <div id="containerPsikologi" class="space-y-6 text-slate-700">
+          <p class="text-center text-slate-400 py-8">Memuat soal asesmen psikologi...</p>
+        </div>
+
+        <button type="submit" id="btnSubmitPsikologi" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl shadow-md transition hidden">
+          Proses & Lihat Analisis Saya
         </button>
       </form>
     </div>
 
   </div>
 
+  <!-- MODAL POPUP ANALISIS PSIKOLOGI -->
+  <div id="modalHasilPsikologi" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+      
+      <div class="text-center border-b pb-4">
+        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hasil Asesmen Anda</span>
+        <h2 id="txtHasilJudul" class="text-2xl font-black text-slate-800 mt-2">Gaya Belajar Visual</h2>
+      </div>
+
+      <div class="space-y-4 text-sm text-slate-600">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h4 class="font-bold text-slate-800 mb-1">🔍 Analisis Potensi:</h4>
+          <p id="txtHasilDeskripsi">...</p>
+        </div>
+
+        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+          <h4 class="font-bold text-emerald-900 mb-1">💡 Rekomendasi untuk Guru:</h4>
+          <p id="txtSaranGuru" class="text-emerald-800">...</p>
+        </div>
+
+        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+          <h4 class="font-bold text-amber-900 mb-1">🏡 Rekomendasi untuk Orang Tua:</h4>
+          <p id="txtSaranOrangTua" class="text-amber-800">...</p>
+        </div>
+      </div>
+
+      <button onclick="tutupModalHasil()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-xl transition">
+        Selesai & Tutup
+      </button>
+    </div>
+  </div>
+
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
     
-    // Ambil Data Session Login
+    // Check Session Login
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
       window.location.href = "index.html";
@@ -55,11 +114,36 @@
     document.getElementById('infoKelas').innerText = `Kelas: ${currentUser.kelas || '-'} | NISN: ${currentUser.username}`;
 
     let daftarSoalGlobal = [];
+    let daftarSoalPsikologiGlobal = [];
 
-    // Fitur Pengaman Tambahan (Mencegah Copy-Paste & Tab Switching sederhana)
-    document.addEventListener('contextmenu', e => e.preventDefault()); // Disable Klik Kanan
+    // Safety Features
+    document.addEventListener('contextmenu', e => e.preventDefault());
 
-    // Load Soal saat halaman dibuka
+    // Switch Navigation Tab
+    function switchTab(tab) {
+      const btnAkademik = document.getElementById('tabAkademik');
+      const btnPsikologi = document.getElementById('tabPsikologi');
+      const secAkademik = document.getElementById('sectionAkademik');
+      const secPsikologi = document.getElementById('sectionPsikologi');
+
+      if (tab === 'akademik') {
+        btnAkademik.className = "pb-3 px-4 font-bold text-sm text-emerald-600 border-b-2 border-emerald-600 transition";
+        btnPsikologi.className = "pb-3 px-4 font-semibold text-sm text-slate-500 hover:text-emerald-600 transition border-b-0";
+        secAkademik.classList.remove('hidden');
+        secPsikologi.classList.add('hidden');
+      } else {
+        btnPsikologi.className = "pb-3 px-4 font-bold text-sm text-purple-600 border-b-2 border-purple-600 transition";
+        btnAkademik.className = "pb-3 px-4 font-semibold text-sm text-slate-500 hover:text-purple-600 transition border-b-0";
+        secPsikologi.classList.remove('hidden');
+        secAkademik.classList.add('hidden');
+        
+        if (daftarSoalPsikologiGlobal.length === 0) {
+          loadSoalPsikologi();
+        }
+      }
+    }
+
+    // 1. LOAD SOAL UJIAN AKADEMIK
     async function loadSoal() {
       try {
         const response = await fetch(SCRIPT_URL, {
@@ -75,12 +159,11 @@
         if (res.success && res.data.length > 0) {
           daftarSoalGlobal = res.data;
           renderSoal(res.data);
-          document.getElementById('btnSubmit').classList.remove('hidden');
+          document.getElementById('btnSubmitAkademik').classList.remove('hidden');
         } else {
           document.getElementById('containerSoal').innerHTML = `<p class="text-center text-slate-400 py-8">Belum ada latihan/asesmen aktif untuk kelas Anda.</p>`;
         }
       } catch (err) {
-        console.error(err);
         document.getElementById('containerSoal').innerHTML = `<p class="text-center text-red-500 py-8">Gagal memuat soal. Periksa koneksi Anda.</p>`;
       }
     }
@@ -102,23 +185,58 @@
       `).join('');
     }
 
-    // Submit Jawaban
+    // 2. LOAD SOAL PSIKOLOGI
+    async function loadSoalPsikologi() {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "getSoalPsikologi" })
+        });
+
+        const res = await response.json();
+        if (res.success && res.data.length > 0) {
+          daftarSoalPsikologiGlobal = res.data;
+          renderSoalPsikologi(res.data);
+          document.getElementById('btnSubmitPsikologi').classList.remove('hidden');
+        } else {
+          document.getElementById('containerPsikologi').innerHTML = `<p class="text-center text-slate-400 py-8">Belum ada soal asesmen psikologi yang tersedia.</p>`;
+        }
+      } catch (err) {
+        document.getElementById('containerPsikologi').innerHTML = `<p class="text-center text-red-500 py-8">Gagal memuat soal psikologi.</p>`;
+      }
+    }
+
+    function renderSoalPsikologi(soalList) {
+      const container = document.getElementById('containerPsikologi');
+      container.innerHTML = soalList.map((item, index) => `
+        <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-100 space-y-3">
+          <p class="font-semibold text-slate-800">${index + 1}. ${item.pertanyaan}</p>
+          <div class="space-y-2 pl-2">
+            ${item.opsi.map(op => `
+              <label class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-white transition border border-transparent hover:border-purple-200">
+                <input type="radio" name="psiko_${item.idSoal}" value="${op.tipe}" required class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+                <span class="text-sm text-slate-700">${op.teks}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // SUBMIT UJIAN AKADEMIK
     document.getElementById('formUjian').addEventListener('submit', async function(e) {
       e.preventDefault();
-
       if(!confirm("Apakah Anda yakin ingin mengirim jawaban ini?")) return;
 
-      const btn = document.getElementById('btnSubmit');
+      const btn = document.getElementById('btnSubmitAkademik');
       btn.innerText = "Mengirim Jawaban...";
       btn.disabled = true;
 
-      // Ambil jawaban pilihan siswa
       const jawabanSiswa = {};
       daftarSoalGlobal.forEach(item => {
         const selected = document.querySelector(`input[name="soal_${item.idSoal}"]:checked`);
-        if (selected) {
-          jawabanSiswa[item.idSoal] = selected.value;
-        }
+        if (selected) jawabanSiswa[item.idSoal] = selected.value;
       });
 
       try {
@@ -141,12 +259,66 @@
           window.location.reload();
         }
       } catch (err) {
-        alert("Terjadi kesalahan saat mengunggah jawaban.");
+        alert("Terjadi kesalahan koneksi.");
       } finally {
-        btn.innerText = "Kirim Jawaban";
+        btn.innerText = "Kirim Jawaban Ujian";
         btn.disabled = false;
       }
     });
+
+    // SUBMIT ASESMEN PSIKOLOGI
+    document.getElementById('formPsikologi').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnSubmitPsikologi');
+      btn.innerText = "Menganalisis Jawaban...";
+      btn.disabled = true;
+
+      const jawabanPsikologi = {};
+      daftarSoalPsikologiGlobal.forEach(item => {
+        const selected = document.querySelector(`input[name="psiko_${item.idSoal}"]:checked`);
+        if (selected) jawabanPsikologi[item.idSoal] = selected.value;
+      });
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "submitPsikologi",
+            nisn: currentUser.username,
+            nama: currentUser.nama || currentUser.username,
+            kelas: currentUser.kelas || "-",
+            kategoriTes: "Gaya Belajar & Minat Bakat",
+            jawaban: jawabanPsikologi
+          })
+        });
+
+        const res = await response.json();
+        if (res.success && res.hasil) {
+          tampilkanModalAnalisis(res.hasil);
+        }
+      } catch (err) {
+        alert("Terjadi kesalahan saat memproses analisis.");
+      } finally {
+        btn.innerText = "Proses & Lihat Analisis Saya";
+        btn.disabled = false;
+      }
+    });
+
+    function tampilkanModalAnalisis(hasil) {
+      document.getElementById('txtHasilJudul').innerText = hasil.judul;
+      document.getElementById('txtHasilDeskripsi').innerText = hasil.analisis;
+      document.getElementById('txtSaranGuru').innerText = hasil.saranGuru;
+      document.getElementById('txtSaranOrangTua').innerText = hasil.saranOrangTua;
+      
+      document.getElementById('modalHasilPsikologi').classList.remove('hidden');
+    }
+
+    function tutupModalHasil() {
+      document.getElementById('modalHasilPsikologi').classList.add('hidden');
+      window.location.reload();
+    }
 
     function logout() {
       localStorage.removeItem('currentUser');
