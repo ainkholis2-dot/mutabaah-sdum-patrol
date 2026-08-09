@@ -117,22 +117,10 @@
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="text-center border-b pb-4">
         <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hasil Asesmen Anda</span>
-        <h2 id="txtHasilJudul" class="text-2xl font-black text-slate-800 mt-2">Gaya Belajar Visual</h2>
       </div>
 
-      <div class="space-y-4 text-sm text-slate-600">
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <h4 class="font-bold text-slate-800 mb-1">🔍 Analisis Potensi:</h4>
-          <p id="txtHasilDeskripsi">...</p>
-        </div>
-        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
-          <h4 class="font-bold text-emerald-900 mb-1">💡 Rekomendasi untuk Guru:</h4>
-          <p id="txtSaranGuru" class="text-emerald-800">...</p>
-        </div>
-        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
-          <h4 class="font-bold text-amber-900 mb-1">🏡 Rekomendasi untuk Orang Tua:</h4>
-          <p id="txtSaranOrangTua" class="text-amber-800">...</p>
-        </div>
+      <div id="containerHasilPsikologi" class="space-y-6 text-sm text-slate-600">
+        <!-- Blok hasil per dimensi dirender otomatis oleh JS -->
       </div>
 
       <button onclick="selesaiUjian()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-xl transition">
@@ -366,10 +354,7 @@
 
         const res = await response.json();
         if (res.success && res.hasil) {
-          document.getElementById('txtHasilJudul').innerText = res.hasil.judul;
-          document.getElementById('txtHasilDeskripsi').innerText = res.hasil.analisis;
-          document.getElementById('txtSaranGuru').innerText = res.hasil.saranGuru;
-          document.getElementById('txtSaranOrangTua').innerText = res.hasil.saranOrangTua;
+          renderHasilPsikologi(res.hasil);
           document.getElementById('modalHasilPsikologi').classList.remove('hidden');
         }
       } catch (err) {
@@ -379,6 +364,51 @@
         btn.disabled = false;
       }
     });
+
+    // Render satu atau dua blok hasil (Minat/Bakat & Kepribadian) ke dalam modal
+    function renderHasilPsikologi(hasil) {
+      const blokList = [
+        { data: hasil.minatBakat, label: '🎯 Minat, Bakat & Gaya Belajar', warna: 'purple' },
+        { data: hasil.kepribadian, label: '🧭 Kepribadian', warna: 'blue' }
+      ].filter(b => b.data);
+
+      document.getElementById('containerHasilPsikologi').innerHTML = blokList.map(b => `
+        <div class="border-b pb-5 last:border-b-0">
+          <span class="bg-${b.warna}-100 text-${b.warna}-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">${b.label}</span>
+          <h3 class="text-lg font-black text-slate-800 mt-2 mb-3">${b.data.judul}</h3>
+
+          <div class="space-y-3">
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-slate-800 mb-1 text-xs">🔍 Analisis:</h4>
+              <p class="text-xs">${b.data.analisis}</p>
+            </div>
+
+            ${b.data.kelebihan ? `
+            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+              <h4 class="font-bold text-emerald-900 mb-1 text-xs">✅ Kelebihan:</h4>
+              <ul class="list-disc list-inside text-xs text-emerald-800">
+                ${b.data.kelebihan.map(k => `<li>${k}</li>`).join('')}
+              </ul>
+            </div>` : ''}
+
+            ${b.data.kekurangan ? `
+            <div class="bg-rose-50 p-3 rounded-xl border border-rose-200">
+              <h4 class="font-bold text-rose-900 mb-1 text-xs">⚠️ Perlu Diperhatikan:</h4>
+              <ul class="list-disc list-inside text-xs text-rose-800">
+                ${b.data.kekurangan.map(k => `<li>${k}</li>`).join('')}
+              </ul>
+            </div>` : ''}
+
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-slate-800 mb-1 text-xs">💡 Untuk Guru:</h4>
+              <p class="text-xs text-slate-600 mb-2">${b.data.saranGuru}</p>
+              <h4 class="font-bold text-slate-800 mb-1 text-xs">🏡 Untuk Orang Tua:</h4>
+              <p class="text-xs text-slate-600">${b.data.saranOrangTua}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
 
     function selesaiUjian() {
       window.location.reload();
