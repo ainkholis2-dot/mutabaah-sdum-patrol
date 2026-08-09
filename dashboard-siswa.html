@@ -1,78 +1,119 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Siswa - SD Unggulan Muhammadiyah Patrol</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Siswa - SD Unggulan Muhammadiyah Patrol</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --daun: #0F6B4F;      /* hijau utama - jalur ujian/branding */
+    --daun-dark: #0A4E3A;
+    --madu: #EF9D2F;      /* amber - aksen energi/jalur ujian */
+    --ungu: #6E62D9;      /* indigo kalem - jalur jelajah diri */
+    --ungu-dark: #564BC2;
+    --kabut: #F3F6EF;     /* latar utama, krem kehijauan lembut */
+    --tinta: #202B22;     /* teks utama, hijau gelap kearah hitam */
+    --karang: #E5604A;    /* coral - peringatan/kekurangan */
+    --garis: #DEE6D8;
+  }
+  body{ background:var(--kabut); color:var(--tinta); font-family:'Plus Jakarta Sans',sans-serif; }
+  .f-display{ font-family:'Fredoka',sans-serif; }
+  .f-mono{ font-family:'Space Mono',monospace; }
+  .card{ background:#fff; border:1px solid var(--garis); border-radius:1.25rem; }
+  @keyframes riseIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes popIn{ from{opacity:0; transform:scale(.94) translateY(6px);} to{opacity:1; transform:scale(1) translateY(0);} }
+  @keyframes sprout{ 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-3px) rotate(2deg);} }
+  .rise{ animation: riseIn .5s cubic-bezier(.2,.7,.3,1) both; }
+  .rise-1{ animation-delay:.05s; } .rise-2{ animation-delay:.12s; } .rise-3{ animation-delay:.19s; }
+  .pop{ animation: popIn .35s cubic-bezier(.2,.7,.3,1) both; }
+  .sprout-icon{ animation: sprout 3s ease-in-out infinite; }
+  input[type="radio"]{ accent-color: var(--daun); }
+  @media (prefers-reduced-motion: reduce){
+    .rise,.pop,.sprout-icon{ animation:none !important; }
+  }
+</style>
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-6">
+<body class="min-h-screen p-4 md:p-6">
 
-  <div class="max-w-3xl mx-auto space-y-6">
-    
+  <div class="max-w-3xl mx-auto space-y-5">
+
     <!-- Header Siswa -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex justify-between items-center">
-      <div>
-        <h1 id="namaSiswa" class="text-xl font-bold text-slate-800">Selamat Datang, Siswa</h1>
-        <p id="infoKelas" class="text-sm text-slate-500">Kelas: - | NISN: -</p>
+    <div class="card rise p-5 md:p-6 flex justify-between items-center gap-3" style="box-shadow:0 1px 0 rgba(15,107,79,.04)">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-xl sprout-icon" style="background:var(--daun)1a; background-color:#0F6B4F1a;">🌱</div>
+        <div class="min-w-0">
+          <h1 id="namaSiswa" class="f-display text-lg md:text-xl font-semibold truncate" style="color:var(--tinta)">Selamat Datang, Siswa</h1>
+          <p id="infoKelas" class="text-xs md:text-sm" style="color:#5B6B57">Kelas: - | NISN: -</p>
+        </div>
       </div>
-      <button onclick="logout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-3 py-2 rounded-lg transition">
+      <button onclick="logout()" class="shrink-0 text-xs font-semibold px-3 py-2 rounded-full transition hover:opacity-80" style="background:#FBEAE6; color:var(--karang)">
         Keluar
       </button>
     </div>
 
-    <!-- Navigation Tab -->
-    <div class="flex space-x-2 border-b border-slate-200">
-      <button id="tabAkademik" onclick="switchTab('akademik')" class="pb-3 px-4 font-bold text-sm text-emerald-600 border-b-2 border-emerald-600 transition">
-        📚 Ujian & Latihan Harian
+    <!-- Pemilih Jalur -->
+    <div class="grid grid-cols-2 gap-3 rise rise-1">
+      <button id="tabAkademik" onclick="switchTab('akademik')" class="f-display text-left p-4 rounded-2xl border-2 transition"
+        style="background:var(--madu); border-color:var(--madu); color:#3A2405; box-shadow:0 6px 16px -8px rgba(239,157,47,.6)">
+        <span class="text-2xl block mb-1">📚</span>
+        <span class="block text-sm font-semibold leading-tight">Ujian &amp; Latihan Harian</span>
       </button>
-      <button id="tabPsikologi" onclick="switchTab('psikologi')" class="pb-3 px-4 font-semibold text-sm text-slate-500 hover:text-emerald-600 transition">
-        🧠 Asesmen Minat, Bakat & Gaya Belajar
+      <button id="tabPsikologi" onclick="switchTab('psikologi')" class="f-display text-left p-4 rounded-2xl border-2 transition bg-white"
+        style="border-color:var(--garis); color:#5B6B57">
+        <span class="text-2xl block mb-1">🧭</span>
+        <span class="block text-sm font-semibold leading-tight">Jelajah Diri: Minat, Bakat &amp; Kepribadian</span>
       </button>
     </div>
 
-    <!-- GATEKEEPER TOKEN (KOTAK INPUT TOKEN) -->
-    <div id="boxToken" class="bg-white rounded-xl p-8 shadow-sm border border-slate-200 text-center space-y-4">
-      <div class="inline-flex p-3 bg-emerald-50 text-emerald-600 rounded-full mb-2">
-        🔒
+    <!-- GERBANG TOKEN -->
+    <div id="boxToken" class="card rise rise-2 p-8 text-center space-y-4" style="border-style:dashed; border-width:2px; border-color:var(--garis)">
+      <div class="inline-flex w-14 h-14 items-center justify-center rounded-full text-2xl sprout-icon" style="background:#0F6B4F14">
+        🔐
       </div>
-      <h3 class="text-lg font-bold text-slate-800">Masukkan Token Ujian</h3>
-      <p class="text-xs text-slate-500 max-w-sm mx-auto">Minta kode token kepada pengawas atau guru pengampu sebelum memulai asesmen.</p>
-      
+      <div>
+        <h3 class="f-display text-lg font-semibold" style="color:var(--tinta)">Gerbang Taman Mutaba'ah</h3>
+        <p class="text-xs max-w-sm mx-auto mt-1" style="color:#5B6B57">Minta kode token kepada pengawas atau guru pengampu untuk membuka jalur belajar hari ini.</p>
+      </div>
+
       <div class="flex max-w-xs mx-auto gap-2">
-        <input type="text" id="inputToken" placeholder="Contoh: MATH123" class="w-full text-center uppercase tracking-widest font-mono font-bold px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-emerald-500 border-slate-300 outline-none">
-        <button onclick="validasiToken()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition">
+        <input type="text" id="inputToken" placeholder="MIS. MATH123"
+          class="f-mono w-full text-center uppercase tracking-widest text-sm font-bold px-4 py-2.5 rounded-xl outline-none border-2 focus:ring-2"
+          style="border-color:var(--garis)">
+        <button onclick="validasiToken()" class="font-semibold px-5 py-2.5 rounded-xl text-white transition hover:opacity-90" style="background:var(--daun)">
           Buka
         </button>
       </div>
     </div>
 
-    <!-- TAB 1: UJIAN AKADEMIK (DISEMBUNYIKAN SEBELUM TOKEN VALID) -->
-    <div id="sectionAkademik" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 space-y-6 hidden">
-      <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
-        <h2 class="text-lg font-bold text-slate-800">Soal Latihan & Assessment Harian</h2>
-        <span class="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Akademik</span>
+    <!-- SECTION UJIAN AKADEMIK -->
+    <div id="sectionAkademik" class="card pop p-6 space-y-6 hidden">
+      <div class="pb-4 flex justify-between items-center" style="border-bottom:1px solid var(--garis)">
+        <h2 class="f-display text-base md:text-lg font-semibold" style="color:var(--tinta)">Soal Latihan &amp; Assessment Harian</h2>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#EF9D2F1f; color:#9A5E10">Akademik</span>
       </div>
 
-      <form id="formUjian" class="space-y-6">
-        <div id="containerSoal" class="space-y-6 text-slate-700"></div>
-        <button type="submit" id="btnSubmitAkademik" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+      <form id="formUjian" class="space-y-5">
+        <div id="containerSoal" class="space-y-4"></div>
+        <button type="submit" id="btnSubmitAkademik" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--madu); color:#3A2405">
           Kirim Jawaban Ujian
         </button>
       </form>
     </div>
 
-    <!-- TAB 2: ASESMEN PSIKOLOGI (DISEMBUNYIKAN SEBELUM TOKEN VALID) -->
-    <div id="sectionPsikologi" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 space-y-6 hidden">
-      <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
-        <h2 class="text-lg font-bold text-slate-800">Tes Gaya Belajar & Potensi Diri</h2>
-        <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full">Psikologi</span>
+    <!-- SECTION ASESMEN PSIKOLOGI -->
+    <div id="sectionPsikologi" class="card pop p-6 space-y-6 hidden">
+      <div class="pb-4 flex justify-between items-center" style="border-bottom:1px solid var(--garis)">
+        <h2 class="f-display text-base md:text-lg font-semibold" style="color:var(--tinta)">Tes Kepribadian, Minat &amp; Bakat</h2>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#6E62D91f; color:#4A3FA0">Jelajah Diri</span>
       </div>
 
-      <form id="formPsikologi" class="space-y-6">
-        <div id="containerPsikologi" class="space-y-6 text-slate-700"></div>
-        <button type="submit" id="btnSubmitPsikologi" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
-          Proses & Lihat Analisis Saya
+      <form id="formPsikologi" class="space-y-5">
+        <div id="containerPsikologi" class="space-y-4"></div>
+        <button type="submit" id="btnSubmitPsikologi" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--ungu)">
+          Proses &amp; Lihat Analisis Saya
         </button>
       </form>
     </div>
@@ -81,32 +122,32 @@
 
   <!-- MODAL HASIL NILAI UJIAN AKADEMIK -->
   <div id="modalNilai" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-5 shadow-2xl">
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+    <div class="pop bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-5 shadow-2xl">
+      <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl" style="background:#EF9D2F1f">
         🎉
       </div>
       <div>
-        <h3 class="text-xl font-bold text-slate-800">Ujian Selesai!</h3>
-        <p class="text-xs text-slate-500 mt-1">Berikut perolehan nilai asesmen Anda:</p>
+        <h3 class="f-display text-xl font-semibold" style="color:var(--tinta)">Ujian Selesai!</h3>
+        <p class="text-xs mt-1" style="color:#5B6B57">Berikut perolehan nilai asesmen Anda:</p>
       </div>
 
-      <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-3">
-        <div class="text-4xl font-black text-emerald-600" id="txtNilaiAkhir">0</div>
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nilai Akhir</p>
-        
-        <div class="grid grid-cols-2 gap-2 border-t pt-3 text-xs">
+      <div class="rounded-xl p-4 space-y-3" style="background:var(--kabut); border:1px solid var(--garis)">
+        <div class="f-display text-4xl font-semibold" id="txtNilaiAkhir" style="color:var(--daun)">0</div>
+        <p class="text-xs font-semibold uppercase tracking-wider" style="color:#8A9684">Nilai Akhir</p>
+
+        <div class="grid grid-cols-2 gap-2 pt-3 text-xs" style="border-top:1px solid var(--garis)">
           <div>
-            <span class="text-slate-400 block">Benar</span>
-            <span id="txtBenar" class="font-bold text-emerald-600 text-sm">0</span>
+            <span class="block" style="color:#8A9684">Benar</span>
+            <span id="txtBenar" class="font-bold text-sm" style="color:var(--daun)">0</span>
           </div>
           <div>
-            <span class="text-slate-400 block">Salah</span>
-            <span id="txtSalah" class="font-bold text-red-500 text-sm">0</span>
+            <span class="block" style="color:#8A9684">Salah</span>
+            <span id="txtSalah" class="font-bold text-sm" style="color:var(--karang)">0</span>
           </div>
         </div>
       </div>
 
-      <button onclick="selesaiUjian()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-xl transition">
+      <button onclick="selesaiUjian()" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--tinta)">
         Kembali ke Utama
       </button>
     </div>
@@ -114,24 +155,24 @@
 
   <!-- MODAL HASIL ANALISIS PSIKOLOGI -->
   <div id="modalHasilPsikologi" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="text-center border-b pb-4">
-        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hasil Asesmen Anda</span>
+    <div class="pop bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="text-center pb-4" style="border-bottom:1px solid var(--garis)">
+        <span class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" style="background:#6E62D91f; color:#4A3FA0">Hasil Asesmen Anda</span>
       </div>
 
-      <div id="containerHasilPsikologi" class="space-y-6 text-sm text-slate-600">
+      <div id="containerHasilPsikologi" class="space-y-6 text-sm">
         <!-- Blok hasil per dimensi dirender otomatis oleh JS -->
       </div>
 
-      <button onclick="selesaiUjian()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-xl transition">
-        Selesai & Tutup
+      <button onclick="selesaiUjian()" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--tinta)">
+        Selesai &amp; Tutup
       </button>
     </div>
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
-    
+
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) window.location.href = "index.html";
 
@@ -142,7 +183,7 @@
     let isTokenValid = false;
     let daftarSoalGlobal = [];
     let daftarSoalPsikologiGlobal = [];
-    
+
     let currentIdUjian = ""; // Variabel penampung ID Ujian yang aktif
 
     document.addEventListener('contextmenu', e => e.preventDefault());
@@ -151,13 +192,13 @@
       activeTab = tab;
       const btnAkademik = document.getElementById('tabAkademik');
       const btnPsikologi = document.getElementById('tabPsikologi');
-      
+
       if (tab === 'akademik') {
-        btnAkademik.className = "pb-3 px-4 font-bold text-sm text-emerald-600 border-b-2 border-emerald-600 transition";
-        btnPsikologi.className = "pb-3 px-4 font-semibold text-sm text-slate-500 hover:text-emerald-600 transition border-b-0";
+        btnAkademik.setAttribute('style', 'background:var(--madu); border-color:var(--madu); color:#3A2405; box-shadow:0 6px 16px -8px rgba(239,157,47,.6)');
+        btnPsikologi.setAttribute('style', 'border-color:var(--garis); color:#5B6B57');
       } else {
-        btnPsikologi.className = "pb-3 px-4 font-bold text-sm text-purple-600 border-b-2 border-purple-600 transition";
-        btnAkademik.className = "pb-3 px-4 font-semibold text-sm text-slate-500 hover:text-purple-600 transition border-b-0";
+        btnPsikologi.setAttribute('style', 'background:var(--ungu); border-color:var(--ungu); color:#fff; box-shadow:0 6px 16px -8px rgba(110,98,217,.6)');
+        btnAkademik.setAttribute('style', 'border-color:var(--garis); color:#5B6B57; background:#fff');
       }
 
       // Reset tampilan jika token belum divalidasi
@@ -217,8 +258,8 @@
         const response = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ 
-            action: "getSoalSiswa", 
+          body: JSON.stringify({
+            action: "getSoalSiswa",
             idUjian: currentIdUjian // Minta soal spesifik berdasarkan ID Ujian dari token
           })
         });
@@ -227,27 +268,38 @@
           daftarSoalGlobal = res.data;
           renderSoal(res.data);
         } else {
-          document.getElementById('containerSoal').innerHTML = `<p class="text-center text-slate-400 py-8">Tidak ada soal untuk token ini.</p>`;
+          document.getElementById('containerSoal').innerHTML = `<p class="text-center py-8 text-sm" style="color:#8A9684">Tidak ada soal untuk token ini.</p>`;
         }
       } catch (err) {
-        document.getElementById('containerSoal').innerHTML = `<p class="text-center text-red-500 py-8">Gagal memuat soal.</p>`;
+        document.getElementById('containerSoal').innerHTML = `<p class="text-center py-8 text-sm" style="color:var(--karang)">Gagal memuat soal.</p>`;
       }
     }
 
     function renderSoal(soalList) {
       document.getElementById('containerSoal').innerHTML = soalList.map((item, index) => `
-        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-          <p class="font-semibold text-slate-800">${index + 1}. ${item.pertanyaan}</p>
-          <div class="space-y-2 pl-2">
+        <div class="pop p-4 rounded-2xl space-y-3" style="background:var(--kabut); border:1px solid var(--garis)">
+          <p class="font-semibold text-sm" style="color:var(--tinta)">${index + 1}. ${item.pertanyaan}</p>
+          <div class="space-y-2">
             ${Object.keys(item.opsi).map(key => `
-              <label class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-white transition border border-transparent hover:border-slate-200">
-                <input type="radio" name="soal_${item.idSoal}" value="${key}" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
-                <span class="text-sm text-slate-700"><b>${key}.</b> ${item.opsi[key]}</span>
+              <label class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition bg-white border-2 [&:has(input:checked)]:border-[color:var(--madu)]" style="border-color:var(--garis)">
+                <input type="radio" name="soal_${item.idSoal}" value="${key}" required class="peer sr-only">
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-bold peer-checked:text-white transition" style="border-color:#C9D3C1; color:#5B6B57; background: transparent;">${key}</span>
+                <span class="text-sm" style="color:var(--tinta)">${item.opsi[key]}</span>
               </label>
             `).join('')}
           </div>
         </div>
       `).join('');
+      // Terapkan warna terisi untuk pilihan yang dicentang (karena CSS peer-checked butuh util khusus Tailwind arbitrary)
+      document.querySelectorAll('#containerSoal input[type=radio]').forEach(r => {
+        r.addEventListener('change', () => {
+          document.querySelectorAll(`input[name="${r.name}"]`).forEach(sib => {
+            const badge = sib.nextElementSibling;
+            if (sib.checked) { badge.style.background = 'var(--madu)'; badge.style.borderColor = 'var(--madu)'; badge.style.color = '#3A2405'; }
+            else { badge.style.background = 'transparent'; badge.style.borderColor = '#C9D3C1'; badge.style.color = '#5B6B57'; }
+          });
+        });
+      });
     }
 
     async function loadSoalPsikologi() {
@@ -263,24 +315,35 @@
           renderSoalPsikologi(res.data);
         }
       } catch (err) {
-        document.getElementById('containerPsikologi').innerHTML = `<p class="text-center text-red-500 py-8">Gagal memuat soal psikologi.</p>`;
+        document.getElementById('containerPsikologi').innerHTML = `<p class="text-center py-8 text-sm" style="color:var(--karang)">Gagal memuat soal psikologi.</p>`;
       }
     }
 
     function renderSoalPsikologi(soalList) {
       document.getElementById('containerPsikologi').innerHTML = soalList.map((item, index) => `
-        <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-100 space-y-3">
-          <p class="font-semibold text-slate-800">${index + 1}. ${item.pertanyaan}</p>
-          <div class="space-y-2 pl-2">
-            ${item.opsi.map(op => `
-              <label class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-white transition border border-transparent hover:border-purple-200">
-                <input type="radio" name="psiko_${item.idSoal}" value="${op.tipe}" required class="w-4 h-4 text-purple-600 focus:ring-purple-500">
-                <span class="text-sm text-slate-700">${op.teks}</span>
+        <div class="pop p-4 rounded-2xl space-y-3" style="background:#6E62D90d; border:1px solid #6E62D933">
+          <p class="font-semibold text-sm" style="color:var(--tinta)">${index + 1}. ${item.pertanyaan}</p>
+          <div class="space-y-2">
+            ${item.opsi.map((op, i) => `
+              <label class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition bg-white border-2" style="border-color:var(--garis)">
+                <input type="radio" name="psiko_${item.idSoal}" value="${op.tipe}" required class="peer sr-only">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2" style="border-color:#C9C4EE;"></span>
+                <span class="text-sm" style="color:var(--tinta)">${op.teks}</span>
               </label>
             `).join('')}
           </div>
         </div>
       `).join('');
+      document.querySelectorAll('#containerPsikologi input[type=radio]').forEach(r => {
+        r.addEventListener('change', () => {
+          document.querySelectorAll(`input[name="${r.name}"]`).forEach(sib => {
+            const dot = sib.nextElementSibling;
+            const label = sib.closest('label');
+            if (sib.checked) { dot.style.background = 'var(--ungu)'; dot.style.borderColor = 'var(--ungu)'; label.style.borderColor = 'var(--ungu)'; }
+            else { dot.style.background = 'transparent'; dot.style.borderColor = '#C9C4EE'; label.style.borderColor = 'var(--garis)'; }
+          });
+        });
+      });
     }
 
     // SUBMIT UJIAN AKADEMIK
@@ -368,42 +431,42 @@
     // Render satu atau dua blok hasil (Minat/Bakat & Kepribadian) ke dalam modal
     function renderHasilPsikologi(hasil) {
       const blokList = [
-        { data: hasil.minatBakat, label: '🎯 Minat, Bakat & Gaya Belajar', warna: 'purple' },
-        { data: hasil.kepribadian, label: '🧭 Kepribadian', warna: 'blue' }
+        { data: hasil.minatBakat, label: '🎯 Minat, Bakat & Gaya Belajar', warna: '#EF9D2F', warnaTeks: '#9A5E10', warnaBg: '#EF9D2F1f' },
+        { data: hasil.kepribadian, label: '🧭 Kepribadian', warna: '#6E62D9', warnaTeks: '#4A3FA0', warnaBg: '#6E62D91f' }
       ].filter(b => b.data);
 
       document.getElementById('containerHasilPsikologi').innerHTML = blokList.map(b => `
-        <div class="border-b pb-5 last:border-b-0">
-          <span class="bg-${b.warna}-100 text-${b.warna}-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">${b.label}</span>
-          <h3 class="text-lg font-black text-slate-800 mt-2 mb-3">${b.data.judul}</h3>
+        <div class="pb-5 last:pb-0" style="border-bottom:1px solid var(--garis)">
+          <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider" style="background:${b.warnaBg}; color:${b.warnaTeks}">${b.label}</span>
+          <h3 class="f-display text-lg font-semibold mt-2 mb-3" style="color:var(--tinta)">${b.data.judul}</h3>
 
           <div class="space-y-3">
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-              <h4 class="font-bold text-slate-800 mb-1 text-xs">🔍 Analisis:</h4>
-              <p class="text-xs">${b.data.analisis}</p>
+            <div class="p-3 rounded-xl" style="background:var(--kabut); border:1px solid var(--garis)">
+              <h4 class="font-bold mb-1 text-xs" style="color:var(--tinta)">🔍 Analisis:</h4>
+              <p class="text-xs" style="color:#425540">${b.data.analisis}</p>
             </div>
 
             ${b.data.kelebihan ? `
-            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
-              <h4 class="font-bold text-emerald-900 mb-1 text-xs">✅ Kelebihan:</h4>
-              <ul class="list-disc list-inside text-xs text-emerald-800">
+            <div class="p-3 rounded-xl" style="background:#0F6B4F0d; border:1px solid #0F6B4F33">
+              <h4 class="font-bold mb-1 text-xs" style="color:var(--daun-dark)">✅ Kelebihan:</h4>
+              <ul class="list-disc list-inside text-xs" style="color:#245A45">
                 ${b.data.kelebihan.map(k => `<li>${k}</li>`).join('')}
               </ul>
             </div>` : ''}
 
             ${b.data.kekurangan ? `
-            <div class="bg-rose-50 p-3 rounded-xl border border-rose-200">
-              <h4 class="font-bold text-rose-900 mb-1 text-xs">⚠️ Perlu Diperhatikan:</h4>
-              <ul class="list-disc list-inside text-xs text-rose-800">
+            <div class="p-3 rounded-xl" style="background:#E5604A0d; border:1px solid #E5604A33">
+              <h4 class="font-bold mb-1 text-xs" style="color:#B3402D">⚠️ Perlu Diperhatikan:</h4>
+              <ul class="list-disc list-inside text-xs" style="color:#B3402D">
                 ${b.data.kekurangan.map(k => `<li>${k}</li>`).join('')}
               </ul>
             </div>` : ''}
 
-            <div class="bg-white p-3 rounded-xl border border-slate-200">
-              <h4 class="font-bold text-slate-800 mb-1 text-xs">💡 Untuk Guru:</h4>
-              <p class="text-xs text-slate-600 mb-2">${b.data.saranGuru}</p>
-              <h4 class="font-bold text-slate-800 mb-1 text-xs">🏡 Untuk Orang Tua:</h4>
-              <p class="text-xs text-slate-600">${b.data.saranOrangTua}</p>
+            <div class="p-3 rounded-xl bg-white" style="border:1px solid var(--garis)">
+              <h4 class="font-bold mb-1 text-xs" style="color:var(--tinta)">💡 Untuk Guru:</h4>
+              <p class="text-xs mb-2" style="color:#425540">${b.data.saranGuru}</p>
+              <h4 class="font-bold mb-1 text-xs" style="color:var(--tinta)">🏡 Untuk Orang Tua:</h4>
+              <p class="text-xs" style="color:#425540">${b.data.saranOrangTua}</p>
             </div>
           </div>
         </div>
