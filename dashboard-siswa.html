@@ -154,6 +154,8 @@
     let isTokenValid = false;
     let daftarSoalGlobal = [];
     let daftarSoalPsikologiGlobal = [];
+    
+    let currentIdUjian = ""; // Variabel penampung ID Ujian yang aktif
 
     document.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -199,13 +201,14 @@
         const res = await response.json();
         if (res.success) {
           isTokenValid = true;
+          currentIdUjian = res.idUjian; // Simpan ID Ujian yang cocok dengan token
           document.getElementById('boxToken').classList.add('hidden');
           tampilkanSectionUjian();
         } else {
           alert(res.message);
         }
       } catch (err) {
-        alert("Gagal memverifikasi token. Periksa koneksi internet.");
+        alert("Gagal memverifikasi token.");
       }
     }
 
@@ -226,14 +229,17 @@
         const response = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "getSoalSiswa", kelas: currentUser.kelas || "Kelas 1" })
+          body: JSON.stringify({ 
+            action: "getSoalSiswa", 
+            idUjian: currentIdUjian // Minta soal spesifik berdasarkan ID Ujian dari token
+          })
         });
         const res = await response.json();
         if (res.success && res.data.length > 0) {
           daftarSoalGlobal = res.data;
           renderSoal(res.data);
         } else {
-          document.getElementById('containerSoal').innerHTML = `<p class="text-center text-slate-400 py-8">Belum ada latihan aktif.</p>`;
+          document.getElementById('containerSoal').innerHTML = `<p class="text-center text-slate-400 py-8">Tidak ada soal untuk token ini.</p>`;
         }
       } catch (err) {
         document.getElementById('containerSoal').innerHTML = `<p class="text-center text-red-500 py-8">Gagal memuat soal.</p>`;
