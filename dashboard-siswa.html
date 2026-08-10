@@ -1,574 +1,575 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Siswa - SD Unggulan Muhammadiyah Patrol</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --daun: #0F6B4F;      /* hijau utama - jalur ujian/branding */
-    --daun-dark: #0A4E3A;
-    --madu: #EF9D2F;      /* amber - aksen energi/jalur ujian */
-    --ungu: #6E62D9;      /* indigo kalem - jalur jelajah diri */
-    --ungu-dark: #564BC2;
-    --kabut: #F3F6EF;     /* latar utama, krem kehijauan lembut */
-    --tinta: #202B22;     /* teks utama, hijau gelap kearah hitam */
-    --karang: #E5604A;    /* coral - peringatan/kekurangan */
-    --garis: #DEE6D8;
-  }
-  body{ background:var(--kabut); color:var(--tinta); font-family:'Plus Jakarta Sans',sans-serif; }
-  .f-display{ font-family:'Fredoka',sans-serif; }
-  .f-mono{ font-family:'Space Mono',monospace; }
-  .card{ background:#fff; border:1px solid var(--garis); border-radius:1.25rem; }
-  @keyframes riseIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-  @keyframes popIn{ from{opacity:0; transform:scale(.94) translateY(6px);} to{opacity:1; transform:scale(1) translateY(0);} }
-  @keyframes sprout{ 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-3px) rotate(2deg);} }
-  .rise{ animation: riseIn .5s cubic-bezier(.2,.7,.3,1) both; }
-  .rise-1{ animation-delay:.05s; } .rise-2{ animation-delay:.12s; } .rise-3{ animation-delay:.19s; }
-  .pop{ animation: popIn .35s cubic-bezier(.2,.7,.3,1) both; }
-  .sprout-icon{ animation: sprout 3s ease-in-out infinite; }
-  input[type="radio"]{ accent-color: var(--daun); }
-  @media (prefers-reduced-motion: reduce){
-    .rise,.pop,.sprout-icon{ animation:none !important; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - SDUM Patrol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
-<body class="min-h-screen p-4 md:p-6">
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-10">
 
-  <div class="max-w-3xl mx-auto space-y-5">
-
-    <!-- Header Siswa -->
-    <div class="card rise p-5 md:p-6 flex justify-between items-center gap-3" style="box-shadow:0 1px 0 rgba(15,107,79,.04)">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-xl sprout-icon" style="background:var(--daun)1a; background-color:#0F6B4F1a;">🌱</div>
-        <div class="min-w-0">
-          <h1 id="namaSiswa" class="f-display text-lg md:text-xl font-semibold truncate" style="color:var(--tinta)">Selamat Datang, Siswa</h1>
-          <p id="infoKelas" class="text-xs md:text-sm" style="color:#5B6B57">Kelas: - | NISN: -</p>
-        </div>
-      </div>
-      <button onclick="logout()" class="shrink-0 text-xs font-semibold px-3 py-2 rounded-full transition hover:opacity-80" style="background:#FBEAE6; color:var(--karang)">
-        Keluar
-      </button>
-    </div>
-
-    <!-- Pemilih Jalur -->
-    <div class="grid grid-cols-2 gap-3 rise rise-1">
-      <button id="tabAkademik" onclick="switchTab('akademik')" class="f-display text-left p-4 rounded-2xl border-2 transition"
-        style="background:var(--madu); border-color:var(--madu); color:#3A2405; box-shadow:0 6px 16px -8px rgba(239,157,47,.6)">
-        <span class="text-2xl block mb-1">📚</span>
-        <span class="block text-sm font-semibold leading-tight">Ujian &amp; Latihan Harian</span>
-      </button>
-      <button id="tabPsikologi" onclick="switchTab('psikologi')" class="f-display text-left p-4 rounded-2xl border-2 transition bg-white"
-        style="border-color:var(--garis); color:#5B6B57">
-        <span class="text-2xl block mb-1">🧭</span>
-        <span class="block text-sm font-semibold leading-tight">Jelajah Diri: Minat, Bakat &amp; Kepribadian</span>
-      </button>
-    </div>
-
-    <!-- GERBANG TOKEN -->
-    <div id="boxToken" class="card rise rise-2 p-8 text-center space-y-4" style="border-style:dashed; border-width:2px; border-color:var(--garis)">
-      <div class="inline-flex w-14 h-14 items-center justify-center rounded-full text-2xl sprout-icon" style="background:#0F6B4F14">
-        🔐
-      </div>
-      <div>
-        <h3 class="f-display text-lg font-semibold" style="color:var(--tinta)">Gerbang Taman Mutaba'ah</h3>
-        <p class="text-xs max-w-sm mx-auto mt-1" style="color:#5B6B57">Minta kode token kepada pengawas atau guru pengampu untuk membuka jalur belajar hari ini.</p>
-      </div>
-
-      <div id="mapelPicker" class="max-w-xs mx-auto text-left space-y-1 hidden">
-        <label class="text-xs font-semibold" style="color:#5B6B57">Pilih Mata Pelajaran</label>
-        <select id="selectMapel" onchange="updateGateVisibility()" class="w-full px-3 py-2.5 rounded-xl border-2 outline-none text-sm" style="border-color:var(--garis)">
-          <option value="">-- Pilih Mata Pelajaran --</option>
-        </select>
-      </div>
-
-      <div class="flex max-w-xs mx-auto gap-2">
-        <input type="text" id="inputToken" placeholder="MIS. MATH123"
-          class="f-mono w-full text-center uppercase tracking-widest text-sm font-bold px-4 py-2.5 rounded-xl outline-none border-2 focus:ring-2"
-          style="border-color:var(--garis)">
-        <button onclick="validasiToken()" class="font-semibold px-5 py-2.5 rounded-xl text-white transition hover:opacity-90" style="background:var(--daun)">
-          Buka
-        </button>
-      </div>
-    </div>
-
-    <!-- SECTION UJIAN AKADEMIK -->
-    <div id="sectionAkademik" class="card pop p-6 space-y-6 hidden">
-      <div class="pb-4 flex justify-between items-center" style="border-bottom:1px solid var(--garis)">
+  <!-- Header / Navbar Admin -->
+  <header class="bg-emerald-800 text-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Logo_Muhammadiyah.svg/500px-Logo_Muhammadiyah.svg.png" 
+             alt="Logo Muhammadiyah" class="h-10 w-10 object-contain bg-white rounded-full p-1">
         <div>
-          <h2 class="f-display text-base md:text-lg font-semibold" style="color:var(--tinta)">Soal Latihan &amp; Assessment Harian</h2>
-          <p id="labelMapelAktif" class="text-xs mt-0.5" style="color:#8A9684"></p>
-        </div>
-        <div class="flex flex-col items-end gap-1.5">
-          <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#EF9D2F1f; color:#9A5E10">Akademik</span>
-          <button type="button" onclick="gantiMapel()" class="text-[11px] font-semibold underline" style="color:#5B6B57">🔁 Ganti Pelajaran</button>
+          <h1 class="font-bold text-base leading-tight">Panel Administrator</h1>
+          <p class="text-xs text-emerald-200">SD Unggulan Muhammadiyah Patrol</p>
         </div>
       </div>
 
-      <form id="formUjian" class="space-y-5">
-        <div id="containerSoal" class="space-y-4"></div>
-        <button type="submit" id="btnSubmitAkademik" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--madu); color:#3A2405">
-          Kirim Jawaban Ujian
-        </button>
-      </form>
-    </div>
-
-    <!-- SECTION ASESMEN PSIKOLOGI -->
-    <div id="sectionPsikologi" class="card pop p-6 space-y-6 hidden">
-      <div class="pb-4 flex justify-between items-center" style="border-bottom:1px solid var(--garis)">
-        <h2 class="f-display text-base md:text-lg font-semibold" style="color:var(--tinta)">Tes Kepribadian, Minat &amp; Bakat</h2>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#6E62D91f; color:#4A3FA0">Jelajah Diri</span>
+      <div class="text-center md:text-right bg-emerald-900/50 px-4 py-1.5 rounded-xl border border-emerald-700/50">
+        <p id="jamText" class="text-xs font-mono font-bold text-amber-300">00:00:00 WIB</p>
+        <p id="tanggalText" class="text-[11px] text-emerald-100 mt-0.5">Memuat tanggal...</p>
       </div>
 
-      <form id="formPsikologi" class="space-y-5">
-        <div id="containerPsikologi" class="space-y-4"></div>
-        <button type="submit" id="btnSubmitPsikologi" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--ungu)">
-          Proses &amp; Lihat Analisis Saya
-        </button>
-      </form>
+      <button onclick="logout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg transition font-semibold text-white shadow">
+        Keluar 🚪
+      </button>
     </div>
+  </header>
 
-  </div>
-
-  <!-- MODAL HASIL NILAI UJIAN AKADEMIK -->
-  <div id="modalNilai" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="pop bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-5 shadow-2xl">
-      <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl" style="background:#EF9D2F1f">
-        🎉
-      </div>
+  <main class="max-w-6xl mx-auto px-4 mt-6">
+    
+    <!-- Banner Selamat Datang -->
+    <div class="bg-emerald-700 text-white p-6 rounded-2xl shadow-md mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
-        <h3 class="f-display text-xl font-semibold" style="color:var(--tinta)">Ujian Selesai!</h3>
-        <p class="text-xs mt-1" style="color:#5B6B57">Berikut perolehan nilai asesmen Anda:</p>
+        <span class="bg-emerald-900/60 text-emerald-200 text-xs px-3 py-1 rounded-full font-medium">Administrator Sistem</span>
+        <h2 class="text-2xl font-bold mt-2">Selamat Datang, <span id="namaAdmin">Admin</span>! 👋</h2>
+        <p class="text-xs text-emerald-100 mt-1">Kelola data master guru, siswa, kelas, dan rekap mutaba'ah di sini.</p>
       </div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="bukaModalInput()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs shadow transition">
+          ➕ Input & Import Master
+        </button>
+        <a href="https://docs.google.com/spreadsheets/d/1pVkqMjoOctFNDqZ9DU5CqC3ynMTObTmam94rjEuFAOI/edit?usp=sharing" target="_blank" class="bg-emerald-900 hover:bg-emerald-950 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow transition border border-emerald-500">
+          🟢 Buka Direct Google Sheet
+        </a>
+      </div>
+    </div>
 
-      <div class="rounded-xl p-4 space-y-3" style="background:var(--kabut); border:1px solid var(--garis)">
-        <div class="f-display text-4xl font-semibold" id="txtNilaiAkhir" style="color:var(--daun)">0</div>
-        <p class="text-xs font-semibold uppercase tracking-wider" style="color:#8A9684">Nilai Akhir</p>
+    <!-- Ringkasan Statistik Real-Time -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Total Santri Master</p>
+        <p id="statSiswa" class="text-3xl font-black text-slate-800 mt-1">0</p>
+        <span class="text-[10px] text-emerald-600 font-medium">● Tahfidz & Mengaji</span>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Total Guru / Ustadz</p>
+        <p id="statGuru" class="text-3xl font-black text-slate-800 mt-1">0</p>
+        <span class="text-[10px] text-emerald-600 font-medium">● Master Guru Login</span>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Setoran Hari Ini</p>
+        <p id="statSetoran" class="text-3xl font-black text-emerald-600 mt-1">0</p>
+        <span class="text-[10px] text-slate-400 font-medium">Hari Ini</span>
+      </div>
+    </div>
 
-        <div class="grid grid-cols-2 gap-2 pt-3 text-xs" style="border-top:1px solid var(--garis)">
-          <div>
-            <span class="block" style="color:#8A9684">Benar</span>
-            <span id="txtBenar" class="font-bold text-sm" style="color:var(--daun)">0</span>
-          </div>
-          <div>
-            <span class="block" style="color:#8A9684">Salah</span>
-            <span id="txtSalah" class="font-bold text-sm" style="color:var(--karang)">0</span>
-          </div>
+    <!-- REKAP LENGKAP -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
+      <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Mutaba'ah Per Anak / Kelas / Kelompok</h3>
+      <p class="text-xs text-slate-500 mb-4">Pilih jenis rekapitulasi setoran yang ingin diunduh ke format Excel.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 1. Rekap Per Anak -->
+        <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 space-y-3">
+          <h4 class="font-bold text-blue-900 text-xs">👤 Rekap Per Anak (Individual)</h4>
+          <select id="tipeAnak" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+            <option value="tahfidz">Program Tahfidz</option>
+            <option value="mengaji">Program Mengaji</option>
+          </select>
+          <input type="text" id="keyAnak" placeholder="Ketik NISN / Nama Santri" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+          <button onclick="downloadRekapLengkap('anak')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Rekap Anak
+          </button>
+        </div>
+
+        <!-- 2. Rekap Per Kelas (Tahfidz) -->
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 space-y-3">
+          <h4 class="font-bold text-emerald-900 text-xs">📖 Rekap Per Kelas (Tahfidz)</h4>
+          <select id="keyKelas" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+            <option value="">-- Semua Kelas --</option>
+            <option value="Kelas 1 A">Kelas 1 A</option>
+            <option value="Kelas 1 B">Kelas 1 B</option>
+            <option value="Kelas 2 A">Kelas 2 A</option>
+            <option value="Kelas 2 B">Kelas 2 B</option>
+            <option value="Kelas 3 Putra">Kelas 3 Putra</option>
+            <option value="Kelas 3 Putri">Kelas 3 Putri</option>
+            <option value="Kelas 4 A">Kelas 4 A</option>
+            <option value="Kelas 4 B">Kelas 4 B</option>
+            <option value="Kelas 5 Putra">Kelas 5 Putra</option>
+            <option value="Kelas 5 Putri">Kelas 5 Putri</option>
+            <option value="Kelas 6 A">Kelas 6 A</option>
+          </select>
+          <button onclick="downloadRekapLengkap('kelas')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Rekap Kelas
+          </button>
+        </div>
+
+        <!-- 3. Rekap Per Kelompok (Mengaji) -->
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50 space-y-3">
+          <h4 class="font-bold text-amber-900 text-xs">📚 Rekap Per Kelompok (Mengaji)</h4>
+          <input type="text" id="keyKelompok" placeholder="Ketik Nama Kelompok Mengaji" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+          <button onclick="downloadRekapLengkap('kelompok')" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Rekap Kelompok
+          </button>
         </div>
       </div>
+    </section>
 
-      <button onclick="selesaiUjian()" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--tinta)">
-        Kembali ke Utama
-      </button>
+    <!-- REKAP UJIAN & ASESMEN PSIKOLOGI -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
+      <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Ujian &amp; Asesmen Psikologi</h3>
+      <p class="text-xs text-slate-500 mb-4">Unduh hasil ujian akademik atau hasil tes kepribadian/minat-bakat, per siswa atau per kelas.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 4. Rekap Ujian Per Anak -->
+        <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/50 space-y-3">
+          <h4 class="font-bold text-orange-900 text-xs">👤 Rekap Nilai Ujian Per Siswa</h4>
+          <input type="text" id="keyUjianAnak" placeholder="Ketik NISN / Nama Siswa" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+          <button onclick="downloadRekapBaru('ujian','anak','keyUjianAnak')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Nilai Ujian (Anak)
+          </button>
+        </div>
+
+        <!-- 5. Rekap Ujian Per Kelas -->
+        <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/50 space-y-3">
+          <h4 class="font-bold text-orange-900 text-xs">🏫 Rekap Nilai Ujian Per Kelas</h4>
+          <select id="keyUjianKelas" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+            <option value="">-- Semua Kelas --</option>
+            <option value="Kelas 1 A">Kelas 1 A</option>
+            <option value="Kelas 1 B">Kelas 1 B</option>
+            <option value="Kelas 2 A">Kelas 2 A</option>
+            <option value="Kelas 2 B">Kelas 2 B</option>
+            <option value="Kelas 3 Putra">Kelas 3 Putra</option>
+            <option value="Kelas 3 Putri">Kelas 3 Putri</option>
+            <option value="Kelas 4 A">Kelas 4 A</option>
+            <option value="Kelas 4 B">Kelas 4 B</option>
+            <option value="Kelas 5 Putra">Kelas 5 Putra</option>
+            <option value="Kelas 5 Putri">Kelas 5 Putri</option>
+            <option value="Kelas 6 A">Kelas 6 A</option>
+          </select>
+          <button onclick="downloadRekapBaru('ujian','kelas','keyUjianKelas')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Nilai Ujian (Kelas)
+          </button>
+        </div>
+
+        <!-- 6. Rekap Psikologi Per Anak -->
+        <div class="p-4 rounded-xl border border-violet-200 bg-violet-50/50 space-y-3">
+          <h4 class="font-bold text-violet-900 text-xs">👤 Rekap Asesmen Psikologi Per Siswa</h4>
+          <input type="text" id="keyPsikologiAnak" placeholder="Ketik NISN / Nama Siswa" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+          <button onclick="downloadRekapBaru('psikologi','anak','keyPsikologiAnak')" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Hasil Psikologi (Anak)
+          </button>
+        </div>
+
+        <!-- 7. Rekap Psikologi Per Kelas -->
+        <div class="p-4 rounded-xl border border-violet-200 bg-violet-50/50 space-y-3">
+          <h4 class="font-bold text-violet-900 text-xs">🏫 Rekap Asesmen Psikologi Per Kelas</h4>
+          <select id="keyPsikologiKelas" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
+            <option value="">-- Semua Kelas --</option>
+            <option value="Kelas 1 A">Kelas 1 A</option>
+            <option value="Kelas 1 B">Kelas 1 B</option>
+            <option value="Kelas 2 A">Kelas 2 A</option>
+            <option value="Kelas 2 B">Kelas 2 B</option>
+            <option value="Kelas 3 Putra">Kelas 3 Putra</option>
+            <option value="Kelas 3 Putri">Kelas 3 Putri</option>
+            <option value="Kelas 4 A">Kelas 4 A</option>
+            <option value="Kelas 4 B">Kelas 4 B</option>
+            <option value="Kelas 5 Putra">Kelas 5 Putra</option>
+            <option value="Kelas 5 Putri">Kelas 5 Putri</option>
+            <option value="Kelas 6 A">Kelas 6 A</option>
+          </select>
+          <button onclick="downloadRekapBaru('psikologi','kelas','keyPsikologiKelas')" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 rounded-lg text-xs transition">
+            📊 Download Hasil Psikologi (Kelas)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigasi Halaman -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+        <div>
+          <h4 class="font-bold text-slate-800 text-sm">Mode Form Guru</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Inputkan setoran hafalan santri secara langsung.</p>
+        </div>
+        <a href="form-input-guru.html" class="bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-semibold text-xs px-4 py-2.5 rounded-lg transition">Buka Form</a>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+        <div>
+          <h4 class="font-bold text-slate-800 text-sm">Laporan Wali Murid</h4>
+          <p class="text-xs text-slate-500 mt-0.5">Lihat tampilan perkembangan hafalan santri.</p>
+        </div>
+        <a href="laporan-walimurid.html" class="bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 font-semibold text-xs px-4 py-2.5 rounded-lg transition">Lihat Laporan</a>
+      </div>
     </div>
-  </div>
 
-  <!-- MODAL HASIL ANALISIS PSIKOLOGI -->
-  <div id="modalHasilPsikologi" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="pop bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="text-center pb-4" style="border-bottom:1px solid var(--garis)">
-        <span class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" style="background:#6E62D91f; color:#4A3FA0">Hasil Asesmen Anda</span>
+  </main>
+
+  <!-- MODAL INPUT MASTER -->
+  <div id="modalInput" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden">
+      
+      <div class="bg-emerald-700 px-6 py-4 text-white flex justify-between items-center">
+        <h3 class="font-bold text-sm">Form & Import Data Master Admin</h3>
+        <button onclick="tutupModalInput()" class="text-white hover:text-slate-200 text-lg font-bold">&times;</button>
       </div>
 
-      <div id="containerHasilPsikologi" class="space-y-6 text-sm">
-        <!-- Blok hasil per dimensi dirender otomatis oleh JS -->
+      <div class="flex bg-slate-100 p-1 border-b text-xs font-semibold text-slate-600">
+        <button id="btnTabTahfidz" onclick="pilihTabModal('tahfidz')" class="w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold">Tahfidz</button>
+        <button id="btnTabMengaji" onclick="pilihTabModal('mengaji')" class="w-1/4 py-2">Mengaji</button>
+        <button id="btnTabGuru" onclick="pilihTabModal('guru')" class="w-1/4 py-2">Guru</button>
+        <button id="btnTabImport" onclick="pilihTabModal('import')" class="w-1/4 py-2 bg-amber-100 text-amber-800">📂 Import Excel</button>
       </div>
 
-      <button onclick="selesaiUjian()" class="w-full text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--tinta)">
-        Selesai &amp; Tutup
-      </button>
+      <div class="p-6">
+        <!-- FORM SISWA TAHFIDZ -->
+        <form id="formInputTahfidz" class="space-y-3">
+          <p class="text-xs text-slate-500 mb-2">Input Siswa Tahfidz (Per Kelas & Wali Kelas).</p>
+          <input type="text" id="nisnTahfidz" required placeholder="NISN Santri" class="w-full px-3 py-2 border rounded-lg text-xs">
+          <input type="text" id="namaTahfidz" required placeholder="Nama Lengkap Santri" class="w-full px-3 py-2 border rounded-lg text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <select id="kelasTahfidz" required class="w-full px-3 py-2 border rounded-lg text-xs">
+              <option value="Kelas 1 A">Kelas 1 A</option>
+              <option value="Kelas 1 B">Kelas 1 B</option>
+              <option value="Kelas 2 A">Kelas 2 A</option>
+              <option value="Kelas 2 B">Kelas 2 B</option>
+              <option value="Kelas 3 Putra">Kelas 3 Putra</option>
+              <option value="Kelas 3 Putri">Kelas 3 Putri</option>
+              <option value="Kelas 4 A">Kelas 4 A</option>
+              <option value="Kelas 4 B">Kelas 4 B</option>
+              <option value="Kelas 5 Putra">Kelas 5 Putra</option>
+              <option value="Kelas 5 Putri">Kelas 5 Putri</option>
+              <option value="Kelas 6 A">Kelas 6 A</option>
+            </select>
+            <input type="text" id="waliKelasTahfidz" required placeholder="Nama Ustadz / Guru Pengampu" class="w-full px-3 py-2 border rounded-lg text-xs">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs">Simpan Siswa Tahfidz</button>
+        </form>
+
+        <!-- FORM SISWA MENGAJI -->
+        <form id="formInputMengaji" class="space-y-3 hidden">
+          <p class="text-xs text-slate-500 mb-2">Input Siswa Mengaji (Per Kelompok & Sesi).</p>
+          <input type="text" id="nisnMengaji" required placeholder="NISN Santri" class="w-full px-3 py-2 border rounded-lg text-xs">
+          <input type="text" id="namaMengaji" required placeholder="Nama Lengkap Santri" class="w-full px-3 py-2 border rounded-lg text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <input type="text" id="kelompokMengaji" required placeholder="Nama Kelompok Mengaji" class="w-full px-3 py-2 border rounded-lg text-xs">
+            <select id="sesiMengaji" required class="w-full px-3 py-2 border rounded-lg text-xs">
+              <option value="Sesi 1">Sesi 1</option>
+              <option value="Sesi 2">Sesi 2</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs">Simpan Siswa Mengaji</button>
+        </form>
+
+        <!-- FORM GURU BARU -->
+        <form id="formInputGuru" class="space-y-3 hidden">
+          <p class="text-xs text-slate-500 mb-2">Pendaftaran akun Guru baru untuk login.</p>
+          <input type="text" id="namaGuruBaru" required placeholder="Nama Lengkap Guru (Sama seperti Guru Pengampu)" class="w-full px-3 py-2 border rounded-lg text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <input type="text" id="usernameGuruBaru" required placeholder="Username Login" class="w-full px-3 py-2 border rounded-lg text-xs">
+            <input type="password" id="passwordGuruBaru" required placeholder="Password / PIN" class="w-full px-3 py-2 border rounded-lg text-xs">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs">Simpan Data Guru</button>
+        </form>
+
+        <!-- IMPORT EXCEL -->
+        <div id="formImportExcel" class="space-y-4 hidden">
+          <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+            <strong>Petunjuk Format Excel:</strong><br>
+            • <b>Siswa Tahfidz:</b> Kolom A (NISN), Kolom B (Nama), Kolom C (Kelas), Kolom D (Ustadz Pengampu)<br>
+            • <b>Siswa Mengaji:</b> Kolom A (NISN), Kolom B (Nama), Kolom C (Kelompok), Kolom D (Sesi)
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1">Target Penyimpanan</label>
+            <select id="tipeImport" class="w-full px-3 py-2 border rounded-lg text-xs">
+              <option value="tahfidz">Siswa Tahfidz</option>
+              <option value="mengaji">Siswa Mengaji</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1">Pilih File Excel (.xlsx, .xls, .csv)</label>
+            <input type="file" id="fileExcel" accept=".xlsx, .xls, .csv" class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-50">
+          </div>
+
+          <button onclick="prosesImportExcel()" id="btnImport" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2.5 rounded-lg text-xs transition">
+            🚀 Upload & Import Data
+          </button>
+        </div>
+
+      </div>
     </div>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywQCsoNaNSpM7mgf9VtcOlDEAVhXeQBTMk5DMVmEERceiCEJgXxqzKThEC5rwaHA70OQ/exec";
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) window.location.href = "index.html";
+    document.addEventListener("DOMContentLoaded", () => {
+      const rawUser = localStorage.getItem('currentUser');
+      if (!rawUser) { window.location.href = "index.html"; return; }
+      const user = JSON.parse(rawUser);
+      if (user.role !== 'Admin') { window.location.href = "index.html"; return; }
 
-    document.getElementById('namaSiswa').innerText = `Selamat Datang, ${currentUser.nama || currentUser.username}`;
-    document.getElementById('infoKelas').innerText = `Kelas: ${currentUser.kelas || '-'} | NISN: ${currentUser.username}`;
+      document.getElementById('namaAdmin').innerText = user.nama || user.username || "Admin";
 
-    let activeTab = 'akademik';
-    let daftarSoalGlobal = [];
-    let daftarSoalPsikologiGlobal = [];
-    let daftarMapelGlobal = [];
+      updateClock();
+      setInterval(updateClock, 1000);
+      loadRealtimeStats();
+    });
 
-    let currentIdUjian = ""; // ID Ujian yang aktif ditampilkan saat ini
-    const validatedTokens = {}; // key: "JenisUjian|Mapel" -> idUjian, token yang sudah divalidasi di sesi ini
-    const soalCache = {};       // idUjian -> daftar soal (agar tidak fetch ulang tiap ganti pelajaran)
-
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    function tokenKey(jenis, mapel) {
-      return jenis + '|' + (mapel || '');
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('jamText').innerText = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
+      const opsiMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('tanggalText').innerText = now.toLocaleDateString('id-ID', opsiMasehi);
     }
 
-    function switchTab(tab) {
-      activeTab = tab;
-      const btnAkademik = document.getElementById('tabAkademik');
-      const btnPsikologi = document.getElementById('tabPsikologi');
-
-      if (tab === 'akademik') {
-        btnAkademik.setAttribute('style', 'background:var(--madu); border-color:var(--madu); color:#3A2405; box-shadow:0 6px 16px -8px rgba(239,157,47,.6)');
-        btnPsikologi.setAttribute('style', 'border-color:var(--garis); color:#5B6B57');
-      } else {
-        btnPsikologi.setAttribute('style', 'background:var(--ungu); border-color:var(--ungu); color:#fff; box-shadow:0 6px 16px -8px rgba(110,98,217,.6)');
-        btnAkademik.setAttribute('style', 'border-color:var(--garis); color:#5B6B57; background:#fff');
-      }
-
-      updateGateVisibility();
-    }
-
-    // Menentukan apakah harus menampilkan gerbang token atau langsung ke section,
-    // berdasarkan kombinasi jenis ujian + mata pelajaran yang sudah pernah divalidasi di sesi ini.
-    function updateGateVisibility() {
-      const mapelPicker = document.getElementById('mapelPicker');
-
-      if (activeTab === 'psikologi') {
-        mapelPicker.classList.add('hidden');
-        const key = tokenKey('Psikologi', '');
-        if (validatedTokens[key]) {
-          showSection('psikologi', validatedTokens[key]);
-        } else {
-          showGate();
-        }
-      } else {
-        mapelPicker.classList.remove('hidden');
-        if (daftarMapelGlobal.length === 0) loadDaftarMapel();
-
-        const mapelTerpilih = document.getElementById('selectMapel').value;
-        const key = tokenKey('Akademik', mapelTerpilih);
-        if (mapelTerpilih && validatedTokens[key]) {
-          showSection('akademik', validatedTokens[key]);
-        } else {
-          showGate();
-        }
-      }
-    }
-
-    function showGate() {
-      document.getElementById('boxToken').classList.remove('hidden');
-      document.getElementById('sectionAkademik').classList.add('hidden');
-      document.getElementById('sectionPsikologi').classList.add('hidden');
-    }
-
-    function showSection(tab, idUjian) {
-      document.getElementById('boxToken').classList.add('hidden');
-      currentIdUjian = idUjian;
-
-      if (tab === 'akademik') {
-        document.getElementById('sectionAkademik').classList.remove('hidden');
-        document.getElementById('sectionPsikologi').classList.add('hidden');
-        document.getElementById('labelMapelAktif').innerText = 'Mata Pelajaran: ' + (document.getElementById('selectMapel').value || '-');
-        loadSoalAkademik(idUjian);
-      } else {
-        document.getElementById('sectionPsikologi').classList.remove('hidden');
-        document.getElementById('sectionAkademik').classList.add('hidden');
-        if (daftarSoalPsikologiGlobal.length === 0) loadSoalPsikologi();
-      }
-    }
-
-    function gantiMapel() {
-      document.getElementById('selectMapel').value = "";
-      document.getElementById('inputToken').value = "";
-      updateGateVisibility();
-    }
-
-    async function loadDaftarMapel() {
+    async function loadRealtimeStats() {
       try {
         const response = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "get_daftar_mapel", kelas: currentUser.kelas || "-" })
+          body: JSON.stringify({ action: "get_admin_stats" })
         });
-        const res = await response.json();
-        if (res.success) {
-          daftarMapelGlobal = res.data || [];
-          const select = document.getElementById('selectMapel');
-          select.innerHTML = '<option value="">-- Pilih Mata Pelajaran --</option>' +
-            daftarMapelGlobal.map(m => `<option value="${m}">${m}</option>`).join('');
+        const result = await response.json();
+        if (result.success) {
+          document.getElementById('statSiswa').innerText = result.totalSiswa || 0;
+          document.getElementById('statGuru').innerText = result.totalGuru || 0;
+          document.getElementById('statSetoran').innerText = result.setoranHariIni || 0;
         }
-      } catch (err) {
-        console.error("Gagal memuat daftar mata pelajaran", err);
-      }
+      } catch (err) {}
     }
 
-    async function validasiToken() {
-      const inputToken = document.getElementById('inputToken').value.trim();
-      const mapelTerpilih = activeTab === 'akademik' ? document.getElementById('selectMapel').value : "";
+    // DOWNLOAD REKAP LENGKAP
+    async function downloadRekapLengkap(mode) {
+      let tipe = 'tahfidz';
+      let filterKey = '';
 
-      if (activeTab === 'akademik' && !mapelTerpilih) return alert("Silakan pilih mata pelajaran terlebih dahulu!");
-      if (!inputToken) return alert("Silakan masukkan kode token!");
+      if (mode === 'anak') {
+        tipe = document.getElementById('tipeAnak').value;
+        filterKey = document.getElementById('keyAnak').value;
+        if (!filterKey) { alert("Masukkan NISN atau Nama Santri terlebih dahulu!"); return; }
+      } else if (mode === 'kelas') {
+        tipe = 'tahfidz';
+        filterKey = document.getElementById('keyKelas').value;
+      } else if (mode === 'kelompok') {
+        tipe = 'mengaji';
+        filterKey = document.getElementById('keyKelompok').value;
+        if (!filterKey) { alert("Masukkan Nama Kelompok terlebih dahulu!"); return; }
+      }
+
+      alert("Memproses rekap data... Mohon tunggu.");
 
       try {
-        const response = await fetch(SCRIPT_URL, {
+        const res = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "verifikasiToken",
-            token: inputToken,
-            jenisUjian: activeTab === 'akademik' ? 'Akademik' : 'Psikologi',
-            kelas: currentUser.kelas || "-",
-            mapel: mapelTerpilih
-          })
+          body: JSON.stringify({ action: "get_rekap_lengkap", mode: mode, tipe: tipe, filterKey: filterKey })
         });
+        const result = await res.json();
 
-        const res = await response.json();
-        if (res.success) {
-          const key = tokenKey(activeTab === 'akademik' ? 'Akademik' : 'Psikologi', mapelTerpilih);
-          validatedTokens[key] = res.idUjian;
-          showSection(activeTab, res.idUjian);
+        if (result.success && result.data.length > 0) {
+          const wsData = [result.headers, ...result.data];
+          const ws = XLSX.utils.aoa_to_sheet(wsData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Rekap Mutabaah");
+
+          const fileName = `Rekap_${mode.toUpperCase()}_${filterKey || 'Semua'}_SDUM.xlsx`;
+          XLSX.writeFile(wb, fileName);
         } else {
-          alert(res.message);
+          alert("Data setoran tidak ditemukan.");
         }
       } catch (err) {
-        alert("Gagal memverifikasi token.");
-      }
     }
 
-    async function loadSoalAkademik(idUjian) {
-      if (soalCache[idUjian]) {
-        daftarSoalGlobal = soalCache[idUjian];
-        renderSoal(daftarSoalGlobal);
+    // DOWNLOAD REKAP UJIAN & PSIKOLOGI (per Anak / per Kelas)
+    async function downloadRekapBaru(tipe, mode, elId) {
+      const filterKey = document.getElementById(elId).value.trim();
+      if (mode === 'anak' && !filterKey) {
+        alert("Masukkan NISN atau Nama Siswa terlebih dahulu!");
         return;
       }
+
+      alert("Memproses rekap data... Mohon tunggu.");
+
       try {
-        const response = await fetch(SCRIPT_URL, {
+        const res = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "getSoalSiswa",
-            idUjian: idUjian
-          })
+          body: JSON.stringify({ action: "get_rekap_lengkap", mode: mode, tipe: tipe, filterKey: filterKey })
         });
-        const res = await response.json();
-        if (res.success && res.data.length > 0) {
-          soalCache[idUjian] = res.data;
-          daftarSoalGlobal = res.data;
-          renderSoal(res.data);
+        const result = await res.json();
+
+        if (result.success && result.data.length > 0) {
+          const wsData = [result.headers, ...result.data];
+          const ws = XLSX.utils.aoa_to_sheet(wsData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, tipe === 'ujian' ? 'Rekap Ujian' : 'Rekap Psikologi');
+
+          const fileName = `Rekap_${tipe.toUpperCase()}_${mode.toUpperCase()}_${filterKey || 'Semua'}_SDUM.xlsx`;
+          XLSX.writeFile(wb, fileName);
         } else {
-          document.getElementById('containerSoal').innerHTML = `<p class="text-center py-8 text-sm" style="color:#8A9684">Tidak ada soal untuk token ini.</p>`;
+          alert("Data tidak ditemukan.");
         }
       } catch (err) {
-        document.getElementById('containerSoal').innerHTML = `<p class="text-center py-8 text-sm" style="color:var(--karang)">Gagal memuat soal.</p>`;
+        alert("Gagal mengunduh rekap data.");
       }
     }
 
-    function renderSoal(soalList) {
-      document.getElementById('containerSoal').innerHTML = soalList.map((item, index) => `
-        <div class="pop p-4 rounded-2xl space-y-3" style="background:var(--kabut); border:1px solid var(--garis)">
-          <p class="font-semibold text-sm" style="color:var(--tinta)">${index + 1}. ${item.pertanyaan}</p>
-          <div class="space-y-2">
-            ${Object.keys(item.opsi).map(key => `
-              <label class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition bg-white border-2 [&:has(input:checked)]:border-[color:var(--madu)]" style="border-color:var(--garis)">
-                <input type="radio" name="soal_${item.idSoal}" value="${key}" required class="peer sr-only">
-                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-bold peer-checked:text-white transition" style="border-color:#C9D3C1; color:#5B6B57; background: transparent;">${key}</span>
-                <span class="text-sm" style="color:var(--tinta)">${item.opsi[key]}</span>
-              </label>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
-      // Terapkan warna terisi untuk pilihan yang dicentang (karena CSS peer-checked butuh util khusus Tailwind arbitrary)
-      document.querySelectorAll('#containerSoal input[type=radio]').forEach(r => {
-        r.addEventListener('change', () => {
-          document.querySelectorAll(`input[name="${r.name}"]`).forEach(sib => {
-            const badge = sib.nextElementSibling;
-            if (sib.checked) { badge.style.background = 'var(--madu)'; badge.style.borderColor = 'var(--madu)'; badge.style.color = '#3A2405'; }
-            else { badge.style.background = 'transparent'; badge.style.borderColor = '#C9D3C1'; badge.style.color = '#5B6B57'; }
-          });
-        });
-      });
+
+    function bukaModalInput() { document.getElementById('modalInput').classList.remove('hidden'); }
+    function tutupModalInput() { document.getElementById('modalInput').classList.add('hidden'); }
+
+    function pilihTabModal(tab) {
+      const fT = document.getElementById('formInputTahfidz');
+      const fM = document.getElementById('formInputMengaji');
+      const fG = document.getElementById('formInputGuru');
+      const fI = document.getElementById('formImportExcel');
+
+      const bT = document.getElementById('btnTabTahfidz');
+      const bM = document.getElementById('btnTabMengaji');
+      const bG = document.getElementById('btnTabGuru');
+      const bI = document.getElementById('btnTabImport');
+
+      [fT, fM, fG, fI].forEach(el => el.classList.add('hidden'));
+      [bT, bM, bG, bI].forEach(el => el.className = "w-1/4 py-2");
+
+      if (tab === 'tahfidz') { fT.classList.remove('hidden'); bT.className = "w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold"; }
+      else if (tab === 'mengaji') { fM.classList.remove('hidden'); bM.className = "w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold"; }
+      else if (tab === 'guru') { fG.classList.remove('hidden'); bG.className = "w-1/4 py-2 bg-white text-emerald-700 rounded-lg shadow font-bold"; }
+      else if (tab === 'import') { fI.classList.remove('hidden'); bI.className = "w-1/4 py-2 bg-amber-200 text-amber-900 rounded-lg shadow font-bold"; }
     }
 
-    async function loadSoalPsikologi() {
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "getSoalPsikologi" })
-        });
-        const res = await response.json();
-        if (res.success && res.data.length > 0) {
-          daftarSoalPsikologiGlobal = res.data;
-          renderSoalPsikologi(res.data);
-        }
-      } catch (err) {
-        document.getElementById('containerPsikologi').innerHTML = `<p class="text-center py-8 text-sm" style="color:var(--karang)">Gagal memuat soal psikologi.</p>`;
-      }
-    }
-
-    function renderSoalPsikologi(soalList) {
-      document.getElementById('containerPsikologi').innerHTML = soalList.map((item, index) => `
-        <div class="pop p-4 rounded-2xl space-y-3" style="background:#6E62D90d; border:1px solid #6E62D933">
-          <p class="font-semibold text-sm" style="color:var(--tinta)">${index + 1}. ${item.pertanyaan}</p>
-          <div class="space-y-2">
-            ${item.opsi.map((op, i) => `
-              <label class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition bg-white border-2" style="border-color:var(--garis)">
-                <input type="radio" name="psiko_${item.idSoal}" value="${op.tipe}" required class="peer sr-only">
-                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2" style="border-color:#C9C4EE;"></span>
-                <span class="text-sm" style="color:var(--tinta)">${op.teks}</span>
-              </label>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
-      document.querySelectorAll('#containerPsikologi input[type=radio]').forEach(r => {
-        r.addEventListener('change', () => {
-          document.querySelectorAll(`input[name="${r.name}"]`).forEach(sib => {
-            const dot = sib.nextElementSibling;
-            const label = sib.closest('label');
-            if (sib.checked) { dot.style.background = 'var(--ungu)'; dot.style.borderColor = 'var(--ungu)'; label.style.borderColor = 'var(--ungu)'; }
-            else { dot.style.background = 'transparent'; dot.style.borderColor = '#C9C4EE'; label.style.borderColor = 'var(--garis)'; }
-          });
-        });
-      });
-    }
-
-    // SUBMIT UJIAN AKADEMIK
-    document.getElementById('formUjian').addEventListener('submit', async function(e) {
+    // FORM HANDLERS
+    document.getElementById('formInputTahfidz').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if(!confirm("Apakah Anda yakin ingin mengirim jawaban ini?")) return;
-
-      const btn = document.getElementById('btnSubmitAkademik');
-      btn.innerText = "Mengirim...";
-      btn.disabled = true;
-
-      const jawabanSiswa = {};
-      daftarSoalGlobal.forEach(item => {
-        const selected = document.querySelector(`input[name="soal_${item.idSoal}"]:checked`);
-        if (selected) jawabanSiswa[item.idSoal] = selected.value;
-      });
-
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "submitUjian",
-            nisn: currentUser.username,
-            nama: currentUser.nama || currentUser.username,
-            kelas: currentUser.kelas || "-",
-            jawabanSiswa: jawabanSiswa
-          })
-        });
-
-        const res = await response.json();
-        if (res.success) {
-          document.getElementById('txtNilaiAkhir').innerText = res.nilai;
-          document.getElementById('txtBenar').innerText = res.benar;
-          document.getElementById('txtSalah').innerText = res.salah;
-          document.getElementById('modalNilai').classList.remove('hidden');
-        }
-      } catch (err) {
-        alert("Terjadi kesalahan pengiriman.");
-      } finally {
-        btn.innerText = "Kirim Jawaban Ujian";
-        btn.disabled = false;
-      }
+      await kirimData({
+        action: "tambah_siswa_tahfidz",
+        nisn: document.getElementById('nisnTahfidz').value,
+        nama: document.getElementById('namaTahfidz').value,
+        kelas: document.getElementById('kelasTahfidz').value,
+        waliKelas: document.getElementById('waliKelasTahfidz').value
+      }, e.target);
     });
 
-    // SUBMIT PSIKOLOGI
-    document.getElementById('formPsikologi').addEventListener('submit', async function(e) {
+    document.getElementById('formInputMengaji').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('btnSubmitPsikologi');
-      btn.innerText = "Menganalisis...";
-      btn.disabled = true;
-
-      const jawabanPsikologi = {};
-      daftarSoalPsikologiGlobal.forEach(item => {
-        const selected = document.querySelector(`input[name="psiko_${item.idSoal}"]:checked`);
-        if (selected) jawabanPsikologi[item.idSoal] = selected.value;
-      });
-
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "submitPsikologi",
-            nisn: currentUser.username,
-            nama: currentUser.nama || currentUser.username,
-            kelas: currentUser.kelas || "-",
-            jawaban: jawabanPsikologi
-          })
-        });
-
-        const res = await response.json();
-        if (res.success && res.hasil) {
-          renderHasilPsikologi(res.hasil);
-          document.getElementById('modalHasilPsikologi').classList.remove('hidden');
-        }
-      } catch (err) {
-        alert("Gagal memproses analisis.");
-      } finally {
-        btn.innerText = "Proses & Lihat Analisis Saya";
-        btn.disabled = false;
-      }
+      await kirimData({
+        action: "tambah_siswa_mengaji",
+        nisn: document.getElementById('nisnMengaji').value,
+        nama: document.getElementById('namaMengaji').value,
+        kelompok: document.getElementById('kelompokMengaji').value,
+        sesi: document.getElementById('sesiMengaji').value
+      }, e.target);
     });
 
-    // Render satu atau dua blok hasil (Minat/Bakat & Kepribadian) ke dalam modal
-    function renderHasilPsikologi(hasil) {
-      const blokList = [
-        { data: hasil.minatBakat, label: '🎯 Minat, Bakat & Gaya Belajar', warna: '#EF9D2F', warnaTeks: '#9A5E10', warnaBg: '#EF9D2F1f' },
-        { data: hasil.kepribadian, label: '🧭 Kepribadian', warna: '#6E62D9', warnaTeks: '#4A3FA0', warnaBg: '#6E62D91f' }
-      ].filter(b => b.data);
+    document.getElementById('formInputGuru').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await kirimData({
+        action: "tambah_guru",
+        nama: document.getElementById('namaGuruBaru').value,
+        username: document.getElementById('usernameGuruBaru').value,
+        password: document.getElementById('passwordGuruBaru').value
+      }, e.target);
+    });
 
-      document.getElementById('containerHasilPsikologi').innerHTML = blokList.map(b => `
-        <div class="pb-5 last:pb-0" style="border-bottom:1px solid var(--garis)">
-          <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider" style="background:${b.warnaBg}; color:${b.warnaTeks}">${b.label}</span>
-          <h3 class="f-display text-lg font-semibold mt-2 mb-3" style="color:var(--tinta)">${b.data.judul}</h3>
+    // FUNGSI IMPORT EXCEL (OPTIMIZED BATCH IMPORT)
+    function prosesImportExcel() {
+      const fileInput = document.getElementById('fileExcel');
+      const tipe = document.getElementById('tipeImport').value;
 
-          <div class="space-y-3">
-            <div class="p-3 rounded-xl" style="background:var(--kabut); border:1px solid var(--garis)">
-              <h4 class="font-bold mb-1 text-xs" style="color:var(--tinta)">🔍 Analisis:</h4>
-              <p class="text-xs" style="color:#425540">${b.data.analisis}</p>
-            </div>
+      if (!fileInput.files.length) {
+        alert("Silakan pilih file Excel terlebih dahulu!");
+        return;
+      }
 
-            ${b.data.kelebihan ? `
-            <div class="p-3 rounded-xl" style="background:#0F6B4F0d; border:1px solid #0F6B4F33">
-              <h4 class="font-bold mb-1 text-xs" style="color:var(--daun-dark)">✅ Kelebihan:</h4>
-              <ul class="list-disc list-inside text-xs" style="color:#245A45">
-                ${b.data.kelebihan.map(k => `<li>${k}</li>`).join('')}
-              </ul>
-            </div>` : ''}
+      const file = fileInput.files[0];
+      const reader = new FileReader();
 
-            ${b.data.kekurangan ? `
-            <div class="p-3 rounded-xl" style="background:#E5604A0d; border:1px solid #E5604A33">
-              <h4 class="font-bold mb-1 text-xs" style="color:#B3402D">⚠️ Perlu Diperhatikan:</h4>
-              <ul class="list-disc list-inside text-xs" style="color:#B3402D">
-                ${b.data.kekurangan.map(k => `<li>${k}</li>`).join('')}
-              </ul>
-            </div>` : ''}
+      reader.onload = async function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            <div class="p-3 rounded-xl bg-white" style="border:1px solid var(--garis)">
-              <h4 class="font-bold mb-1 text-xs" style="color:var(--tinta)">💡 Untuk Guru:</h4>
-              <p class="text-xs mb-2" style="color:#425540">${b.data.saranGuru}</p>
-              <h4 class="font-bold mb-1 text-xs" style="color:var(--tinta)">🏡 Untuk Orang Tua:</h4>
-              <p class="text-xs" style="color:#425540">${b.data.saranOrangTua}</p>
-            </div>
-          </div>
-        </div>
-      `).join('');
+          // Abaikan baris header (baris pertama)
+          const rows = jsonData.slice(1).filter(r => r.length > 0 && r[0]);
+
+          if (rows.length === 0) {
+            alert("File Excel kosong atau format tidak sesuai!");
+            return;
+          }
+
+          // Petakan data ke struktur JSON Batch
+          const formattedBatch = rows.map(r => ({
+            nisn: String(r[0] || '').trim(),
+            nama: String(r[1] || '').trim(),
+            kelasOrKelompok: String(r[2] || '').trim(),
+            waliOrSesi: String(r[3] || '').trim()
+          }));
+
+          const actionTarget = tipe === 'tahfidz' ? "batch_tambah_siswa_tahfidz" : "batch_tambah_siswa_mengaji";
+
+          alert(`Mengimpor ${formattedBatch.length} data sekaligus... Mohon tunggu.`);
+
+          // Kirim dalam 1x HTTP POST Request (sangat cepat)
+          const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: actionTarget,
+              data: formattedBatch
+            })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            alert("Alhamdulillah! " + result.message);
+            fileInput.value = '';
+            tutupModalInput();
+            loadRealtimeStats();
+          } else {
+            alert("Gagal mengimpor: " + result.message);
+          }
+
+        } catch (err) {
+          alert("Gagal memproses file Excel: " + err.message);
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
     }
 
-    function selesaiUjian() {
-      document.getElementById('modalNilai').classList.add('hidden');
-      document.getElementById('modalHasilPsikologi').classList.add('hidden');
-      gantiMapel();
+    async function kirimData(payload, formEl) {
+      try {
+        const res = await fetch(SCRIPT_URL, { 
+          method: 'POST', 
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload) 
+        });
+        const result = await res.json();
+        if (result.success) {
+          alert("Alhamdulillah! " + result.message);
+          if (formEl) formEl.reset();
+          tutupModalInput();
+          loadRealtimeStats();
+        } else { alert("Gagal: " + result.message); }
+      } catch (err) { alert("Kesalahan koneksi."); }
     }
 
-    function logout() {
-      localStorage.removeItem('currentUser');
-      window.location.href = "index.html";
-    }
-
-    // Inisialisasi tampilan awal (tab Akademik + muat daftar mata pelajaran)
-    switchTab('akademik');
+    function logout() { localStorage.removeItem('currentUser'); window.location.href = "index.html"; }
   </script>
 </body>
 </html>
