@@ -122,76 +122,6 @@
       </div>
     </section>
 
-    <!-- REKAP UJIAN & ASESMEN PSIKOLOGI -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-      <h3 class="text-md font-bold text-slate-800 mb-1">📥 Download Rekap Ujian &amp; Asesmen Psikologi</h3>
-      <p class="text-xs text-slate-500 mb-4">Unduh hasil ujian akademik atau hasil tes kepribadian/minat-bakat, per siswa atau per kelas.</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- 4. Rekap Ujian Per Anak -->
-        <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/50 space-y-3">
-          <h4 class="font-bold text-orange-900 text-xs">👤 Rekap Nilai Ujian Per Siswa</h4>
-          <input type="text" id="keyUjianAnak" placeholder="Ketik NISN / Nama Siswa" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
-          <button onclick="downloadRekapBaru('ujian','anak','keyUjianAnak')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs transition">
-            📊 Download Nilai Ujian (Anak)
-          </button>
-        </div>
-
-        <!-- 5. Rekap Ujian Per Kelas -->
-        <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/50 space-y-3">
-          <h4 class="font-bold text-orange-900 text-xs">🏫 Rekap Nilai Ujian Per Kelas</h4>
-          <select id="keyUjianKelas" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
-            <option value="">-- Semua Kelas --</option>
-            <option value="Kelas 1 A">Kelas 1 A</option>
-            <option value="Kelas 1 B">Kelas 1 B</option>
-            <option value="Kelas 2 A">Kelas 2 A</option>
-            <option value="Kelas 2 B">Kelas 2 B</option>
-            <option value="Kelas 3 Putra">Kelas 3 Putra</option>
-            <option value="Kelas 3 Putri">Kelas 3 Putri</option>
-            <option value="Kelas 4 A">Kelas 4 A</option>
-            <option value="Kelas 4 B">Kelas 4 B</option>
-            <option value="Kelas 5 Putra">Kelas 5 Putra</option>
-            <option value="Kelas 5 Putri">Kelas 5 Putri</option>
-            <option value="Kelas 6 A">Kelas 6 A</option>
-          </select>
-          <button onclick="downloadRekapBaru('ujian','kelas','keyUjianKelas')" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-xs transition">
-            📊 Download Nilai Ujian (Kelas)
-          </button>
-        </div>
-
-        <!-- 6. Rekap Psikologi Per Anak -->
-        <div class="p-4 rounded-xl border border-violet-200 bg-violet-50/50 space-y-3">
-          <h4 class="font-bold text-violet-900 text-xs">👤 Rekap Asesmen Psikologi Per Siswa</h4>
-          <input type="text" id="keyPsikologiAnak" placeholder="Ketik NISN / Nama Siswa" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
-          <button onclick="downloadRekapBaru('psikologi','anak','keyPsikologiAnak')" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 rounded-lg text-xs transition">
-            📊 Download Hasil Psikologi (Anak)
-          </button>
-        </div>
-
-        <!-- 7. Rekap Psikologi Per Kelas -->
-        <div class="p-4 rounded-xl border border-violet-200 bg-violet-50/50 space-y-3">
-          <h4 class="font-bold text-violet-900 text-xs">🏫 Rekap Asesmen Psikologi Per Kelas</h4>
-          <select id="keyPsikologiKelas" class="w-full px-3 py-1.5 border rounded-lg text-xs bg-white">
-            <option value="">-- Semua Kelas --</option>
-            <option value="Kelas 1 A">Kelas 1 A</option>
-            <option value="Kelas 1 B">Kelas 1 B</option>
-            <option value="Kelas 2 A">Kelas 2 A</option>
-            <option value="Kelas 2 B">Kelas 2 B</option>
-            <option value="Kelas 3 Putra">Kelas 3 Putra</option>
-            <option value="Kelas 3 Putri">Kelas 3 Putri</option>
-            <option value="Kelas 4 A">Kelas 4 A</option>
-            <option value="Kelas 4 B">Kelas 4 B</option>
-            <option value="Kelas 5 Putra">Kelas 5 Putra</option>
-            <option value="Kelas 5 Putri">Kelas 5 Putri</option>
-            <option value="Kelas 6 A">Kelas 6 A</option>
-          </select>
-          <button onclick="downloadRekapBaru('psikologi','kelas','keyPsikologiKelas')" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 rounded-lg text-xs transition">
-            📊 Download Hasil Psikologi (Kelas)
-          </button>
-        </div>
-      </div>
-    </section>
-
     <!-- Navigasi Halaman -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
@@ -311,7 +241,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywQCsoNaNSpM7mgf9VtcOlDEAVhXeQBTMk5DMVmEERceiCEJgXxqzKThEC5rwaHA70OQ/exec";
 
     document.addEventListener("DOMContentLoaded", () => {
       const rawUser = localStorage.getItem('currentUser');
@@ -389,42 +319,9 @@
           alert("Data setoran tidak ditemukan.");
         }
       } catch (err) {
-    }
-
-    // DOWNLOAD REKAP UJIAN & PSIKOLOGI (per Anak / per Kelas)
-    async function downloadRekapBaru(tipe, mode, elId) {
-      const filterKey = document.getElementById(elId).value.trim();
-      if (mode === 'anak' && !filterKey) {
-        alert("Masukkan NISN atau Nama Siswa terlebih dahulu!");
-        return;
-      }
-
-      alert("Memproses rekap data... Mohon tunggu.");
-
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "get_rekap_lengkap", mode: mode, tipe: tipe, filterKey: filterKey })
-        });
-        const result = await res.json();
-
-        if (result.success && result.data.length > 0) {
-          const wsData = [result.headers, ...result.data];
-          const ws = XLSX.utils.aoa_to_sheet(wsData);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, tipe === 'ujian' ? 'Rekap Ujian' : 'Rekap Psikologi');
-
-          const fileName = `Rekap_${tipe.toUpperCase()}_${mode.toUpperCase()}_${filterKey || 'Semua'}_SDUM.xlsx`;
-          XLSX.writeFile(wb, fileName);
-        } else {
-          alert("Data tidak ditemukan.");
-        }
-      } catch (err) {
         alert("Gagal mengunduh rekap data.");
       }
     }
-
 
     function bukaModalInput() { document.getElementById('modalInput').classList.remove('hidden'); }
     function tutupModalInput() { document.getElementById('modalInput').classList.add('hidden'); }
