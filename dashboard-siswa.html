@@ -78,6 +78,13 @@
         <p class="text-xs max-w-sm mx-auto mt-1" style="color:#5B6B57">Minta kode token kepada pengawas atau guru pengampu untuk membuka jalur belajar hari ini.</p>
       </div>
 
+      <div id="mapelPicker" class="max-w-xs mx-auto text-left space-y-1 hidden">
+        <label class="text-xs font-semibold" style="color:#5B6B57">Pilih Mata Pelajaran</label>
+        <select id="selectMapel" onchange="updateGateVisibility()" class="w-full px-3 py-2.5 rounded-xl border-2 outline-none text-sm" style="border-color:var(--garis)">
+          <option value="">-- Pilih Mata Pelajaran --</option>
+        </select>
+      </div>
+
       <div class="flex max-w-xs mx-auto gap-2">
         <input type="text" id="inputToken" placeholder="MIS. MATH123"
           class="f-mono w-full text-center uppercase tracking-widest text-sm font-bold px-4 py-2.5 rounded-xl outline-none border-2 focus:ring-2"
@@ -91,8 +98,14 @@
     <!-- SECTION UJIAN AKADEMIK -->
     <div id="sectionAkademik" class="card pop p-6 space-y-6 hidden">
       <div class="pb-4 flex justify-between items-center" style="border-bottom:1px solid var(--garis)">
-        <h2 class="f-display text-base md:text-lg font-semibold" style="color:var(--tinta)">Soal Latihan &amp; Assessment Harian</h2>
-        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#EF9D2F1f; color:#9A5E10">Akademik</span>
+        <div>
+          <h2 class="f-display text-base md:text-lg font-semibold" style="color:var(--tinta)">Soal Latihan &amp; Assessment Harian</h2>
+          <p id="labelMapelAktif" class="text-xs mt-0.5" style="color:#8A9684"></p>
+        </div>
+        <div class="flex flex-col items-end gap-1.5">
+          <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#EF9D2F1f; color:#9A5E10">Akademik</span>
+          <button type="button" onclick="gantiMapel()" class="text-[11px] font-semibold underline" style="color:#5B6B57">🔁 Ganti Pelajaran</button>
+        </div>
       </div>
 
       <form id="formUjian" class="space-y-5">
@@ -180,13 +193,19 @@
     document.getElementById('infoKelas').innerText = `Kelas: ${currentUser.kelas || '-'} | NISN: ${currentUser.username}`;
 
     let activeTab = 'akademik';
-    let isTokenValid = false;
     let daftarSoalGlobal = [];
     let daftarSoalPsikologiGlobal = [];
+    let daftarMapelGlobal = [];
 
-    let currentIdUjian = ""; // Variabel penampung ID Ujian yang aktif
+    let currentIdUjian = ""; // ID Ujian yang aktif ditampilkan saat ini
+    const validatedTokens = {}; // key: "JenisUjian|Mapel" -> idUjian, token yang sudah divalidasi di sesi ini
+    const soalCache = {};       // idUjian -> daftar soal (agar tidak fetch ulang tiap ganti pelajaran)
 
     document.addEventListener('contextmenu', e => e.preventDefault());
+
+    function tokenKey(jenis, mapel) {
+      return jenis + '|' + (mapel || '');
+    }
 
     function switchTab(tab) {
       activeTab = tab;
@@ -201,18 +220,88 @@
         btnAkademik.setAttribute('style', 'border-color:var(--garis); color:#5B6B57; background:#fff');
       }
 
-      // Reset tampilan jika token belum divalidasi
-      if (!isTokenValid) {
-        document.getElementById('boxToken').classList.remove('hidden');
-        document.getElementById('sectionAkademik').classList.add('hidden');
-        document.getElementById('sectionPsikologi').classList.add('hidden');
+      updateGateVisibility();
+    }
+
+    // Menentukan apakah harus menampilkan gerbang token atau langsung ke section,
+    // berdasarkan kombinasi jenis ujian + mata pelajaran yang sudah pernah divalidasi di sesi ini.
+    function updateGateVisibility() {
+      const mapelPicker = document.getElementById('mapelPicker');
+
+      if (activeTab === 'psikologi') {
+        mapelPicker.classList.add('hidden');
+        const key = tokenKey('Psikologi', '');
+        if (validatedTokens[key]) {
+          showSection('psikologi', validatedTokens[key]);
+        } else {
+          showGate();
+        }
       } else {
-        tampilkanSectionUjian();
+        mapelPicker.classList.remove('hidden');
+        if (daftarMapelGlobal.length === 0) loadDaftarMapel();
+
+        const mapelTerpilih = document.getElementById('selectMapel').value;
+        const key = tokenKey('Akademik', mapelTerpilih);
+        if (mapelTerpilih && validatedTokens[key]) {
+          showSection('akademik', validatedTokens[key]);
+        } else {
+          showGate();
+        }
+      }
+    }
+
+    function showGate() {
+      document.getElementById('boxToken').classList.remove('hidden');
+      document.getElementById('sectionAkademik').classList.add('hidden');
+      document.getElementById('sectionPsikologi').classList.add('hidden');
+    }
+
+    function showSection(tab, idUjian) {
+      document.getElementById('boxToken').classList.add('hidden');
+      currentIdUjian = idUjian;
+
+      if (tab === 'akademik') {
+        document.getElementById('sectionAkademik').classList.remove('hidden');
+        document.getElementById('sectionPsikologi').classList.add('hidden');
+        document.getElementById('labelMapelAktif').innerText = 'Mata Pelajaran: ' + (document.getElementById('selectMapel').value || '-');
+        loadSoalAkademik(idUjian);
+      } else {
+        document.getElementById('sectionPsikologi').classList.remove('hidden');
+        document.getElementById('sectionAkademik').classList.add('hidden');
+        if (daftarSoalPsikologiGlobal.length === 0) loadSoalPsikologi();
+      }
+    }
+
+    function gantiMapel() {
+      document.getElementById('selectMapel').value = "";
+      document.getElementById('inputToken').value = "";
+      updateGateVisibility();
+    }
+
+    async function loadDaftarMapel() {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "get_daftar_mapel", kelas: currentUser.kelas || "-" })
+        });
+        const res = await response.json();
+        if (res.success) {
+          daftarMapelGlobal = res.data || [];
+          const select = document.getElementById('selectMapel');
+          select.innerHTML = '<option value="">-- Pilih Mata Pelajaran --</option>' +
+            daftarMapelGlobal.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+      } catch (err) {
+        console.error("Gagal memuat daftar mata pelajaran", err);
       }
     }
 
     async function validasiToken() {
       const inputToken = document.getElementById('inputToken').value.trim();
+      const mapelTerpilih = activeTab === 'akademik' ? document.getElementById('selectMapel').value : "";
+
+      if (activeTab === 'akademik' && !mapelTerpilih) return alert("Silakan pilih mata pelajaran terlebih dahulu!");
       if (!inputToken) return alert("Silakan masukkan kode token!");
 
       try {
@@ -223,16 +312,16 @@
             action: "verifikasiToken",
             token: inputToken,
             jenisUjian: activeTab === 'akademik' ? 'Akademik' : 'Psikologi',
-            kelas: currentUser.kelas || "-"
+            kelas: currentUser.kelas || "-",
+            mapel: mapelTerpilih
           })
         });
 
         const res = await response.json();
         if (res.success) {
-          isTokenValid = true;
-          currentIdUjian = res.idUjian; // Simpan ID Ujian yang cocok dengan token
-          document.getElementById('boxToken').classList.add('hidden');
-          tampilkanSectionUjian();
+          const key = tokenKey(activeTab === 'akademik' ? 'Akademik' : 'Psikologi', mapelTerpilih);
+          validatedTokens[key] = res.idUjian;
+          showSection(activeTab, res.idUjian);
         } else {
           alert(res.message);
         }
@@ -241,30 +330,24 @@
       }
     }
 
-    function tampilkanSectionUjian() {
-      if (activeTab === 'akademik') {
-        document.getElementById('sectionAkademik').classList.remove('hidden');
-        document.getElementById('sectionPsikologi').classList.add('hidden');
-        if (daftarSoalGlobal.length === 0) loadSoalAkademik();
-      } else {
-        document.getElementById('sectionPsikologi').classList.remove('hidden');
-        document.getElementById('sectionAkademik').classList.add('hidden');
-        if (daftarSoalPsikologiGlobal.length === 0) loadSoalPsikologi();
+    async function loadSoalAkademik(idUjian) {
+      if (soalCache[idUjian]) {
+        daftarSoalGlobal = soalCache[idUjian];
+        renderSoal(daftarSoalGlobal);
+        return;
       }
-    }
-
-    async function loadSoalAkademik() {
       try {
         const response = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({
             action: "getSoalSiswa",
-            idUjian: currentIdUjian // Minta soal spesifik berdasarkan ID Ujian dari token
+            idUjian: idUjian
           })
         });
         const res = await response.json();
         if (res.success && res.data.length > 0) {
+          soalCache[idUjian] = res.data;
           daftarSoalGlobal = res.data;
           renderSoal(res.data);
         } else {
@@ -474,13 +557,18 @@
     }
 
     function selesaiUjian() {
-      window.location.reload();
+      document.getElementById('modalNilai').classList.add('hidden');
+      document.getElementById('modalHasilPsikologi').classList.add('hidden');
+      gantiMapel();
     }
 
     function logout() {
       localStorage.removeItem('currentUser');
       window.location.href = "index.html";
     }
+
+    // Inisialisasi tampilan awal (tab Akademik + muat daftar mata pelajaran)
+    switchTab('akademik');
   </script>
 </body>
 </html>
