@@ -266,24 +266,23 @@
       </h2>
       <p class="text-xs text-slate-500 mb-4">Alat bantu ketik cepat untuk membagikan materi murojaah/PR ke grup WhatsApp. Data di sini <b>tidak disimpan</b> ke Google Sheet.</p>
 
-      <div class="mb-5">
-        <label class="block text-xs font-bold text-slate-600 mb-1">Nama Kelompok (Ustadz/Ustadzah)</label>
-        <input type="text" id="namaKelompokMurojaah" placeholder="Contoh: Kelompok Ustadz Ahmad" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+      <div class="mb-5 grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Nama Kelompok (Ustadz/Ustadzah)</label>
+          <input type="text" id="namaKelompokMurojaah" readonly class="w-full border rounded-md p-2.5 text-sm bg-slate-100 text-slate-700 font-semibold cursor-not-allowed">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal</label>
+          <input type="date" id="tglMurojaah" readonly class="w-full border rounded-md p-2.5 text-sm bg-slate-100 text-slate-700 font-semibold cursor-not-allowed">
+        </div>
       </div>
 
       <!-- SESI 1 -->
       <div class="mb-6 p-4 rounded-lg border border-emerald-200 bg-emerald-50/50">
         <h3 class="font-bold text-emerald-800 text-sm mb-3">📌 Materi Sesi 1</h3>
 
-        <div class="mb-3">
-          <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Murojaah</label>
-          <select id="jenisMurojaah1" onchange="toggleJenisMurojaah(1)" class="w-full border rounded-md p-2.5 text-sm bg-white">
-            <option value="hafalan">Murojaah Hafalan</option>
-            <option value="mengaji">Murojaah Mengaji</option>
-          </select>
-        </div>
-
-        <div id="blokHafalan1" class="grid grid-cols-2 gap-3">
+        <p class="text-xs font-bold text-emerald-700 mb-2">📗 Murojaah Hafalan</p>
+        <div id="blokHafalan1" class="grid grid-cols-2 gap-3 mb-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Surah (Juz 30)</label>
             <select id="suratMurojaah1" class="w-full border rounded-md p-2.5 text-sm bg-white"></select>
@@ -294,7 +293,8 @@
           </div>
         </div>
 
-        <div id="blokMengaji1" class="grid grid-cols-2 gap-3 hidden">
+        <p class="text-xs font-bold text-emerald-700 mb-2">📘 Murojaah Mengaji</p>
+        <div id="blokMengaji1" class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Jilid</label>
             <select id="jilidMurojaah1" class="w-full border rounded-md p-2.5 text-sm bg-white">
@@ -314,15 +314,8 @@
       <div class="mb-6 p-4 rounded-lg border border-amber-200 bg-amber-50/50">
         <h3 class="font-bold text-amber-800 text-sm mb-3">📌 Materi Sesi 2</h3>
 
-        <div class="mb-3">
-          <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Murojaah</label>
-          <select id="jenisMurojaah2" onchange="toggleJenisMurojaah(2)" class="w-full border rounded-md p-2.5 text-sm bg-white">
-            <option value="hafalan">Murojaah Hafalan</option>
-            <option value="mengaji">Murojaah Mengaji</option>
-          </select>
-        </div>
-
-        <div id="blokHafalan2" class="grid grid-cols-2 gap-3">
+        <p class="text-xs font-bold text-amber-700 mb-2">📗 Murojaah Hafalan</p>
+        <div id="blokHafalan2" class="grid grid-cols-2 gap-3 mb-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Surah (Juz 30)</label>
             <select id="suratMurojaah2" class="w-full border rounded-md p-2.5 text-sm bg-white"></select>
@@ -333,7 +326,8 @@
           </div>
         </div>
 
-        <div id="blokMengaji2" class="grid grid-cols-2 gap-3 hidden">
+        <p class="text-xs font-bold text-amber-700 mb-2">📘 Murojaah Mengaji</p>
+        <div id="blokMengaji2" class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Jilid</label>
             <select id="jilidMurojaah2" class="w-full border rounded-md p-2.5 text-sm bg-white">
@@ -403,6 +397,10 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('tglTahfidz').value = today;
       document.getElementById('tglMengaji').value = today;
+
+      // Nama Kelompok Murojaah otomatis diambil dari akun guru yang login
+      document.getElementById('namaKelompokMurojaah').value = user.nama || user.username || "-";
+      document.getElementById('tglMurojaah').value = today;
 
       loadDaftarSantri();
       initWaktuDanTanggal();
@@ -605,25 +603,15 @@
       });
     }
 
-    function toggleJenisMurojaah(sesi) {
-      const jenis = document.getElementById('jenisMurojaah' + sesi).value;
-      document.getElementById('blokHafalan' + sesi).classList.toggle('hidden', jenis !== 'hafalan');
-      document.getElementById('blokMengaji' + sesi).classList.toggle('hidden', jenis !== 'mengaji');
-    }
-
     function formatMateriMurojaah(sesi) {
-      const jenis = document.getElementById('jenisMurojaah' + sesi).value;
-      if (jenis === 'hafalan') {
-        const surat = document.getElementById('suratMurojaah' + sesi).value;
-        const ayat = document.getElementById('ayatMurojaah' + sesi).value;
-        if (!surat || !ayat) return null;
-        return `Murojaah Hafalan - Surah ${surat} (Ayat ${ayat})`;
-      } else {
-        const jilid = document.getElementById('jilidMurojaah' + sesi).value;
-        const halaman = document.getElementById('halamanMurojaah' + sesi).value;
-        if (!halaman) return null;
-        return `Murojaah Mengaji - ${jilid} (Halaman ${halaman})`;
-      }
+      const surat = document.getElementById('suratMurojaah' + sesi).value;
+      const ayat = document.getElementById('ayatMurojaah' + sesi).value.trim();
+      const jilid = document.getElementById('jilidMurojaah' + sesi).value;
+      const halaman = document.getElementById('halamanMurojaah' + sesi).value.trim();
+
+      if (!surat || !ayat || !halaman) return null; // wajib lengkap semua (hafalan + mengaji)
+
+      return `📗 Hafalan: Surah ${surat} (Ayat ${ayat})\n📘 Mengaji: ${jilid} (Halaman ${halaman})`;
     }
 
     function shareMurojaahWA() {
@@ -638,22 +626,25 @@
       const materiSesi1 = formatMateriMurojaah(1);
       const materiSesi2 = formatMateriMurojaah(2);
 
-      if (!materiSesi1 && !materiSesi2) {
-        alert("Mohon lengkapi materi minimal untuk salah satu sesi!");
+      if (!materiSesi1 || !materiSesi2) {
+        alert("Mohon lengkapi SEMUA materi (Hafalan & Mengaji) untuk Sesi 1 dan Sesi 2!");
         return;
       }
 
-      const tglHariIni = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const tglInput = document.getElementById('tglMurojaah').value;
+      const tglHariIni = tglInput
+        ? new Date(tglInput + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        : new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
       let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
                   `*REMINDER MUROJAAH*\n` +
                   `-----------------------------------\n` +
                   `👥 *Kelompok:* ${namaKelompok}\n` +
                   `📅 *Tanggal:* ${tglHariIni}\n` +
-                  `-----------------------------------\n\n`;
+                  `-----------------------------------\n\n` +
+                  `*Sesi 1:*\n${materiSesi1}\n\n` +
+                  `*Sesi 2:*\n${materiSesi2}\n\n`;
 
-      if (materiSesi1) pesan += `*Sesi 1:*\n${materiSesi1}\n\n`;
-      if (materiSesi2) pesan += `*Sesi 2:*\n${materiSesi2}\n\n`;
       if (tugas) pesan += `📝 *Tugas/PR Tambahan:*\n${tugas}\n\n`;
 
       pesan += `Mohon Ayah/Bunda membimbing ananda untuk murojaah materi di atas di rumah ya. Jazakumullahu Khairan.\n\n` +
