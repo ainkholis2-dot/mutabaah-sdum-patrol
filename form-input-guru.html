@@ -95,6 +95,9 @@
       <button id="btnTabMengaji" onclick="switchTab('mengaji')" class="flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2">
         <i class="fa-solid fa-book-open text-lg"></i> Setoran Mengaji
       </button>
+      <button id="btnTabMurojaah" onclick="switchTab('murojaah')" class="flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-rotate text-lg"></i> Reminder Murojaah
+      </button>
     </div>
 
     <!-- FORM SETORAN TAHFIDZ -->
@@ -254,6 +257,111 @@
           </button>
         </div>
       </form>
+    </div>
+
+    <!-- FORM REMINDER MUROJAAH (TIDAK DISIMPAN KE SHEET, HANYA BANTU GENERATE TEKS SHARE WA) -->
+    <div id="formMurojaah" class="bg-white p-6 rounded-lg shadow-md hidden">
+      <h2 class="text-xl font-bold text-emerald-700 mb-1 pb-2 border-b flex items-center gap-2">
+        <i class="fa-solid fa-rotate"></i> Reminder Murojaah
+      </h2>
+      <p class="text-xs text-slate-500 mb-4">Alat bantu ketik cepat untuk membagikan materi murojaah/PR ke grup WhatsApp. Data di sini <b>tidak disimpan</b> ke Google Sheet.</p>
+
+      <div class="mb-5">
+        <label class="block text-xs font-bold text-slate-600 mb-1">Nama Kelompok (Ustadz/Ustadzah)</label>
+        <input type="text" id="namaKelompokMurojaah" placeholder="Contoh: Kelompok Ustadz Ahmad" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+      </div>
+
+      <!-- SESI 1 -->
+      <div class="mb-6 p-4 rounded-lg border border-emerald-200 bg-emerald-50/50">
+        <h3 class="font-bold text-emerald-800 text-sm mb-3">📌 Materi Sesi 1</h3>
+
+        <div class="mb-3">
+          <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Murojaah</label>
+          <select id="jenisMurojaah1" onchange="toggleJenisMurojaah(1)" class="w-full border rounded-md p-2.5 text-sm bg-white">
+            <option value="hafalan">Murojaah Hafalan</option>
+            <option value="mengaji">Murojaah Mengaji</option>
+          </select>
+        </div>
+
+        <div id="blokHafalan1" class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Surah (Juz 30)</label>
+            <select id="suratMurojaah1" class="w-full border rounded-md p-2.5 text-sm bg-white"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Ayat</label>
+            <input type="text" id="ayatMurojaah1" placeholder="Contoh: 1-10" class="w-full border rounded-md p-2.5 text-sm">
+          </div>
+        </div>
+
+        <div id="blokMengaji1" class="grid grid-cols-2 gap-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Jilid</label>
+            <select id="jilidMurojaah1" class="w-full border rounded-md p-2.5 text-sm bg-white">
+              <option>Jilid 1</option><option>Jilid 2</option><option>Jilid 3</option>
+              <option>Jilid 4</option><option>Jilid 5</option><option>Jilid 6</option>
+              <option>Al-Qur'an</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Halaman</label>
+            <input type="text" id="halamanMurojaah1" placeholder="Contoh: 12-15" class="w-full border rounded-md p-2.5 text-sm">
+          </div>
+        </div>
+      </div>
+
+      <!-- SESI 2 -->
+      <div class="mb-6 p-4 rounded-lg border border-amber-200 bg-amber-50/50">
+        <h3 class="font-bold text-amber-800 text-sm mb-3">📌 Materi Sesi 2</h3>
+
+        <div class="mb-3">
+          <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Murojaah</label>
+          <select id="jenisMurojaah2" onchange="toggleJenisMurojaah(2)" class="w-full border rounded-md p-2.5 text-sm bg-white">
+            <option value="hafalan">Murojaah Hafalan</option>
+            <option value="mengaji">Murojaah Mengaji</option>
+          </select>
+        </div>
+
+        <div id="blokHafalan2" class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Surah (Juz 30)</label>
+            <select id="suratMurojaah2" class="w-full border rounded-md p-2.5 text-sm bg-white"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Ayat</label>
+            <input type="text" id="ayatMurojaah2" placeholder="Contoh: 1-10" class="w-full border rounded-md p-2.5 text-sm">
+          </div>
+        </div>
+
+        <div id="blokMengaji2" class="grid grid-cols-2 gap-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Jilid</label>
+            <select id="jilidMurojaah2" class="w-full border rounded-md p-2.5 text-sm bg-white">
+              <option>Jilid 1</option><option>Jilid 2</option><option>Jilid 3</option>
+              <option>Jilid 4</option><option>Jilid 5</option><option>Jilid 6</option>
+              <option>Al-Qur'an</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Halaman</label>
+            <input type="text" id="halamanMurojaah2" placeholder="Contoh: 12-15" class="w-full border rounded-md p-2.5 text-sm">
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-xs font-bold text-slate-600 mb-1">Tugas / PR Tambahan (Opsional)</label>
+        <textarea id="tugasMurojaah" rows="2" placeholder="Contoh: Latihan menulis huruf hijaiyah 1 halaman" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+      </div>
+
+      <button type="button" onclick="shareMurojaahWA()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+        <i class="fa-brands fa-whatsapp text-lg"></i> Share Reminder ke WhatsApp
+      </button>
+
+      <button type="button" onclick="bukaModalPolling()" class="w-full mt-3 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-square-poll-vertical text-lg"></i> Buat Teks Polling Murojaah
+      </button>
+      <p class="text-[11px] text-slate-400 mt-1.5 text-center">WhatsApp tidak punya link otomatis untuk polling, jadi teksnya perlu di-paste manual ke fitur Polling WA.</p>
     </div>
 
   </div>
@@ -460,20 +568,98 @@
     function switchTab(type) {
       const formT = document.getElementById('formTahfidz');
       const formM = document.getElementById('formMengaji');
+      const formR = document.getElementById('formMurojaah');
       const btnT = document.getElementById('btnTabTahfidz');
       const btnM = document.getElementById('btnTabMengaji');
+      const btnR = document.getElementById('btnTabMurojaah');
 
-      if (type === 'tahfidz') {
-        formT.classList.remove('hidden');
-        formM.classList.add('hidden');
-        btnT.className = "flex-1 py-3 font-semibold text-emerald-700 border-b-2 border-emerald-600 transition flex items-center justify-center gap-2";
-        btnM.className = "flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2";
+      const aktif = "flex-1 py-3 font-semibold text-emerald-700 border-b-2 border-emerald-600 transition flex items-center justify-center gap-2";
+      const nonaktif = "flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2";
+
+      formT.classList.add('hidden');
+      formM.classList.add('hidden');
+      formR.classList.add('hidden');
+      btnT.className = nonaktif;
+      btnM.className = nonaktif;
+      btnR.className = nonaktif;
+
+      if (type === 'tahfidz') { formT.classList.remove('hidden'); btnT.className = aktif; }
+      else if (type === 'mengaji') { formM.classList.remove('hidden'); btnM.className = aktif; }
+      else if (type === 'murojaah') { formR.classList.remove('hidden'); btnR.className = aktif; isiDropdownSurahMurojaah(); }
+    }
+
+    // ==========================================
+    // FITUR REMINDER MUROJAAH (client-side saja, tidak simpan ke Sheet)
+    // ==========================================
+    function isiDropdownSurahMurojaah() {
+      [1, 2].forEach(sesi => {
+        const sel = document.getElementById('suratMurojaah' + sesi);
+        if (sel.options.length > 0) return; // sudah pernah diisi, tidak perlu ulang
+        sel.innerHTML = '<option value="">-- Pilih Surah --</option>';
+        dataSurahPerJuz["Juz 30"].forEach(surah => {
+          const opt = document.createElement('option');
+          opt.value = surah;
+          opt.textContent = surah;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    function toggleJenisMurojaah(sesi) {
+      const jenis = document.getElementById('jenisMurojaah' + sesi).value;
+      document.getElementById('blokHafalan' + sesi).classList.toggle('hidden', jenis !== 'hafalan');
+      document.getElementById('blokMengaji' + sesi).classList.toggle('hidden', jenis !== 'mengaji');
+    }
+
+    function formatMateriMurojaah(sesi) {
+      const jenis = document.getElementById('jenisMurojaah' + sesi).value;
+      if (jenis === 'hafalan') {
+        const surat = document.getElementById('suratMurojaah' + sesi).value;
+        const ayat = document.getElementById('ayatMurojaah' + sesi).value;
+        if (!surat || !ayat) return null;
+        return `Murojaah Hafalan - Surah ${surat} (Ayat ${ayat})`;
       } else {
-        formT.classList.add('hidden');
-        formM.classList.remove('hidden');
-        btnM.className = "flex-1 py-3 font-semibold text-emerald-700 border-b-2 border-emerald-600 transition flex items-center justify-center gap-2";
-        btnT.className = "flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2";
+        const jilid = document.getElementById('jilidMurojaah' + sesi).value;
+        const halaman = document.getElementById('halamanMurojaah' + sesi).value;
+        if (!halaman) return null;
+        return `Murojaah Mengaji - ${jilid} (Halaman ${halaman})`;
       }
+    }
+
+    function shareMurojaahWA() {
+      const namaKelompok = document.getElementById('namaKelompokMurojaah').value.trim();
+      const tugas = document.getElementById('tugasMurojaah').value.trim();
+
+      if (!namaKelompok) {
+        alert("Mohon isi Nama Kelompok (Ustadz/Ustadzah) terlebih dahulu!");
+        return;
+      }
+
+      const materiSesi1 = formatMateriMurojaah(1);
+      const materiSesi2 = formatMateriMurojaah(2);
+
+      if (!materiSesi1 && !materiSesi2) {
+        alert("Mohon lengkapi materi minimal untuk salah satu sesi!");
+        return;
+      }
+
+      const tglHariIni = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      let pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+                  `*REMINDER MUROJAAH*\n` +
+                  `-----------------------------------\n` +
+                  `👥 *Kelompok:* ${namaKelompok}\n` +
+                  `📅 *Tanggal:* ${tglHariIni}\n` +
+                  `-----------------------------------\n\n`;
+
+      if (materiSesi1) pesan += `*Sesi 1:*\n${materiSesi1}\n\n`;
+      if (materiSesi2) pesan += `*Sesi 2:*\n${materiSesi2}\n\n`;
+      if (tugas) pesan += `📝 *Tugas/PR Tambahan:*\n${tugas}\n\n`;
+
+      pesan += `Mohon Ayah/Bunda membimbing ananda untuk murojaah materi di atas di rumah ya. Jazakumullahu Khairan.\n\n` +
+               `Wassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`, '_blank');
     }
 
     async function loadDaftarSantri() {
@@ -708,10 +894,76 @@
       document.getElementById('tglMengaji').value = new Date().toISOString().split('T')[0];
     }
 
+    // ==========================================
+    // MODAL TEKS POLLING (bantu ketik, tetap harus dibuat manual di WA)
+    // ==========================================
+    function bukaModalPolling() {
+      document.getElementById('modalPolling').classList.remove('hidden');
+    }
+    function tutupModalPolling() {
+      document.getElementById('modalPolling').classList.add('hidden');
+    }
+
+    function salinTeksPolling(jenis) {
+      const label = jenis === 'hafalan' ? 'hafalan' : 'mengaji';
+      const teks = `Pertanyaan: Sudah murojaah ${label} hari ini?\nOpsi 1: Sudah ✅\nOpsi 2: Belum ❌`;
+
+      const helper = document.getElementById('clipboardHelper');
+      helper.value = teks;
+      helper.style.position = 'fixed';
+      helper.style.top = '0';
+      helper.select();
+      document.execCommand('copy');
+
+      alert("Teks polling '" + label + "' berhasil disalin!\n\nBuka Grup WA → 📎 Lampiran → Polling → paste pertanyaan & opsinya secara manual.");
+    }
+
     function logout() {
       localStorage.removeItem('currentUser');
       window.location.href = "index.html";
     }
   </script>
+
+  <!-- MODAL TEKS POLLING (untuk di-paste manual ke fitur Polling WhatsApp) -->
+  <div id="modalPolling" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden max-h-[85vh] overflow-y-auto">
+      <div class="bg-violet-700 px-6 py-4 text-white flex justify-between items-center sticky top-0">
+        <h3 class="font-bold text-sm">📊 Teks Polling Murojaah</h3>
+        <button onclick="tutupModalPolling()" class="text-white hover:text-slate-200 text-lg font-bold">&times;</button>
+      </div>
+
+      <div class="p-5 space-y-5">
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-800">
+          <b>Cara pakai:</b> Buka Grup WA → tombol 📎 (lampiran) → <b>Polling</b> → paste Pertanyaan & Opsi di bawah ini satu per satu.
+        </div>
+
+        <div>
+          <p class="text-xs font-bold text-slate-700 mb-1">1️⃣ Polling Hafalan</p>
+          <div class="bg-slate-50 border rounded-lg p-3 text-xs space-y-1">
+            <p><b>Pertanyaan:</b> Sudah murojaah hafalan hari ini?</p>
+            <p><b>Opsi 1:</b> Sudah ✅</p>
+            <p><b>Opsi 2:</b> Belum ❌</p>
+          </div>
+          <button onclick="salinTeksPolling('hafalan')" class="mt-2 w-full bg-violet-100 hover:bg-violet-200 text-violet-800 font-semibold py-2 rounded-lg text-xs transition">
+            📋 Salin Semua Teks Polling Hafalan
+          </button>
+        </div>
+
+        <div>
+          <p class="text-xs font-bold text-slate-700 mb-1">2️⃣ Polling Mengaji</p>
+          <div class="bg-slate-50 border rounded-lg p-3 text-xs space-y-1">
+            <p><b>Pertanyaan:</b> Sudah murojaah mengaji hari ini?</p>
+            <p><b>Opsi 1:</b> Sudah ✅</p>
+            <p><b>Opsi 2:</b> Belum ❌</p>
+          </div>
+          <button onclick="salinTeksPolling('mengaji')" class="mt-2 w-full bg-violet-100 hover:bg-violet-200 text-violet-800 font-semibold py-2 rounded-lg text-xs transition">
+            📋 Salin Semua Teks Polling Mengaji
+          </button>
+        </div>
+
+        <textarea id="clipboardHelper" class="absolute opacity-0 pointer-events-none" style="top:-9999px"></textarea>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
