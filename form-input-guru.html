@@ -303,8 +303,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Halaman</label>
-            <input type="text" id="halamanMurojaah1" placeholder="Contoh: 12-15" class="w-full border rounded-md p-2.5 text-sm">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Jumlah Halaman Murojaah</label>
+            <input type="text" id="halamanMurojaah1" placeholder="Contoh: 2 halaman" class="w-full border rounded-md p-2.5 text-sm">
           </div>
         </div>
       </div>
@@ -335,8 +335,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Halaman</label>
-            <input type="text" id="halamanMurojaah2" placeholder="Contoh: 12-15" class="w-full border rounded-md p-2.5 text-sm">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Jumlah Halaman Murojaah</label>
+            <input type="text" id="halamanMurojaah2" placeholder="Contoh: 2 halaman" class="w-full border rounded-md p-2.5 text-sm">
           </div>
         </div>
       </div>
@@ -605,11 +605,14 @@
       const surat = document.getElementById('suratMurojaah' + sesi).value;
       const ayat = document.getElementById('ayatMurojaah' + sesi).value.trim();
       const jilid = document.getElementById('jilidMurojaah' + sesi).value;
-      const halaman = document.getElementById('halamanMurojaah' + sesi).value.trim();
+      let jumlahHalaman = document.getElementById('halamanMurojaah' + sesi).value.trim();
 
-      if (!surat || !ayat || !halaman) return null; // wajib lengkap semua (hafalan + mengaji)
+      if (!surat || !ayat || !jumlahHalaman) return null; // wajib lengkap semua (hafalan + mengaji)
 
-      return `📗 Hafalan: Surah ${surat} (Ayat ${ayat})\n📘 Mengaji: ${jilid} (Halaman ${halaman})`;
+      // Tambahkan kata "halaman" otomatis kalau guru cuma ketik angka (mis. "2" -> "2 halaman")
+      if (/^\d+$/.test(jumlahHalaman)) jumlahHalaman += " halaman";
+
+      return `📗 Hafalan: Surah ${surat} (Ayat ${ayat})\n📘 Mengaji: ${jilid} (${jumlahHalaman})`;
     }
 
     function shareMurojaahWA() {
