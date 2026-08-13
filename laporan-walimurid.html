@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan Wali Murid - SD Unggulan Muhammadiyah Patrol</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --daun: #0F6B4F; --daun-dark: #0A4E3A;
+    --madu: #EF9D2F; --ungu: #6E62D9;
+    --kabut: #F3F6EF; --tinta: #202B22;
+    --karang: #E5604A; --garis: #DEE6D8;
+  }
+  body{ background:var(--kabut); color:var(--tinta); font-family:'Plus Jakarta Sans',sans-serif; }
+  .f-display{ font-family:'Fredoka',sans-serif; }
+  .card{ background:#fff; border:1px solid var(--garis); border-radius:1.25rem; }
+  @keyframes riseIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .rise{ animation: riseIn .5s cubic-bezier(.2,.7,.3,1) both; }
+  .rise-1{ animation-delay:.06s; } .rise-2{ animation-delay:.12s; } .rise-3{ animation-delay:.18s; }
+  input[type="checkbox"]{ accent-color: var(--daun); width:1.15rem; height:1.15rem; }
+  @media (prefers-reduced-motion: reduce){ .rise{ animation:none !important; } }
+</style>
+</head>
+<body class="min-h-screen p-4 md:p-6">
+
+  <div class="max-w-3xl mx-auto space-y-5">
+
+    <!-- Header -->
+    <div class="card rise p-5 md:p-6 flex justify-between items-center gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-xl" style="background:#0F6B4F1a">🌿</div>
+        <div class="min-w-0">
+          <h1 class="f-display text-lg md:text-xl font-semibold truncate">Laporan Ananda: <span id="namaAnak">-</span></h1>
+          <p id="infoAnak" class="text-xs md:text-sm" style="color:#5B6B57">Kelas: - | NISN: -</p>
+        </div>
+      </div>
+      <button onclick="logout()" class="shrink-0 text-xs font-semibold px-3 py-2 rounded-full transition hover:opacity-80" style="background:#FBEAE6; color:var(--karang)">
+        Keluar
+      </button>
+    </div>
+
+    <!-- Tab Pemilih -->
+    <div class="grid grid-cols-3 gap-2 rise rise-1">
+      <button id="tabMutabaah" onclick="switchTab('mutabaah')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition" style="background:var(--daun); border-color:var(--daun); color:#fff">
+        🌱 Mutaba'ah Harian
+      </button>
+      <button id="tabHafalan" onclick="switchTab('hafalan')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition bg-white" style="border-color:var(--garis); color:#5B6B57">
+        📗 Capaian Hafalan
+      </button>
+      <button id="tabMengaji" onclick="switchTab('mengaji')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition bg-white" style="border-color:var(--garis); color:#5B6B57">
+        📘 Capaian Mengaji
+      </button>
+    </div>
+
+    <!-- SECTION MUTABA'AH HARIAN -->
+    <div id="sectionMutabaah" class="space-y-5 rise rise-2">
+      <div class="card p-6">
+        <h2 class="f-display text-base font-semibold mb-1">Checklist Mutaba'ah Hari Ini</h2>
+        <p class="text-xs mb-4" style="color:#5B6B57">Isi checklist kegiatan harian ananda di rumah. Bisa diisi/diubah kapan saja selama hari ini.</p>
+
+        <div id="statusHariIni" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold" style="background:#0F6B4F14; color:var(--daun-dark)">
+          ✅ Sudah diisi untuk hari ini. Anda tetap bisa mengubahnya.
+        </div>
+
+        <div class="space-y-3">
+          <p class="text-xs font-bold" style="color:#5B6B57">🕌 Sholat 5 Waktu</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+              <input type="checkbox" id="chkSubuh">
+              <span class="text-sm font-medium">Subuh</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+              <input type="checkbox" id="chkDzuhur">
+              <span class="text-sm font-medium">Dzuhur</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+              <input type="checkbox" id="chkAshar">
+              <span class="text-sm font-medium">Ashar</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+              <input type="checkbox" id="chkMaghrib">
+              <span class="text-sm font-medium">Maghrib</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+              <input type="checkbox" id="chkIsya">
+              <span class="text-sm font-medium">Isya</span>
+            </label>
+          </div>
+
+          <p class="text-xs font-bold pt-2" style="color:#5B6B57">Kegiatan Lainnya</p>
+          <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+            <input type="checkbox" id="chkMurojaahHafalan">
+            <span class="text-sm font-medium">📗 Murojaah Hafalan</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+            <input type="checkbox" id="chkMurojaahMengaji">
+            <span class="text-sm font-medium">📘 Murojaah Mengaji</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition" style="border-color:var(--garis)">
+            <input type="checkbox" id="chkTidur">
+            <span class="text-sm font-medium">😴 Tidur Tepat Waktu</span>
+          </label>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-bold mb-1" style="color:#5B6B57">Catatan Tambahan (Opsional)</label>
+          <textarea id="catatanMutabaah" rows="2" placeholder="Contoh: Ananda sedikit kurang fit hari ini" class="w-full border-2 rounded-xl p-2.5 text-sm outline-none" style="border-color:var(--garis)"></textarea>
+        </div>
+
+        <button onclick="simpanMutabaah()" class="w-full mt-4 text-white font-semibold py-3 rounded-xl transition hover:opacity-90" style="background:var(--daun)">
+          Simpan Mutaba'ah Hari Ini
+        </button>
+      </div>
+
+      <div class="card p-6">
+        <h2 class="f-display text-base font-semibold mb-3">Riwayat 30 Hari Terakhir</h2>
+        <div id="listRiwayatMutabaah" class="space-y-2 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- SECTION CAPAIAN HAFALAN -->
+    <div id="sectionHafalan" class="space-y-3 rise rise-2 hidden">
+      <div class="card p-6">
+        <h2 class="f-display text-base font-semibold mb-3">📗 Riwayat Capaian Hafalan</h2>
+        <div id="listHafalan" class="space-y-2 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- SECTION CAPAIAN MENGAJI -->
+    <div id="sectionMengaji" class="space-y-3 rise rise-2 hidden">
+      <div class="card p-6">
+        <h2 class="f-display text-base font-semibold mb-3">📘 Riwayat Capaian Mengaji</h2>
+        <div id="listMengaji" class="space-y-2 text-xs"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = "index.html";
+
+    const nisnAnak = currentUser.nisnAnak || "";
+    let dataDashboard = null;
+    let activeTab = 'mutabaah';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!nisnAnak) {
+        alert("Akun ini belum terhubung ke data anak (NISN). Hubungi admin sekolah.");
+      }
+      muatDataWalimurid();
+    });
+
+    function switchTab(tab) {
+      activeTab = tab;
+      const tabs = { mutabaah: ['tabMutabaah', 'sectionMutabaah'], hafalan: ['tabHafalan', 'sectionHafalan'], mengaji: ['tabMengaji', 'sectionMengaji'] };
+      Object.keys(tabs).forEach(key => {
+        const [btnId, secId] = tabs[key];
+        const btn = document.getElementById(btnId);
+        const sec = document.getElementById(secId);
+        if (key === tab) {
+          btn.setAttribute('style', 'background:var(--daun); border-color:var(--daun); color:#fff');
+          sec.classList.remove('hidden');
+        } else {
+          btn.setAttribute('style', 'border-color:var(--garis); color:#5B6B57; background:#fff');
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    async function muatDataWalimurid() {
+      if (!nisnAnak) return;
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "get_data_walimurid", nisn: nisnAnak })
+        });
+        const result = await res.json();
+        if (!result.success) { alert(result.message); return; }
+
+        dataDashboard = result;
+        document.getElementById('namaAnak').innerText = result.profil.nama;
+        document.getElementById('infoAnak').innerText = `Kelas: ${result.profil.kelas} | NISN: ${result.profil.nisn}`;
+
+        if (result.sudahIsiHariIni) {
+          document.getElementById('statusHariIni').classList.remove('hidden');
+          if (result.riwayatMutabaah.length > 0) {
+            const hariIni = result.riwayatMutabaah[0];
+            document.getElementById('chkSubuh').checked = hariIni.subuh === 'Ya';
+            document.getElementById('chkDzuhur').checked = hariIni.dzuhur === 'Ya';
+            document.getElementById('chkAshar').checked = hariIni.ashar === 'Ya';
+            document.getElementById('chkMaghrib').checked = hariIni.maghrib === 'Ya';
+            document.getElementById('chkIsya').checked = hariIni.isya === 'Ya';
+            document.getElementById('chkMurojaahHafalan').checked = hariIni.murojaahHafalan === 'Ya';
+            document.getElementById('chkMurojaahMengaji').checked = hariIni.murojaahMengaji === 'Ya';
+            document.getElementById('chkTidur').checked = hariIni.tidurTepatWaktu === 'Ya';
+            document.getElementById('catatanMutabaah').value = hariIni.catatan || '';
+          }
+        }
+
+        renderRiwayatMutabaah(result.riwayatMutabaah);
+        renderHafalan(result.rekapTahfidz);
+        renderMengaji(result.rekapMengaji);
+      } catch (err) {
+        alert("Gagal memuat data. Coba muat ulang halaman.");
+      }
+    }
+
+    function renderRiwayatMutabaah(list) {
+      const el = document.getElementById('listRiwayatMutabaah');
+      if (!list || list.length === 0) { el.innerHTML = `<p style="color:#8A9684">Belum ada riwayat.</p>`; return; }
+      el.innerHTML = list.map(r => `
+        <div class="p-2.5 rounded-lg space-y-1.5" style="background:var(--kabut)">
+          <div class="font-semibold">${r.tanggal}</div>
+          <div class="flex flex-wrap gap-x-2 gap-y-1">
+            <span title="Subuh">Subuh${r.subuh === 'Ya' ? '✅' : '❌'}</span>
+            <span title="Dzuhur">Dzuhur${r.dzuhur === 'Ya' ? '✅' : '❌'}</span>
+            <span title="Ashar">Ashar${r.ashar === 'Ya' ? '✅' : '❌'}</span>
+            <span title="Maghrib">Maghrib${r.maghrib === 'Ya' ? '✅' : '❌'}</span>
+            <span title="Isya">Isya${r.isya === 'Ya' ? '✅' : '❌'}</span>
+          </div>
+          <div class="flex gap-3">
+            <span title="Murojaah Hafalan">📗${r.murojaahHafalan === 'Ya' ? '✅' : '❌'}</span>
+            <span title="Murojaah Mengaji">📘${r.murojaahMengaji === 'Ya' ? '✅' : '❌'}</span>
+            <span title="Tidur">😴${r.tidurTepatWaktu === 'Ya' ? '✅' : '❌'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderHafalan(list) {
+      const el = document.getElementById('listHafalan');
+      if (!list || list.length === 0) { el.innerHTML = `<p style="color:#8A9684">Belum ada data setoran hafalan.</p>`; return; }
+      el.innerHTML = list.map(r => `
+        <div class="p-3 rounded-lg" style="background:var(--kabut)">
+          <div class="flex justify-between font-semibold"><span>${r.tanggal}</span><span>Nilai: ${r.nilai}</span></div>
+          <p class="mt-1">${r.jenis} - ${r.surat} (Ayat ${r.ayat})</p>
+          ${r.catatan ? `<p class="mt-1 italic" style="color:#5B6B57">"${r.catatan}"</p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderMengaji(list) {
+      const el = document.getElementById('listMengaji');
+      if (!list || list.length === 0) { el.innerHTML = `<p style="color:#8A9684">Belum ada data setoran mengaji.</p>`; return; }
+      el.innerHTML = list.map(r => `
+        <div class="p-3 rounded-lg" style="background:var(--kabut)">
+          <div class="flex justify-between font-semibold"><span>${r.tanggal}</span><span>Nilai: ${r.nilai}</span></div>
+          <p class="mt-1">${r.jilid} ${r.halaman ? '- Hal ' + r.halaman : ''} ${r.surah ? '- ' + r.surah : ''}</p>
+          ${r.catatan ? `<p class="mt-1 italic" style="color:#5B6B57">"${r.catatan}"</p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    async function simpanMutabaah() {
+      if (!nisnAnak) return alert("Akun belum terhubung ke NISN anak.");
+
+      const payload = {
+        action: "simpan_mutabaah_harian",
+        nisn: nisnAnak,
+        nama: dataDashboard ? dataDashboard.profil.nama : "",
+        subuh: document.getElementById('chkSubuh').checked ? "Ya" : "Tidak",
+        dzuhur: document.getElementById('chkDzuhur').checked ? "Ya" : "Tidak",
+        ashar: document.getElementById('chkAshar').checked ? "Ya" : "Tidak",
+        maghrib: document.getElementById('chkMaghrib').checked ? "Ya" : "Tidak",
+        isya: document.getElementById('chkIsya').checked ? "Ya" : "Tidak",
+        murojaahHafalan: document.getElementById('chkMurojaahHafalan').checked ? "Ya" : "Tidak",
+        murojaahMengaji: document.getElementById('chkMurojaahMengaji').checked ? "Ya" : "Tidak",
+        tidurTepatWaktu: document.getElementById('chkTidur').checked ? "Ya" : "Tidak",
+        catatan: document.getElementById('catatanMutabaah').value.trim()
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+          alert(result.message);
+          muatDataWalimurid();
+        } else {
+          alert("Gagal: " + result.message);
+        }
+      } catch (err) {
+        alert("Gagal menyimpan. Coba lagi.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
