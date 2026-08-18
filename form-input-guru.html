@@ -6,19 +6,35 @@
   <title>Dashboard Input Guru - Mutaba'ah</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --daun: #0F6B4F; --daun-dark: #0A4E3A;
+      --madu: #EF9D2F; --ungu: #6E62D9;
+      --kabut: #F3F6EF; --tinta: #202B22;
+      --karang: #E5604A; --garis: #DEE6D8;
+    }
+    body{ font-family:'Plus Jakarta Sans',sans-serif; background:var(--kabut); }
+    .f-display{ font-family:'Fredoka',sans-serif; }
+    .card-mutabaah{ background:#fff; border:1px solid var(--garis); border-radius:1.25rem; }
+    @keyframes riseIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+    .rise{ animation: riseIn .45s cubic-bezier(.2,.7,.3,1) both; }
+    @media (prefers-reduced-motion: reduce){ .rise{ animation:none !important; } }
+  </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800">
+<body class="min-h-screen text-slate-800" style="background:var(--kabut)">
 
   <!-- Navbar -->
-  <nav class="bg-emerald-700 text-white shadow-md">
+  <nav class="text-white shadow-md" style="background:var(--daun)">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-book-quran text-2xl"></i>
-        <span class="font-bold text-lg">Input Mutaba'ah</span>
+        <span class="text-xl">🌿</span>
+        <span class="f-display font-semibold text-lg">Input Mutaba'ah</span>
       </div>
       <div class="flex items-center space-x-4 text-xs md:text-sm">
-        <span id="userInfo" class="font-medium bg-emerald-800 px-3 py-1 rounded-full">Loading...</span>
-        <button onclick="logout()" class="bg-rose-600 hover:bg-rose-700 px-3 py-1 rounded text-white font-medium transition">
+        <span id="userInfo" class="font-medium px-3 py-1.5 rounded-full" style="background:var(--daun-dark)">Loading...</span>
+        <button onclick="logout()" class="px-3 py-1.5 rounded-full text-white font-semibold transition hover:opacity-90" style="background:var(--karang)">
           <i class="fa-solid fa-right-from-bracket mr-1"></i>Keluar
         </button>
       </div>
@@ -88,24 +104,24 @@
     </div>
 
     <!-- Tab Selection -->
-    <div class="flex border-b border-slate-300 mb-6 bg-white rounded-t-lg shadow-sm">
-      <button id="btnTabTahfidz" onclick="switchTab('tahfidz')" class="flex-1 py-3 font-semibold text-emerald-700 border-b-2 border-emerald-600 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-heart text-lg"></i> Setoran Tahfidz
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6 rise">
+      <button id="btnTabTahfidz" onclick="switchTab('tahfidz')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition flex items-center justify-center gap-2" style="background:var(--daun); border-color:var(--daun); color:#fff">
+        <i class="fa-solid fa-heart"></i> <span>Setoran Tahfidz</span>
       </button>
-      <button id="btnTabMengaji" onclick="switchTab('mengaji')" class="flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-book-open text-lg"></i> Setoran Mengaji
+      <button id="btnTabMengaji" onclick="switchTab('mengaji')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition flex items-center justify-center gap-2 bg-white" style="border-color:var(--garis); color:#5B6B57">
+        <i class="fa-solid fa-book-open"></i> <span>Setoran Mengaji</span>
       </button>
-      <button id="btnTabMurojaah" onclick="switchTab('murojaah')" class="flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-rotate text-lg"></i> Reminder Murojaah
+      <button id="btnTabMurojaah" onclick="switchTab('murojaah')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition flex items-center justify-center gap-2 bg-white" style="border-color:var(--garis); color:#5B6B57">
+        <i class="fa-solid fa-rotate"></i> <span>Reminder Murojaah</span>
       </button>
-      <button id="btnTabMutabaah" onclick="switchTab('mutabaah')" class="flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-seedling text-lg"></i> Mutaba'ah Santri
+      <button id="btnTabMutabaah" onclick="switchTab('mutabaah')" class="f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition flex items-center justify-center gap-2 bg-white" style="border-color:var(--garis); color:#5B6B57">
+        <i class="fa-solid fa-seedling"></i> <span>Mutaba'ah Santri</span>
       </button>
     </div>
 
     <!-- FORM SETORAN TAHFIDZ -->
-    <div id="formTahfidz" class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-bold text-emerald-700 mb-4 pb-2 border-b flex items-center gap-2">
+    <div id="formTahfidz" class="card-mutabaah p-6 rise">
+      <h2 class="f-display text-xl font-semibold mb-4 pb-2 border-b flex items-center gap-2" style="color:var(--daun-dark); border-color:var(--garis)">
         <i class="fa-solid fa-pen-to-square"></i> Input Setoran Tahfidz
       </h2>
       <form id="ftTahfidz" onsubmit="handleSaveTahfidz(event)">
@@ -176,7 +192,7 @@
 
         <!-- Tombol Aksi Tahfidz -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button type="submit" id="btnSimpanTahfidz" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+          <button type="submit" id="btnSimpanTahfidz" class="w-full text-white font-semibold py-3 rounded-xl shadow-sm transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--daun)">
             <i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet
           </button>
           <button type="button" onclick="kirimWaTahfidz()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
@@ -187,8 +203,8 @@
     </div>
 
     <!-- FORM SETORAN MENGAJI -->
-    <div id="formMengaji" class="bg-white p-6 rounded-lg shadow-md hidden">
-      <h2 class="text-xl font-bold text-emerald-700 mb-4 pb-2 border-b flex items-center gap-2">
+    <div id="formMengaji" class="card-mutabaah p-6 rise hidden">
+      <h2 class="f-display text-xl font-semibold mb-4 pb-2 border-b flex items-center gap-2" style="color:var(--daun-dark); border-color:var(--garis)">
         <i class="fa-solid fa-pen-to-square"></i> Input Setoran Mengaji
       </h2>
       <form id="ftMengaji" onsubmit="handleSaveMengaji(event)">
@@ -237,7 +253,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Surah (Khusus Tadarus)</label>
-            <input type="text" id="surahMengaji" placeholder="Contoh: Al-Baqarah" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="surahMengaji" class="w-full border rounded-md p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <option value="">-- Pilih Surah --</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Ayat (Khusus Tadarus)</label>
@@ -252,7 +270,7 @@
 
         <!-- Tombol Aksi Mengaji -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button type="submit" id="btnSimpanMengaji" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
+          <button type="submit" id="btnSimpanMengaji" class="w-full text-white font-semibold py-3 rounded-xl shadow-sm transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--daun)">
             <i class="fa-solid fa-floppy-disk"></i> Simpan Ke Sheet
           </button>
           <button type="button" onclick="kirimWaMengaji()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center gap-2">
@@ -263,8 +281,8 @@
     </div>
 
     <!-- FORM REMINDER MUROJAAH (TIDAK DISIMPAN KE SHEET, HANYA BANTU GENERATE TEKS SHARE WA) -->
-    <div id="formMurojaah" class="bg-white p-6 rounded-lg shadow-md hidden">
-      <h2 class="text-xl font-bold text-emerald-700 mb-1 pb-2 border-b flex items-center gap-2">
+    <div id="formMurojaah" class="card-mutabaah p-6 rise hidden">
+      <h2 class="f-display text-xl font-semibold mb-1 pb-2 border-b flex items-center gap-2" style="color:var(--daun-dark); border-color:var(--garis)">
         <i class="fa-solid fa-rotate"></i> Reminder Murojaah
       </h2>
       <p class="text-xs text-slate-500 mb-4">Alat bantu ketik cepat untuk membagikan materi murojaah/PR ke grup WhatsApp. Data di sini <b>tidak disimpan</b> ke Google Sheet.</p>
@@ -360,8 +378,8 @@
     </div>
 
     <!-- SECTION MUTABA'AH SANTRI (khusus santri milik guru ini) -->
-    <div id="formMutabaah" class="bg-white p-6 rounded-lg shadow-md hidden">
-      <h2 class="text-xl font-bold text-emerald-700 mb-1 pb-2 border-b flex items-center gap-2">
+    <div id="formMutabaah" class="card-mutabaah p-6 rise hidden">
+      <h2 class="f-display text-xl font-semibold mb-1 pb-2 border-b flex items-center gap-2" style="color:var(--daun-dark); border-color:var(--garis)">
         <i class="fa-solid fa-seedling"></i> Mutaba'ah Harian Santri
       </h2>
       <p class="text-xs text-slate-500 mb-4">Laporan checklist harian (diisi orang tua di rumah) untuk santri yang menjadi bimbingan Anda. Data 7 hari terakhir.</p>
@@ -375,6 +393,13 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
+
+    // Daftar Surah Al-Baqarah (2) s.d. An-Nahl (16), untuk dropdown Tadarus di Setoran Mengaji
+    const dataSurahTadarus = [
+      "2. Al-Baqarah", "3. Ali 'Imran", "4. An-Nisa'", "5. Al-Ma'idah", "6. Al-An'am",
+      "7. Al-A'raf", "8. Al-Anfal", "9. At-Taubah", "10. Yunus", "11. Hud",
+      "12. Yusuf", "13. Ar-Ra'd", "14. Ibrahim", "15. Al-Hijr", "16. An-Nahl"
+    ];
 
     // Data Daftar Surah Berdasarkan Juz
     const dataSurahPerJuz = {
@@ -414,6 +439,15 @@
       // Nama Kelompok Murojaah otomatis diambil dari akun guru yang login
       document.getElementById('namaKelompokMurojaah').value = user.nama || user.username || "-";
       document.getElementById('tglMurojaah').value = today;
+
+      // Isi dropdown Surah untuk Tadarus (Setoran Mengaji)
+      const selectSurahMengaji = document.getElementById('surahMengaji');
+      dataSurahTadarus.forEach(surah => {
+        const opt = document.createElement('option');
+        opt.value = surah;
+        opt.textContent = surah;
+        selectSurahMengaji.appendChild(opt);
+      });
 
       loadDaftarSantri();
       initWaktuDanTanggal();
@@ -470,20 +504,46 @@
     }
 
     // Konversi Kalender Hijriah
+    // CATATAN: sebelumnya pakai Intl.DateTimeFormat dengan kalender 'islamic-umalqura',
+    // tapi banyak WebView aplikasi (mis. Median.co) punya data ICU/kalender yang tidak
+    // lengkap sehingga hasilnya salah total (contoh: "5 Maret SM H") tanpa melempar error,
+    // jadi try/catch tidak menangkapnya. Solusinya: hitung manual pakai algoritma tabular
+    // Hijriah (Kuwaiti Algorithm) yang murni JavaScript, tidak bergantung dukungan browser.
+    const NAMA_BULAN_HIJRIAH = [
+      "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir", "Jumadil Awal", "Jumadil Akhir",
+      "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqaidah", "Dzulhijjah"
+    ];
+
+    function konversiKeHijriah(tanggal) {
+      const day = tanggal.getDate();
+      const month = tanggal.getMonth() + 1;
+      const year = tanggal.getFullYear();
+
+      let jd = Math.floor((1461 * (year + 4800 + Math.floor((month - 14) / 12))) / 4) +
+               Math.floor((367 * (month - 2 - 12 * Math.floor((month - 14) / 12))) / 12) -
+               Math.floor((3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100)) / 4) +
+               day - 32075;
+
+      let l = jd - 1948440 + 10632;
+      const n = Math.floor((l - 1) / 10631);
+      l = l - 10631 * n + 354;
+      const j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) + Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
+      l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+      const hMonth = Math.floor((24 * l) / 709);
+      const hDay = l - Math.floor((709 * hMonth) / 24);
+      const hYear = 30 * n + j - 30;
+
+      return { hari: hDay, bulan: hMonth, tahun: hYear };
+    }
+
     function getHijriDateFormatted() {
       try {
         const now = new Date();
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', options);
-        document.getElementById('tglHijriah').textContent = `${formatter.format(now)} H`;
+        const h = konversiKeHijriah(now);
+        const namaBulan = NAMA_BULAN_HIJRIAH[h.bulan - 1] || "";
+        document.getElementById('tglHijriah').textContent = `${h.hari} ${namaBulan} ${h.tahun} H`;
       } catch (e) {
-        try {
-          const now = new Date();
-          const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' });
-          document.getElementById('tglHijriah').textContent = `${formatter.format(now)} H`;
-        } catch (err) {
-          document.getElementById('tglHijriah').textContent = "Kalender Hijriah";
-        }
+        document.getElementById('tglHijriah').textContent = "Kalender Hijriah";
       }
     }
 
@@ -586,22 +646,24 @@
       const btnR = document.getElementById('btnTabMurojaah');
       const btnMB = document.getElementById('btnTabMutabaah');
 
-      const aktif = "flex-1 py-3 font-semibold text-emerald-700 border-b-2 border-emerald-600 transition flex items-center justify-center gap-2";
-      const nonaktif = "flex-1 py-3 font-semibold text-slate-500 hover:text-emerald-700 transition flex items-center justify-center gap-2";
+      const kelasAktif = "f-display text-xs md:text-sm font-semibold py-3 rounded-xl border-2 transition flex items-center justify-center gap-2";
 
-      formT.classList.add('hidden');
-      formM.classList.add('hidden');
-      formR.classList.add('hidden');
-      formMB.classList.add('hidden');
-      btnT.className = nonaktif;
-      btnM.className = nonaktif;
-      btnR.className = nonaktif;
-      btnMB.className = nonaktif;
+      [ [btnT, formT], [btnM, formM], [btnR, formR], [btnMB, formMB] ].forEach(([btn, form]) => {
+        form.classList.add('hidden');
+        btn.className = kelasAktif + " bg-white";
+        btn.setAttribute('style', 'border-color:var(--garis); color:#5B6B57');
+      });
 
-      if (type === 'tahfidz') { formT.classList.remove('hidden'); btnT.className = aktif; }
-      else if (type === 'mengaji') { formM.classList.remove('hidden'); btnM.className = aktif; }
-      else if (type === 'murojaah') { formR.classList.remove('hidden'); btnR.className = aktif; isiDropdownSurahMurojaah(); }
-      else if (type === 'mutabaah') { formMB.classList.remove('hidden'); btnMB.className = aktif; loadMutabaahSantri(); }
+      const aktifkan = (btn, form) => {
+        form.classList.remove('hidden');
+        btn.className = kelasAktif;
+        btn.setAttribute('style', 'background:var(--daun); border-color:var(--daun); color:#fff');
+      };
+
+      if (type === 'tahfidz') { aktifkan(btnT, formT); }
+      else if (type === 'mengaji') { aktifkan(btnM, formM); }
+      else if (type === 'murojaah') { aktifkan(btnR, formR); isiDropdownSurahMurojaah(); }
+      else if (type === 'mutabaah') { aktifkan(btnMB, formMB); loadMutabaahSantri(); }
     }
 
     // ==========================================
