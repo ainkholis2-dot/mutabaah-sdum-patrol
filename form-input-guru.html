@@ -632,27 +632,31 @@
             <div class="flex justify-between items-center mb-2">
               <h4 class="font-bold text-sm text-slate-800">${s.nama}</h4>
               <span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${s.isiHariIni ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
-                ${s.isiHariIni ? '✅ Sudah isi hari ini' : '⏳ Belum isi hari ini'}
+                ${s.isiHariIni ? 'Sudah isi hari ini' : 'Belum isi hari ini'}
               </span>
             </div>
             ${s.riwayat.length === 0 ? `<p class="text-xs text-slate-400">Belum ada riwayat mutaba'ah.</p>` : `
-            <div class="space-y-1.5">
-              ${s.riwayat.map(r => `
-                <div class="flex justify-between items-center text-xs bg-slate-50 rounded-lg px-3 py-1.5">
-                  <span class="font-semibold">${r.tanggal}</span>
-                  <span class="flex gap-1">
-                    <span title="Subuh">${r.subuh === 'Ya' ? '🕌✅' : '🕌❌'}</span>
-                    <span title="Dzuhur">${r.dzuhur === 'Ya' ? '☀️✅' : '☀️❌'}</span>
-                    <span title="Ashar">${r.ashar === 'Ya' ? '🌤️✅' : '🌤️❌'}</span>
-                    <span title="Maghrib">${r.maghrib === 'Ya' ? '🌆✅' : '🌆❌'}</span>
-                    <span title="Isya">${r.isya === 'Ya' ? '🌙✅' : '🌙❌'}</span>
-                    <span title="Murojaah Hafalan">${r.murojaahHafalan === 'Ya' ? '📗✅' : '📗❌'}</span>
-                    <span title="Murojaah Mengaji">${r.murojaahMengaji === 'Ya' ? '📘✅' : '📘❌'}</span>
-                    <span title="Tidur Tepat Waktu">${r.tidurTepatWaktu === 'Ya' ? '😴✅' : '😴❌'}</span>
-                  </span>
+            <div class="space-y-2">
+              ${s.riwayat.map(r => {
+                const label = (nilai) => nilai === 'Ya'
+                  ? '<span class="text-emerald-700 font-semibold">Sudah</span>'
+                  : '<span class="text-red-500 font-semibold">Belum</span>';
+                return `
+                <div class="text-xs bg-slate-50 rounded-lg px-3 py-2">
+                  <p class="font-bold text-slate-700 mb-1">${r.tanggal}</p>
+                  <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-slate-600">
+                    <p>Subuh: ${label(r.subuh)}</p>
+                    <p>Dzuhur: ${label(r.dzuhur)}</p>
+                    <p>Ashar: ${label(r.ashar)}</p>
+                    <p>Maghrib: ${label(r.maghrib)}</p>
+                    <p>Isya: ${label(r.isya)}</p>
+                    <p>Murojaah Hafalan: ${label(r.murojaahHafalan)}</p>
+                    <p>Murojaah Mengaji: ${label(r.murojaahMengaji)}</p>
+                    <p>Tidur Tepat Waktu: ${label(r.tidurTepatWaktu)}</p>
+                  </div>
+                  ${r.catatan ? `<p class="text-[11px] italic text-slate-500 mt-1.5">Catatan: "${r.catatan}"</p>` : ''}
                 </div>
-                ${r.catatan ? `<p class="text-[11px] italic text-slate-500 pl-3">"${r.catatan}"</p>` : ''}
-              `).join('')}
+              `}).join('')}
             </div>`}
           </div>
         `).join('');
