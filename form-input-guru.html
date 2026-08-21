@@ -96,10 +96,13 @@
 
     </div>
 
-    <!-- Tombol Rekap Harian ke WA Grup -->
-    <div class="mb-6">
-      <button onclick="kirimRekapHarianGrup()" id="btnRekapGrup" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border border-emerald-600">
-        <i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Mutaba'ah Hari Ini ke Grup WA
+    <!-- Tombol Rekap Harian ke WA Grup (dipisah per program) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+      <button onclick="kirimRekapHarianGrup('tahfidz')" id="btnRekapTahfidz" class="w-full text-white font-semibold py-3.5 px-4 rounded-xl shadow-sm transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--daun-dark)">
+        <i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Tahfidz Hari Ini
+      </button>
+      <button onclick="kirimRekapHarianGrup('mengaji')" id="btnRekapMengaji" class="w-full text-white font-semibold py-3.5 px-4 rounded-xl shadow-sm transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--daun-dark)">
+        <i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Mengaji Hari Ini
       </button>
     </div>
 
@@ -547,9 +550,13 @@
       }
     }
 
-    // Fungsi Rekap Harian Semua Setoran Hari Ini ke WhatsApp Grup
-    async function kirimRekapHarianGrup() {
-      const btn = document.getElementById('btnRekapGrup');
+    // Fungsi Rekap Harian Setoran Hari Ini ke WhatsApp Grup, dipisah per program (tahfidz/mengaji)
+    async function kirimRekapHarianGrup(jenis) {
+      const btnId = jenis === 'tahfidz' ? 'btnRekapTahfidz' : 'btnRekapMengaji';
+      const labelAsli = jenis === 'tahfidz'
+        ? `<i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Tahfidz Hari Ini`
+        : `<i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Mengaji Hari Ini`;
+      const btn = document.getElementById(btnId);
       const today = new Date().toISOString().split('T')[0];
       const tglMasehiStr = document.getElementById('tglMasehi').textContent;
       const tglHijriahStr = document.getElementById('tglHijriah').textContent;
@@ -566,35 +573,34 @@
         const data = await res.json();
 
         if (data.success) {
+          const judulProgram = jenis === 'tahfidz' ? 'SETORAN TAHFIDZ' : 'SETORAN MENGAJI';
+          const daftar = jenis === 'tahfidz' ? data.tahfidz : data.mengaji;
+
           let textRekap = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
                           `Yth. Ayah / Bunda Wali Murid,\n` +
-                          `Berikut kami sampaikan *REKAP MUTABA'AH HARIAN* Ananda santri bimbingan:\n\n` +
+                          `Berikut kami sampaikan *REKAP ${judulProgram} HARIAN* Ananda santri bimbingan:\n\n` +
                           `📅 *Hari/Tanggal:* ${tglMasehiStr}\n` +
                           `🌙 *Hijriah:* ${tglHijriahStr}\n` +
                           `-----------------------------------\n\n`;
 
-          // Section Tahfidz
-          textRekap += `📖 *[ SETORAN TAHFIDZ ]*\n`;
-          if (data.tahfidz && data.tahfidz.length > 0) {
-            data.tahfidz.forEach((item, index) => {
-              textRekap += `${index + 1}. *${item.santri}*\n` +
-                           `   - Jenis: ${item.jenis}\n` +
-                           `   - Capaian: ${item.capaian}\n` +
-                           `   - Nilai: ${item.nilai}\n`;
-            });
+          textRekap += `📖 *[ ${judulProgram} ]*\n`;
+          if (daftar && daftar.length > 0) {
+            if (jenis === 'tahfidz') {
+              daftar.forEach((item, index) => {
+                textRekap += `${index + 1}. *${item.santri}*\n` +
+                             `   - Jenis: ${item.jenis}\n` +
+                             `   - Capaian: ${item.capaian}\n` +
+                             `   - Nilai: ${item.nilai}\n`;
+              });
+            } else {
+              daftar.forEach((item, index) => {
+                textRekap += `${index + 1}. *${item.santri}*\n` +
+                             `   - Capaian: ${item.capaian}\n` +
+                             `   - Nilai: ${item.nilai}\n`;
+              });
+            }
           } else {
-            textRekap += `_Belum ada data setoran tahfidz hari ini._\n`;
-          }
-
-          textRekap += `\n📖 *[ SETORAN MENGAJI ]*\n`;
-          if (data.mengaji && data.mengaji.length > 0) {
-            data.mengaji.forEach((item, index) => {
-              textRekap += `${index + 1}. *${item.santri}*\n` +
-                           `   - Capaian: ${item.capaian}\n` +
-                           `   - Nilai: ${item.nilai}\n`;
-            });
-          } else {
-            textRekap += `_Belum ada data setoran mengaji hari ini._\n`;
+            textRekap += `_Belum ada data setoran ${jenis === 'tahfidz' ? 'tahfidz' : 'mengaji'} hari ini._\n`;
           }
 
           textRekap += `\n-----------------------------------\n` +
@@ -611,7 +617,7 @@
         console.error(err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-brands fa-whatsapp text-xl text-green-400"></i> Bagikan Rekap Mutaba'ah Hari Ini ke Grup WA`;
+        btn.innerHTML = labelAsli;
       }
     }
 
