@@ -46,8 +46,11 @@
   </div>
 
   <script>
-    // Link Apps Script Terbaru Anda
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUDNPQW8LLPG9AJhJROzyoB5SYQtQ8UB0RLTnPPYw6bHWZV3wfDtXhLXL55jCmaGECIQ/exec";
+    // Login diproses lewat proxy /api/login (server Vercel sendiri), BUKAN langsung
+    // ke script.google.com dari browser. Ini supaya password tidak pernah terlihat
+    // dikirim ke domain lain oleh browser, karena pola itu sering dicurigai Google
+    // Safe Browsing sebagai phishing/credential harvesting.
+    const LOGIN_PROXY_URL = "/api/login";
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -60,9 +63,9 @@
       btn.disabled = true;
 
       try {
-        const response = await fetch(SCRIPT_URL, {
+        const response = await fetch(LOGIN_PROXY_URL, {
           method: 'POST',
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "login", 
             username: usernameInput,
